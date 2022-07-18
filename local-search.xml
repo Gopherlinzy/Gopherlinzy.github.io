@@ -4,11 +4,38 @@
   
   
   <entry>
-    <title>Gin框架入门</title>
-    <link href="/2022/07/18/go/"/>
-    <url>/2022/07/18/go/</url>
+    <title>Gin框架入门-HTTP请求</title>
+    <link href="/2022/07/18/gin-Http/"/>
+    <url>/2022/07/18/gin-Http/</url>
     
-    <content type="html"><![CDATA[<h1 id="一、gin的简单介绍"><a href="#一、gin的简单介绍" class="headerlink" title="一、gin的简单介绍"></a>一、gin的简单介绍</h1><p>Gin 是一个用 Go (Golang) 编写的 Web 框架，由于 httprouter，它具有 martini 的 API，性能提高了 40 倍。具有高性能的优点。<br>官方地址：<a href="https://github.com/gin-gonic/gin">https://github.com/gin-gonic/gin</a></p><h1 id="二、下载并安装"><a href="#二、下载并安装" class="headerlink" title="二、下载并安装"></a>二、下载并安装</h1><p>要安装Gin包，首先需要安装Go并设置Go工作区</p><h2 id="1、下载并安装"><a href="#1、下载并安装" class="headerlink" title="1、下载并安装"></a>1、下载并安装</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">go</span> get -u github.com/gin-gonic/gin<br></code></pre></td></tr></table></figure><h2 id="2、在代码中导入它"><a href="#2、在代码中导入它" class="headerlink" title="2、在代码中导入它"></a>2、在代码中导入它</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br></code></pre></td></tr></table></figure><h1 id="三、快速入门"><a href="#三、快速入门" class="headerlink" title="三、快速入门"></a>三、快速入门</h1><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>r.GET(<span class="hljs-string">&quot;/test&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br><span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;hello gin!&quot;</span>,<br>&#125;)<br>&#125;)<br>r.Run() <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br>&#125;<br><br></code></pre></td></tr></table></figure><p>运行这段代码并在浏览器中访问 <a href="http://localhost:8080，此时监听的是8080端口">http://localhost:8080，此时监听的是8080端口</a></p><p><img src="/img/gin1.png"></p><p>此时显示404 page not found,这是正常的.<br>因为当前我们的GET路由选择在&#x2F;test上，所以我们要访问的是<a href="http://localhost:8080/test">http://localhost:8080/test</a></p><p><img src="/img/gin2.png"></p><p>大功告成！</p>]]></content>
+    <content type="html"><![CDATA[<h1 id="一、HTTP请求类型"><a href="#一、HTTP请求类型" class="headerlink" title="一、HTTP请求类型"></a>一、HTTP请求类型</h1><p>http协议中一共定义了八种方法或者称之为类型来表明对请求网络资源（Request-URI）的不同的操作方式，分别是：OPTIONS、HEAD、GET、POST、PUT、DELETE、TRACE、CONNECT。</p><p>请求|内容<br>-|-|-<br>GET|请求指定的页面信息，并返回实体主体。<br>POST|向指定资源提交数据进行处理请求（例如提交表单或者上传文件），数据被包含在请求体中。<br>DELETE|请求服务器删除指定的页面。<br>PUT|从客户端向服务器传送的数据取代指定的文档的内容。</p>]]></content>
+    
+    
+    <categories>
+      
+      <category>Gin框架</category>
+      
+    </categories>
+    
+    
+    <tags>
+      
+      <tag>go</tag>
+      
+      <tag>gin，http</tag>
+      
+    </tags>
+    
+  </entry>
+  
+  
+  
+  <entry>
+    <title>Gin框架入门</title>
+    <link href="/2022/07/18/gin/"/>
+    <url>/2022/07/18/gin/</url>
+    
+    <content type="html"><![CDATA[<h1 id="一、gin的简单介绍"><a href="#一、gin的简单介绍" class="headerlink" title="一、gin的简单介绍"></a>一、gin的简单介绍</h1><p>Gin 是一个用 Go (Golang) 编写的 Web 框架，由于 httprouter，它具有 martini 的 API，性能提高了 40 倍。具有高性能的优点。<br>官方地址：<a href="https://github.com/gin-gonic/gin">https://github.com/gin-gonic/gin</a></p><h1 id="二、下载并安装"><a href="#二、下载并安装" class="headerlink" title="二、下载并安装"></a>二、下载并安装</h1><p>要安装Gin包，首先需要安装Go并设置Go工作区</p><h2 id="1、下载并安装"><a href="#1、下载并安装" class="headerlink" title="1、下载并安装"></a>1、下载并安装</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">go</span> get -u github.com/gin-gonic/gin<br></code></pre></td></tr></table></figure><h2 id="2、在代码中导入它"><a href="#2、在代码中导入它" class="headerlink" title="2、在代码中导入它"></a>2、在代码中导入它</h2><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br></code></pre></td></tr></table></figure><h1 id="三、快速入门"><a href="#三、快速入门" class="headerlink" title="三、快速入门"></a>三、快速入门</h1><figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>r.GET(<span class="hljs-string">&quot;/test&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br><span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;hello gin!&quot;</span>,<br>&#125;)<br>&#125;)<br>r.Run() <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br>&#125;<br><br></code></pre></td></tr></table></figure><p>运行这段代码并在浏览器中访问 <a href="http://localhost:8080，此时监听的是8080端口">http://localhost:8080，此时监听的是8080端口</a></p><p><img src="/.io//gin1.png"></p><p>此时显示404 page not found,这是正常的.<br>因为当前我们的GET路由选择在&#x2F;test上，所以我们要访问的是<a href="http://localhost:8080/test">http://localhost:8080/test</a></p><p><img src="/.io//gin2.png"></p><p>大功告成！</p>]]></content>
     
     
     <categories>
