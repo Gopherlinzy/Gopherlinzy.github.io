@@ -8,7 +8,7 @@
     <link href="/2022/07/18/gin-Http/"/>
     <url>/2022/07/18/gin-Http/</url>
     
-    <content type="html"><![CDATA[<h1 id="一、HTTP请求类型"><a href="#一、HTTP请求类型" class="headerlink" title="一、HTTP请求类型"></a>一、HTTP请求类型</h1><p>http协议中一共定义了八种方法或者称之为类型来表明对请求网络资源（Request-URI）的不同的操作方式，分别是：OPTIONS、HEAD、GET、POST、PUT、DELETE、TRACE、CONNECT。</p><p>请求|内容<br>-|-|-<br>GET|请求指定的页面信息，并返回实体主体。<br>POST|向指定资源提交数据进行处理请求（例如提交表单或者上传文件），数据被包含在请求体中。<br>DELETE|请求服务器删除指定的页面。<br>PUT|从客户端向服务器传送的数据取代指定的文档的内容。</p>]]></content>
+    <content type="html"><![CDATA[<h1 id="一、HTTP请求类型"><a href="#一、HTTP请求类型" class="headerlink" title="一、HTTP请求类型"></a>一、HTTP请求类型</h1><p>http协议中一共定义了八种方法或者称之为类型来表明对请求网络资源（Request-URI）的不同的操作方式，分别是：OPTIONS、HEAD、GET、POST、PUT、DELETE、TRACE、CONNECT。</p><table><thead><tr><th>请求</th><th>内容</th></tr></thead><tbody><tr><td><strong>GET</strong></td><td>请求指定的页面信息，并返回实体主体。</td></tr><tr><td><strong>POST</strong></td><td>向指定资源提交数据进行处理请求（例如提交表单或者上传文件），数据被包含在请求体中。</td></tr><tr><td><strong>DELETE</strong></td><td>请求服务器删除指定的页面。</td></tr><tr><td><strong>PUT</strong></td><td>从客户端向服务器传送的数据取代指定的文档的内容。</td></tr></tbody></table>]]></content>
     
     
     <categories>
