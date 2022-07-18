@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gopherlinzy.github.io/img/default.png">
 <meta property="article:published_time" content="2022-07-18T00:20:45.000Z">
-<meta property="article:modified_time" content="2022-07-18T06:58:28.807Z">
+<meta property="article:modified_time" content="2022-07-18T07:02:43.645Z">
 <meta property="article:author" content="孙禄毅">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="gin">
@@ -224,7 +224,7 @@
       <span class="post-meta mr-2">
         <i class="iconfont icon-chart"></i>
         
-          490 字
+          705 字
         
       </span>
     
@@ -235,7 +235,7 @@
         
         
         
-          5 分钟
+          6 分钟
         
       </span>
     
@@ -303,17 +303,42 @@
 <p>2、在代码中导入它</p>
 <figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br></code></pre></td></tr></table></figure>
 
-<blockquote><p>Do not just seek happiness for yourself. Seek happiness for all. Through kindness. Through mercy.</p>
-<footer><strong>David Levithan</strong><cite>Wide Awake</cite></footer></blockquote>
+<p>三、快速入门</p>
+<figure class="highlight golang"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs Golang"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;github.com/gin-gonic/gin&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>	r.GET(<span class="hljs-string">&quot;/test&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>			<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;hello gin!&quot;</span>,<br>		&#125;)<br>	&#125;)<br>	r.Run() <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
 
-<blockquote><p>NEW: DevDocs now comes with syntax highlighting. <a target="_blank" rel="noopener" href="http://devdocs.io/">http://devdocs.io</a></p>
-<footer><strong>@DevDocs</strong><cite><a target="_blank" rel="noopener" href="https://twitter.com/devdocs/status/356095192085962752">twitter.com/devdocs/status/356095192085962752</a></cite></footer></blockquote>
+<p>运行这段代码并在浏览器中访问 <a href="http://localhost:8080，此时监听的是8080端口">http://localhost:8080，此时监听的是8080端口</a></p>
+<p><img src="/img/gin1.png" srcset="/img/loading.gif" lazyload></p>
+<p>此时显示404 page not found,这是正常的.<br>因为当前我们的GET路由选择在&#x2F;test上，所以我们要访问的是<a target="_blank" rel="noopener" href="http://localhost:8080/test">http://localhost:8080/test</a></p>
+<p><img src="/img/gin2.png" srcset="/img/loading.gif" lazyload></p>
+<p>大功告成！</p>
+
                 
               </div>
             
             <hr/>
             <div>
               <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Gin%E6%A1%86%E6%9E%B6/" class="category-chain-item">Gin框架</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
   
   
     <div class="post-meta">
