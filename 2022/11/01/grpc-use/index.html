@@ -1,0 +1,775 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、gRPC概述1、什么是gRPC？gRPC 是一个强大的开源 RPC（远程过程调用）框架，用于构建可扩展且快速的 API。它允许客户端和服务器应用程序透明地通信并开发连接的系统。gRPC框架依赖 HTTP&#x2F;2、协议缓冲区和其他现代技术堆栈来确保最大的 API 安全性、性能和可扩展性。 在 gRPC 中，客户端应用程序可以">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC（三）基础：gRPC快速入门">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/11/01/grpc-use/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、gRPC概述1、什么是gRPC？gRPC 是一个强大的开源 RPC（远程过程调用）框架，用于构建可扩展且快速的 API。它允许客户端和服务器应用程序透明地通信并开发连接的系统。gRPC框架依赖 HTTP&#x2F;2、协议缓冲区和其他现代技术堆栈来确保最大的 API 安全性、性能和可扩展性。 在 gRPC 中，客户端应用程序可以">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
+<meta property="article:published_time" content="2022-11-01T07:08:49.000Z">
+<meta property="article:modified_time" content="2022-11-01T07:13:24.616Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="grpc">
+<meta property="article:tag" content="rpc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>gRPC（三）基础：gRPC快速入门 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="gRPC（三）基础：gRPC快速入门"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-01 15:08" pubdate>
+          2022年11月1日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.1k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          35 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">gRPC（三）基础：gRPC快速入门</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/go-grpc-example">点击跳转</a><br>gRPC官方文档：<a target="_blank" rel="noopener" href="https://grpc.io/docs/what-is-grpc/">点击跳转</a></p>
+</blockquote>
+<h1 id="一、gRPC概述"><a href="#一、gRPC概述" class="headerlink" title="一、gRPC概述"></a>一、gRPC概述</h1><h2 id="1、什么是gRPC？"><a href="#1、什么是gRPC？" class="headerlink" title="1、什么是gRPC？"></a>1、什么是gRPC？</h2><p>gRPC 是一个强大的开源 RPC（远程过程调用）框架，用于构建可扩展且快速的 API。它允许客户端和服务器应用程序透明地通信并开发连接的系统。gRPC框架依赖 <code>HTTP/2</code>、协议缓冲区和其他现代技术堆栈来确保最大的 API 安全性、性能和可扩展性。</p>
+<p>在 gRPC 中，客户端应用程序可以直接调用不同机器上的服务器应用程序上的方法，就像是本地对象一样，更容易创建<code>分布式应用程序和服务</code>。</p>
+<p>与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以远程调用的方法及其参数和返回类型。在服务端，服务端实现这个接口并运行一个 gRPC 服务器来处理客户端调用。在客户端，客户端有一个存根（自动生成的文件），它提供与服务器相同的方法。</p>
+<p><img src="/img/grpc_use/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2、gRPC-的历史"><a href="#2、gRPC-的历史" class="headerlink" title="2、gRPC 的历史"></a>2、gRPC 的历史</h2><p>2015 年，Google 开发了 gRPC 作为 RPC 框架的扩展，以链接使用不同技术创建的许多微服务。最初，它与 Google 的内部基础设施密切相关，但后来，它被开源并标准化以供社区使用。在其发布的第一年，顶级组织利用它来支持从微服务到 Web、移动和物联网的用例。并在 2017 年因越来越受欢迎而成为云原生计算基金会（CNCF）孵化项目。</p>
+<h2 id="3、使用Protobuf"><a href="#3、使用Protobuf" class="headerlink" title="3、使用Protobuf"></a>3、使用Protobuf</h2><p>Protobuf 是 Google 的<code>序列化/反序列化协议</code>，可以轻松定义服务和自动生成客户端库。gRPC 使用此协议作为其接口定义语言 (IDL) 和序列化工具集。</p>
+<ul>
+<li>客户端和服务器之间的 gRPC 服务和消息在 proto 文件中定义。</li>
+<li>Protobuf 编译器 <code>protoc</code> 生成客户端和服务器代码，在运行时将 .proto 文件加载到内存中，并使用内存中的模式来<code>序列化/反序列化二进制消息</code>。</li>
+<li>代码生成后，每条消息都会在客户端和远程服务之间进行交换。</li>
+</ul>
+<blockquote>
+<p>为什么使用Protobuf？<br>使用 Protobuf 进行解析需要更少的 CPU 资源，因为数据被转换为二进制格式，并且编码的消息的大小更轻。因此，消息交换速度更快，即使在 CPU 速度较慢的机器（例如移动设备）中也是如此。</p>
+</blockquote>
+<h2 id="4、gRPC架构"><a href="#4、gRPC架构" class="headerlink" title="4、gRPC架构"></a>4、gRPC架构</h2><p>在下面的 gRPC 架构图中，我们有 gRPC 客户端和服务器端。在 gRPC 中，每个客户端服务都包含一个存根（自动生成的文件），类似于包含当前远程过程的接口。</p>
+<p>gRPC工作流程：</p>
+<ul>
+<li>gRPC 客户端将要发送到服务器的参数对存根进行本地过程调用。</li>
+<li>客户端存根使用 Protobuf 使用<code>编组过程序列化参数</code>，并将请求转发到本地机器中的本地客户端时间库。</li>
+<li>操作系统通过 <code>HTTP/2</code> 协议调用远程服务器机器。</li>
+<li>服务器的操作系统接收数据包并调用服务器存根程序，该程序对接收到的参数进行解码并使用 Protobuf 执行相应的程序调用。</li>
+<li>服务器存根将编码响应发送回客户端传输层。客户端存根取回结果消息并解包返回的参数，然后执行返回给调用者。<br><img src="/img/grpc_use/grpc2.png" srcset="/img/loading.gif" lazyload></li>
+</ul>
+<h1 id="二、准备工作"><a href="#二、准备工作" class="headerlink" title="二、准备工作"></a>二、准备工作</h1><p>使用 Go 来编写 gRPC Server 和 Client，让其互相通讯。在此之上会使用到如下库：</p>
+<blockquote>
+<p>下面示例是在 <code>windows</code>环境中安装。</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs bash">google.golang.org/grpc<br>google.golang.org/protobuf/cmd/protoc-gen-go<br>google.golang.org/grpc/cmd/protoc-gen-go-grpc<br></code></pre></td></tr></table></figure>
+
+<ol>
+<li>初始化项目<code>go mod init 项目名称</code>模块管理依赖项</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span> mod init <span class="hljs-keyword">go</span>-grpc-examle<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>安装protoc：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs bash">➜ go get -u google.golang.org/grpc<br></code></pre></td></tr></table></figure>
+<p>通过<code>--version</code>命令查看是否安装成功:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">➜ protoc --version<br>libprotoc 3.20.1<br></code></pre></td></tr></table></figure>
+
+<ol start="2">
+<li>使用以下命令为 Go 安装协议编译器插件：</li>
+</ol>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash">➜ go install google.golang.org/protobuf/cmd/protoc-gen-go@v1.28<br>➜ go install google.golang.org/grpc/cmd/protoc-gen-go-grpc@v1.2<br></code></pre></td></tr></table></figure>
+<p>验证插件是否安装成功:</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs bash">➜ protoc-gen-go --version<br>protoc-gen-go.exe v1.28.1<br><br>➜ protoc-gen-go-grpc --version<br>protoc-gen-go-grpc 1.2.0<br></code></pre></td></tr></table></figure>
+
+<ol start="3">
+<li>更新你的PATH，以便protoc编译器可以找到插件（你不在gopath下创建的项目，这里自行百度改一下PATH）</li>
+</ol>
+<h1 id="三、编写gRPC-Client-and-Server"><a href="#三、编写gRPC-Client-and-Server" class="headerlink" title="三、编写gRPC Client and Server"></a>三、编写gRPC Client and Server</h1><h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs bash">go-grpc-example<br>├── client<br>│   └──hello_client<br>│   	└── client.go<br>├── proto<br>│   └──hello<br>│   	└── hello.proto<br>├── server<br>│   └──hello_server<br>│   	└── server.go<br></code></pre></td></tr></table></figure>
+
+<h2 id="2、编写-proto-文件"><a href="#2、编写-proto-文件" class="headerlink" title="2、编写 .proto 文件"></a>2、编写 .proto 文件</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go">syntax = <span class="hljs-string">&quot;proto3&quot;</span>;<br><br><span class="hljs-comment">// 定义go生成后的包名</span><br>option go_package = <span class="hljs-string">&quot;./;hello&quot;</span>;<br><span class="hljs-keyword">package</span> proto;<br><br><span class="hljs-comment">// 定义入参</span><br>message Request &#123;<br>  <span class="hljs-type">string</span> name =<span class="hljs-number">1</span>;<br>&#125;<br><span class="hljs-comment">// 定义返回</span><br>message Response &#123;<br>  <span class="hljs-type">string</span> result = <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-comment">// 定义接口</span><br>service UserService &#123;<br>  rpc Say(Request) returns (Response);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="3、生成Go代码"><a href="#3、生成Go代码" class="headerlink" title="3、生成Go代码"></a>3、生成Go代码</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment"># 同时生成hello.pb.go 和 hello_grpc.pb.go</span><br>➜ protoc --go-grpc_out=. --go_out=. hello.proto<br></code></pre></td></tr></table></figure>
+<p>当前目录下可以看到生成两个文件：<br><img src="/img/grpc_use/grpc3.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="4、编写-Server-服务端代码"><a href="#4、编写-Server-服务端代码" class="headerlink" title="4、编写 Server 服务端代码"></a>4、编写 Server 服务端代码</h2><p>编写 gRPC Server 的基础模板，完成一个方法的调用。对 server.go 写入如下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> HelloService <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">// 必须嵌入UnimplementedUserServiceServer</span><br>	hello.UnimplementedUserServiceServer<br>&#125;<br><br><span class="hljs-comment">// 实现SayHi方法</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *HelloService)</span></span> SayHi(ctx context.Context, req *hello.Request) (res *hello.Response, err <span class="hljs-type">error</span>) &#123;<br>	format := time.Now().Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>)<br>	<span class="hljs-keyword">return</span> &amp;hello.Response&#123;Result: <span class="hljs-string">&quot;hi &quot;</span> + req.GetName() + <span class="hljs-string">&quot;---&quot;</span> + format&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 创建grpc服务</span><br>	server := grpc.NewServer()<br>	<span class="hljs-comment">// 注册服务</span><br>	hello.RegisterUserServiceServer(server, &amp;HelloService&#123;&#125;)<br><br>	<span class="hljs-comment">// 监听端口</span><br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:&quot;</span>+PORT)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;net.Listen err: %v&quot;</span>, err)<br>	&#125;<br><br>	server.Serve(lis)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5、编写-Client-客户端代码"><a href="#5、编写-Client-客户端代码" class="headerlink" title="5、编写 Client 客户端代码"></a>5、编写 Client 客户端代码</h2><p>接下来编写 gRPC Go Client 的基础模板，打开 hello_client&#x2F;client.go 文件，写入以下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 建立链接</span><br>	conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithInsecure())<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;grpc.Dial err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">// 一定要记得关闭链接</span><br>	<span class="hljs-keyword">defer</span> conn.Close()<br><br>	<span class="hljs-comment">// 实例化客户端</span><br>	client := hello.NewUserServiceClient(conn)<br>	<span class="hljs-comment">// 发起请求</span><br>	response, err := client.SayHi(context.Background(), &amp;hello.Request&#123;Name: <span class="hljs-string">&quot;lin钟一&quot;</span>&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;client.SayHi err: %v&quot;</span>, err)<br>	&#125;<br>	fmt.Printf(<span class="hljs-string">&quot;resp: %s&quot;</span>, response.GetResult())<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="6、启动-amp-请求"><a href="#6、启动-amp-请求" class="headerlink" title="6、启动 &amp; 请求"></a>6、启动 &amp; 请求</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">50970</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">51040</span><br>resp: hi lin钟一--<span class="hljs-number">-2022</span><span class="hljs-number">-11</span><span class="hljs-number">-01</span> <span class="hljs-number">14</span>:<span class="hljs-number">54</span>:<span class="hljs-number">01</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>在本文，我们对 gRPC Client&#x2F;Server 进行了介绍和了解。希望你结合第一章写的rpc请求的方法对文中讲述内容再写一个 Demo 进行深入了解。</p>
+<p>下一篇关于gRPC Streaming的内容，gRPC 三种类型的流式。</p>
+<ul>
+<li>Server-side streaming RPC：服务器端流式 RPC</li>
+<li>Client-side streaming RPC：客户端流式 RPC</li>
+<li>Bidirectional streaming RPC：双向流式 RPC</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
+      
+        <a href="/tags/grpc/">#grpc</a>
+      
+        <a href="/tags/rpc/">#rpc</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>gRPC（三）基础：gRPC快速入门</div>
+      <div>https://gopherlinzy.github.io/2022/11/01/grpc-use/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月1日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/03/grpc-stream/" title="gRPC（四）基础：gRPC流">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（四）基础：gRPC流</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/31/grpc-protobuf/" title="gRPC（二）入门：Protobuf入门">
+                        <span class="hidden-mobile">gRPC（二）入门：Protobuf入门</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

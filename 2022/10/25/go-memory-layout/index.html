@@ -1,0 +1,884 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 本文将介绍Go中的各种字段类型的字节数和对齐保证。  一、内存对齐1、什么是内存对齐？元素是按照定义顺序一个一个放到内存中去的，但并不是紧密排列的。从结构体存储的首地址开始，每个元素放置到内存中时，它都会认为内存是按照自己的大小（通常它为4字节(32位)或8字节(64位)）来划分的，因此元素放置的位置一定会在自己宽度的整数倍上开始，这就是所谓的内存对齐。 2、为什么需要内存对齐？CPU 访问">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go高性能编程-Go中的类型对齐保证">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/10/25/go-memory-layout/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 本文将介绍Go中的各种字段类型的字节数和对齐保证。  一、内存对齐1、什么是内存对齐？元素是按照定义顺序一个一个放到内存中去的，但并不是紧密排列的。从结构体存储的首地址开始，每个元素放置到内存中时，它都会认为内存是按照自己的大小（通常它为4字节(32位)或8字节(64位)）来划分的，因此元素放置的位置一定会在自己宽度的整数倍上开始，这就是所谓的内存对齐。 2、为什么需要内存对齐？CPU 访问">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+<meta property="article:published_time" content="2022-10-25T03:07:23.000Z">
+<meta property="article:modified_time" content="2022-10-25T03:16:32.078Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="高性能">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Go高性能编程-Go中的类型对齐保证 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg12.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Go高性能编程-Go中的类型对齐保证"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-25 11:07" pubdate>
+          2022年10月25日 上午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.7k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          65 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Go高性能编程-Go中的类型对齐保证</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>本文将介绍Go中的各种字段类型的字节数和对齐保证。</p>
+</blockquote>
+<h1 id="一、内存对齐"><a href="#一、内存对齐" class="headerlink" title="一、内存对齐"></a>一、内存对齐</h1><h2 id="1、什么是内存对齐？"><a href="#1、什么是内存对齐？" class="headerlink" title="1、什么是内存对齐？"></a>1、什么是内存对齐？</h2><p>元素是按照定义顺序一个一个放到内存中去的，但并不是紧密排列的。从结构体存储的首地址开始，每个元素放置到内存中时，它都会认为<code>内存是按照自己的大小（通常它为4字节(32位)或8字节(64位)）来划分的</code>，因此元素放置的位置一定会在自己宽度的整数倍上开始，这就是所谓的内存对齐。</p>
+<h2 id="2、为什么需要内存对齐？"><a href="#2、为什么需要内存对齐？" class="headerlink" title="2、为什么需要内存对齐？"></a>2、为什么需要内存对齐？</h2><p>CPU 访问内存时，并不是逐个字节访问，而是以字长（word size）为单位访问。比如 32 位的 CPU ，字长为 4 字节，那么 CPU 访问内存的单位也是 4 字节。64位 CPU 访问内存的单位是8个字节。</p>
+<p>这么设计的目的，是减少 CPU 访问内存的次数，加大 CPU 访问内存的吞吐量。比如同样读取 8 个字节的数据，一次读取 4 个字节那么只需要读取 2 次。<code>CPU 始终以字长访问内存</code>。</p>
+<p>提出设想如果我们不进行内存对齐，而是按照类型字节长度紧密对齐呢？</p>
+<p>变量 a、b 各占据 3 字节的空间，我们使用32位 CPU 访问内存读取变量，例如：</p>
+<p><img src="/img/go_memory_layout/go1.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>内存对齐后，a、b 占据 4 字节空间，CPU 读取 b 变量的值只需要进行一次内存访问。</li>
+<li>不进行内存对齐，CPU 读取 b 变量的值需要进行 2 次内存访问。第一次访问得到 b 变量的第 1 个字节，第二次访问得到 b 变量的后两个字节，最后在寄存器中将剩余的数据合并得到我们想要变量 b 的数据。</li>
+</ul>
+<p>从这个例子中也可以看到，内存对齐对实现变量的原子性操作也是有好处的，每次内存访问是原子的，如果变量的大小不超过字长，那么内存对齐后，对该变量的访问就是原子的，这个特性在并发场景下至关重要。</p>
+<p><code>简言之：合理的内存对齐可以提高内存读写的性能，并且便于实现变量操作的原子性。</code></p>
+<blockquote>
+<p>内存对齐是为了减少访问内存的次数，提高CPU读取内存数据的效率，如果内存不对齐，访问相同的数据需要更多的访问内存次数。</p>
+</blockquote>
+<h1 id="二、Go中的类型对齐保证"><a href="#二、Go中的类型对齐保证" class="headerlink" title="二、Go中的类型对齐保证"></a>二、Go中的类型对齐保证</h1><p>为了充分利用CPU指令来达到最佳程序性能，为一个特定类型的值开辟的内存块的起始地址必须为某个整数N的倍数，N被称为此类型的值地址对齐保证，或者简单地称为此类型的对齐保证。 我们也可以说此类型的值的地址保证为N字节对齐的。</p>
+<h2 id="1、数据类型的大小和对齐保证"><a href="#1、数据类型的大小和对齐保证" class="headerlink" title="1、数据类型的大小和对齐保证"></a>1、数据类型的大小和对齐保证</h2><p>对于当前的标准 Go 编译器（版本 1.19），字段对齐保证和类型的一般对齐保证是相等的。</p>
+<p>对于不同的类型，对应的对齐保证大小和占用的内存大小：</p>
+<table>
+<thead>
+<tr>
+<th align="left">类型</th>
+<th>对齐保证（字节数）</th>
+<th>占用的内存大小（字节数）</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">byte, uint8, int8</td>
+<td>1</td>
+<td>1</td>
+</tr>
+<tr>
+<td align="left">uint16, int16</td>
+<td>2</td>
+<td>2</td>
+</tr>
+<tr>
+<td align="left">uint32, int32, float32</td>
+<td>4</td>
+<td>4</td>
+</tr>
+<tr>
+<td align="left">uint64, int64, float64, complex64</td>
+<td>8</td>
+<td>8</td>
+</tr>
+<tr>
+<td align="left">complex128</td>
+<td>16</td>
+<td>16</td>
+</tr>
+<tr>
+<td align="left">string</td>
+<td>8</td>
+<td>16</td>
+</tr>
+<tr>
+<td align="left">array</td>
+<td>取决于元素类型</td>
+<td></td>
+</tr>
+<tr>
+<td align="left">struct</td>
+<td>取决于各个字段类型</td>
+<td></td>
+</tr>
+<tr>
+<td align="left">uint, int</td>
+<td></td>
+<td>取决于编译器实现。通常在32位架构上为4字节，在64位架构上为8字节。</td>
+</tr>
+<tr>
+<td align="left">uintptr</td>
+<td></td>
+<td>取决于编译器实现。但必须能够存下任一个内存地址。</td>
+</tr>
+</tbody></table>
+<p>Go白皮书仅列出了一些<a target="_blank" rel="noopener" href="https://golang.google.cn/ref/spec#Numeric_types">类型对齐保证要求</a>，一个合格的Go编译器必须保证：</p>
+<ol>
+<li>对于任何类型的变量x，<code>unsafe.Alignof(x)</code>的结果最小为1。</li>
+<li>对于一个结构体类型的变量x，<code>unsafe.Alignof(x)</code>的结果为x的所有字段的对齐保证unsafe.Alignof(x.f)中的最大值（但是最小为1）。</li>
+<li>对于一个数组类型的变量x，<code>unsafe.Alignof(x)</code>的结果和此数组的元素类型的一个变量的对齐保证相等。</li>
+</ol>
+<blockquote>
+<p>如果结构或数组类型不包含内存大小大于零的字段（或元素），则其大小为零。两个不同的零大小变量在内存中可能具有相同的地址。</p>
+</blockquote>
+<h2 id="2、Go实现内存对齐"><a href="#2、Go实现内存对齐" class="headerlink" title="2、Go实现内存对齐"></a>2、Go实现内存对齐</h2><p>Go的unsafe包中有三个函数：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Sizeof</span><span class="hljs-params">(x ArbitraryType)</span></span> <span class="hljs-type">uintptr</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Offsetof</span><span class="hljs-params">(x ArbitraryType)</span></span> <span class="hljs-type">uintptr</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Alignof</span><span class="hljs-params">(x ArbitraryType)</span></span> <span class="hljs-type">uintptr</span><br></code></pre></td></tr></table></figure>
+<p><code>unsafe.Sizeof 返回变量x的占用字节数，但不包含它所指向内容的大小</code>，对于一个string类型的变量它的大小是16字节，一个指针类型的变量大小是8字节<br><code>unsafe.Alignof 返回变量x需要的对齐保证</code>，它可以被x地址整除。(一般取结构体数据类型对齐保证的最大值)<br><code>unsafe.Offsetof 返回结构体成员地址相对于结构体首地址相差的字节数，称为偏移量</code></p>
+<p>在 Go 语言中，我们可以使用 unsafe.Sizeof 计算出一个数据类型实例需要占用的字节数。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> T1 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span>  <span class="hljs-comment">//1字节</span><br>	b <span class="hljs-type">int64</span> <span class="hljs-comment">//8字节</span><br>	c <span class="hljs-type">int16</span> <span class="hljs-comment">//2字节</span><br>&#125;<br><br><span class="hljs-keyword">type</span> T2 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span><br>	c <span class="hljs-type">int16</span><br>	b <span class="hljs-type">int64</span><br>&#125;<br><br><span class="hljs-keyword">type</span> T3 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span>  <span class="hljs-comment">//1字节</span><br>	b <span class="hljs-type">int32</span> <span class="hljs-comment">//4字节</span><br>	c <span class="hljs-type">int16</span> <span class="hljs-comment">//2字节</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	fmt.Println(<span class="hljs-string">&quot;T1结构体内存占用：&quot;</span>, unsafe.Sizeof(T1&#123;&#125;))<br>	fmt.Println(<span class="hljs-string">&quot;T2结构体内存占用：&quot;</span>, unsafe.Sizeof(T2&#123;&#125;))<br><br>	<span class="hljs-keyword">var</span> s <span class="hljs-type">string</span><br>	fmt.Printf(<span class="hljs-string">&quot;string类型的内存占用大小%v, 对齐保证%v\n&quot;</span>, unsafe.Sizeof(s), unsafe.Alignof(s))<br>	fmt.Println(<span class="hljs-string">&quot;T1结构体对齐保证：&quot;</span>, unsafe.Alignof(T2&#123;&#125;))<br>	fmt.Println(<span class="hljs-string">&quot;T2结构体对齐保证：&quot;</span>, unsafe.Alignof(T3&#123;&#125;))<br><br>	<span class="hljs-keyword">var</span> t1 T1<br>	<span class="hljs-keyword">var</span> t2 T2<br>	fmt.Println(<span class="hljs-string">&quot;T1成员b地址相对于结构体首地址相差的字节数：&quot;</span>, unsafe.Offsetof(t1.b))<br>	fmt.Println(<span class="hljs-string">&quot;T2成员c地址相对于结构体首地址相差的字节数：&quot;</span>, unsafe.Offsetof(t2.c))<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><img src="/img/go_memory_layout/go2.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="1）内存对齐规则"><a href="#1）内存对齐规则" class="headerlink" title="1）内存对齐规则"></a>1）内存对齐规则</h3><p><strong>内存对齐的规则，这里只介绍结构体的内存对齐：</strong></p>
+<ul>
+<li>规则一：结构体第一个字段偏移量为0，后面的字段的偏移量等于成员数据类型大小和字段对齐保证两者取最小值的最小整数倍，如果不满足规则，编译器会在前面填充值为0的字节空间</li>
+<li>规则二：结构体本身也需要内存对齐，其大小等于各字段类型占用内存最大的和编译器默认对齐保证两者取最小值的最小整数倍</li>
+</ul>
+<h3 id="2）计算结构体内存占用大小"><a href="#2）计算结构体内存占用大小" class="headerlink" title="2）计算结构体内存占用大小"></a>2）计算结构体内存占用大小</h3><p>为什么这里明明结构体内字段类型和数量都是一样，但是内存大小却不一样？</p>
+<h4 id="a、T1为什么是24字节？"><a href="#a、T1为什么是24字节？" class="headerlink" title="a、T1为什么是24字节？"></a>a、T1为什么是24字节？</h4><ul>
+<li>a是int8类型占1字节，对齐保证是1字节。<ul>
+<li>因为是第一个成员，偏移量为0，所有不需要填充，直接排在内存空间的第一位。</li>
+</ul>
+</li>
+<li>b是int64类型占8字节，对齐保证是8字节。<ul>
+<li>当前偏移量为2，根据规则一，其偏移量为两者中最小值，所以调整后的偏移量为8。</li>
+<li>在64位架构上，为了让字段b的地址为8字节对齐，需在这里填充7个字节，从第9位开始占用8个字节空间。</li>
+<li>在32位架构上，为了让字段b的地址为4字节对齐，需在这里填充3个字节，从第5位开始占用8个字节空间。</li>
+</ul>
+</li>
+<li>c是int16类型占2字节，对齐保证2字节。<ul>
+<li>当前偏移量为16，根据规则一，其偏移量为两者中最小值，所以调整后的偏移量为2。</li>
+<li>在64位架构上需在这里填充6个字节，从第17位开始占用2个字节空间。</li>
+<li>在32位架构上需在这里填充2个字节，从第13位开始占用2个字节空间。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/go_memory_layout/go3.png" srcset="/img/loading.gif" lazyload></p>
+<p>第一条规则算下来结构体T1在64位架构上占用大小为 1+7+8+2&#x3D;18，在32位架构上占用大小为 1+3+8+2&#x3D;14</p>
+<blockquote>
+<p>我们再来根据第二条规则计算：<br>结构体最大字段内存大小为8字节，</p>
+<ul>
+<li>结构体T1的内存大小在64位架构上，取两者最小值8的最小整数倍，因本身结构体当前大小为18，所以最后结构体大小&#x3D;3*8&#x3D;24，为24个字节。</li>
+<li>结构体T1的内存大小在32位架构上，取两者最小值4的最小整数倍，因本身结构体当前大小为14，所以最后结构体大小&#x3D;4*4&#x3D;16，为16个字节。</li>
+</ul>
+</blockquote>
+<h4 id="b、T2为什么是16字节？"><a href="#b、T2为什么是16字节？" class="headerlink" title="b、T2为什么是16字节？"></a>b、T2为什么是16字节？</h4><ul>
+<li>a是int8类型占1字节，对齐保证是1字节。<ul>
+<li>因为是第一个成员，偏移量为0，所有不需要填充，直接排在内存空间的第一位。</li>
+</ul>
+</li>
+<li>c是int16类型占2个字节，对齐保证2字节。<ul>
+<li>当前偏移量为2，根据规则一，其偏移量为两者中最小值，所以调整后的偏移量为2。</li>
+<li>为了让字段c的地址为2字节对齐，需在这里填充1个字节，从第3位开始占用2个字节空间。</li>
+</ul>
+</li>
+<li>b是int64类型占8个字节，对齐保证是8字节。<ul>
+<li>当前偏移量为4，根据规则一，其偏移量为两者中最小值，所以调整后的偏移量为8。</li>
+<li>在64位架构上，为了让字段b的地址为8字节对齐，需在这里填充4个字节，从第9位开始占用8个字节空间。</li>
+<li>在32位架构上，为了让字段b的地址为4字节对齐，不需要填充，从第5位开始占用8个字节空间。</li>
+<li>字节可以保证字段b的地址为4字节对齐的。</li>
+</ul>
+</li>
+</ul>
+<p><img src="/img/go_memory_layout/go4.png" srcset="/img/loading.gif" lazyload></p>
+<p>第一条规则算下来<br>结构体T1在64位架构上占用大小为 1+1+2+4+8&#x3D;16<br>结构体T1在32位架构上占用大小为 1+1+2+8&#x3D;12</p>
+<blockquote>
+<p>我们再来根据第二条规则计算：<br>结构体最大字段内存大小为8字节，</p>
+<ul>
+<li>结构体T1的内存大小在64位架构上，取两者最小值8的最小整数倍，因本身结构体当前大小为16，所以最后结构体大小&#x3D;2*8&#x3D;16，为16个字节。</li>
+<li>结构体T1的内存大小在32位架构上，取两者最小值4的最小整数倍，因本身结构体当前大小为12，所以最后结构体大小&#x3D;3*4&#x3D;12，为12个字节。</li>
+</ul>
+</blockquote>
+<h3 id="3）struct-内存对齐的技巧"><a href="#3）struct-内存对齐的技巧" class="headerlink" title="3）struct 内存对齐的技巧"></a>3）struct 内存对齐的技巧</h3><p>我们通过上面两个结构体，因为字段数据类型顺序不一样，导致内存占用也不同。</p>
+<p>每个字段按照自身的对齐倍数来确定在内存中的偏移量，字段排列顺序不同，上一个字段因偏移而浪费的大小也不同。</p>
+<p><code>因此，在对内存特别敏感的结构体的设计上，我们可以通过调整字段的顺序，减少内存的占用。</code></p>
+<h3 id="4）空-struct-的作用"><a href="#4）空-struct-的作用" class="headerlink" title="4）空 struct{} 的作用"></a>4）空 struct{} 的作用</h3><p>空 struct{} 大小为 0，作为其他 struct 的字段时，一般不需要内存对齐。但是有一种情况除外：<code>即当 struct&#123;&#125; 作为结构体最后一个字段时，需要内存对齐</code>。</p>
+<p>因为如果有指针指向该字段, 返回的地址将在结构体之外，如果此指针一直存活不释放对应的内存，就会有内存泄露的问题（该内存不因结构体释放而释放）。</p>
+<p>因此，当 struct{} 作为其他 struct 最后一个字段时，需要填充额外的内存保证安全。我们做个试验，验证下这种情况。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> demo1 <span class="hljs-keyword">struct</span> &#123;<br>	c <span class="hljs-type">int32</span><br>	a <span class="hljs-keyword">struct</span>&#123;&#125;<br>&#125;<br><br><span class="hljs-keyword">type</span> demo2 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-keyword">struct</span>&#123;&#125;<br>	c <span class="hljs-type">int32</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	fmt.Println(unsafe.Sizeof(demo1&#123;&#125;)) <span class="hljs-comment">// 8</span><br>	fmt.Println(unsafe.Sizeof(demo2&#123;&#125;)) <span class="hljs-comment">// 4</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/go_memory_layout/go5.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>可以看到，demo2{} 的大小为 4 字节，与字段 c 占据空间一致，而 demo1{} 的大小为 8 字节，即额外填充了 4 字节的空间。</p>
+</blockquote>
+<h2 id="3、64位字原子操作的地址对齐保证要求"><a href="#3、64位字原子操作的地址对齐保证要求" class="headerlink" title="3、64位字原子操作的地址对齐保证要求"></a>3、64位字原子操作的地址对齐保证要求</h2><p>一个64位字的原子操作要求此64位字的地址必须是8字节对齐的。 这对于标准编译器目前支持的64位架构来说并不是一个问题，因为标准编译器保证任何一个64位字的地址在64位架构上都是8字节对齐的。</p>
+<p>然而，在32位架构上，标准编译器为64位字做出的地址对齐保证仅为4个字节。 对一个不是8字节对齐的64位字进行64位原子操作将在运行时刻产生一个恐慌，需要分别读取两次合并。 更糟的是，一些非常老旧的架构并不支持64位原子操作需要的基本指令。</p>
+<p><a target="_blank" rel="noopener" href="https://golang.google.cn/pkg/sync/atomic/#pkg-note-BUG">sync&#x2F;atomic标准库包文档的末尾</a>提到：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">On <span class="hljs-number">386</span>, the <span class="hljs-number">64</span>-bit functions use instructions unavailable before the Pentium MMX.<br><br>On non-Linux ARM, the <span class="hljs-number">64</span>-bit functions use instructions unavailable before the ARMv6k core.<br><br>On ARM, <span class="hljs-number">386</span>, and <span class="hljs-number">32</span>-bit MIPS, it is the caller<span class="hljs-string">&#x27;s responsibility to arrange for 64-bit alignment of 64-bit words </span><br><span class="hljs-string">accessed atomically via the primitive atomic functions (types Int64 and Uint64 are automatically aligned). The </span><br><span class="hljs-string">first word in an allocated struct, array, or slice; in a global variable; or in a local variable</span><br><span class="hljs-string">(because the subject of all atomic operations will escape to the heap) can be relied upon to be 64-bit aligned.</span><br></code></pre></td></tr></table></figure>
+<p>所以大致意思意思：</p>
+<ol>
+<li>这些非常老旧的架构在今日已经相当的不主流了。 如果一个程序需要在这些架构上对64位字进行原子操作，还有很多其它同步技术可用。</li>
+<li>对其它不是很老旧的32位架构，有一些方法可以保证在这些架构上对一些64位字的原子操作是安全的。</li>
+</ol>
+<p>这里的方法是<code>已分配结构、数组或切片中的第一个（64位）字(元素)可以被认为是8字节对齐的</code>。</p>
+<p>这里的已分配解读为一个声明的变量、内置函数make的调用返回值，或者内置函数new的调用返回值所引用的值。如果一个切片是从一个已分配数组派生出来的并且此切片和此数组共享第一个元素，则我们也可以将此切片看作是一个已分配的值。</p>
+<p>这里对哪些64位字可以在32位架构上被安全地原子访问的描述是有些保守的。 有很多描述并未包括的64位字在32位架构上也是可以被安全地原子访问的。</p>
+<p> 比如，如果一个元素类型为64位字的数组或者切片的第一个元素可以被安全地进行64位原子访问，则此数组或切片中的所有元素都可以被安全地进行64位原子访问。 只是因为很难用三言两语将所有在32位架构上可以被安全地原子访问的64位字都罗列出来，所以官方文档采取了一种保守的描述。</p>
+<p>下面是一个展示了哪些64位字在32位架构上可以和哪些不可以被安全地原子访问的例子。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> (<br>	T1 <span class="hljs-keyword">struct</span> &#123;<br>		v <span class="hljs-type">uint64</span><br>	&#125;<br><br>	T2 <span class="hljs-keyword">struct</span> &#123;<br>		_ <span class="hljs-type">int16</span><br>		x T1<br>		y *T1<br>	&#125;<br><br>	T3 <span class="hljs-keyword">struct</span> &#123;<br>		_ <span class="hljs-type">int16</span><br>		x [<span class="hljs-number">6</span>]<span class="hljs-type">int64</span><br>		y *[<span class="hljs-number">6</span>]<span class="hljs-type">int64</span><br>	&#125;<br>)<br><br><span class="hljs-keyword">var</span> a <span class="hljs-type">int64</span>    <span class="hljs-comment">// a可以安全地被原子访问</span><br><span class="hljs-keyword">var</span> b T1       <span class="hljs-comment">// b.v可以安全地被原子访问</span><br><span class="hljs-keyword">var</span> c [<span class="hljs-number">6</span>]<span class="hljs-type">int64</span> <span class="hljs-comment">// c[0]可以安全地被原子访问</span><br><br><span class="hljs-keyword">var</span> d T2 <span class="hljs-comment">// d.x.v不能被安全地被原子访问</span><br><span class="hljs-keyword">var</span> e T3 <span class="hljs-comment">// e.x[0]不能被安全地被原子访问</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">f</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> f <span class="hljs-type">int64</span>           <span class="hljs-comment">// f可以安全地被原子访问</span><br>	<span class="hljs-keyword">var</span> g = []<span class="hljs-type">int64</span>&#123;<span class="hljs-number">5</span>: <span class="hljs-number">0</span>&#125; <span class="hljs-comment">// g[0]可以安全地被原子访问</span><br><br>	<span class="hljs-keyword">var</span> h = e.x[:] <span class="hljs-comment">// h[0]可以安全地被原子访问</span><br><br>	<span class="hljs-comment">// 这里，d.y.v和e.y[0]都可以安全地被原子访问，</span><br>	<span class="hljs-comment">// 因为*d.y和*e.y都是开辟出来的。</span><br>	d.y = <span class="hljs-built_in">new</span>(T1)<br>	e.y = &amp;[<span class="hljs-number">6</span>]<span class="hljs-type">int64</span>&#123;&#125;<br><br>	_, _, _ = f, g, h<br>&#125;<br><br><span class="hljs-comment">// 事实上，c、g和e.y.v的所有以元素都可以被安全地原子访问。</span><br><span class="hljs-comment">// 只不过官方文档没有明确地做出保证。</span><br></code></pre></td></tr></table></figure>
+
+<p>如果一个结构体类型的某个64位字的字段（通常为第一个字段）在代码中需要被原子访问，为了保证此字段值在各种架构上都可以被原子访问，我们应该总是使用此结构体的开辟值。 当此结构体类型被用做另一个结构体类型的一个字段的类型时，此字段应该（尽量）被安排为另一个结构体类型的第一个字段，并且总是使用另一个结构体类型的开辟值。</p>
+<p>如果一个结构体含有需要一个被原子访问的字段，并且我们希望此结构体可以自由地用做其它结构体的任何字段（可能非第一个字段）的类型，则我们可以用一个[15]byte值来模拟此64位值，并在运行时刻动态地决定此64位值的地址。 比如：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Counter <span class="hljs-keyword">struct</span> &#123;<br>	x [<span class="hljs-number">15</span>]<span class="hljs-type">byte</span> <span class="hljs-comment">// 模拟：x uint64</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counter)</span></span> xAddr() *<span class="hljs-type">uint64</span> &#123;<br>	<span class="hljs-comment">// 此返回结果总是8字节对齐的。</span><br>	<span class="hljs-keyword">return</span> (*<span class="hljs-type">uint64</span>)(unsafe.Pointer(<br>		(<span class="hljs-type">uintptr</span>(unsafe.Pointer(&amp;c.x)) + <span class="hljs-number">7</span>)/<span class="hljs-number">8</span>*<span class="hljs-number">8</span>))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counter)</span></span> Add(delta <span class="hljs-type">uint64</span>) &#123;<br>	p := c.xAddr()<br>	atomic.AddUint64(p, delta)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(c *Counter)</span></span> Value() <span class="hljs-type">uint64</span> &#123;<br>	<span class="hljs-keyword">return</span> atomic.LoadUint64(c.xAddr())<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>通过采用此方法，<code>Counter</code>类型可以自由地用做其它结构体的任何字段的类型，而无需担心此类型中维护的64位字段值可能不是8字节对齐的。 此方法的缺点是，对于每个Counter类型的值，都有7个字节浪费了。而且此方法使用了非类型安全指针。</p>
+<p><code>Go 1.19</code>引入了一种更为优雅的方法来保证一些值的地址对齐保证为8字节。 Go 1.19在sync&#x2F;atomic标准库包中加入了几个原子类型。 这些类型包括atomic.Int64和atomic.Uint64。 这两个类型的值在内存中总是8字节对齐的，即使在32位架构上也是如此。 我们可以利用这个事实来确保一些64位字在32位架构上总是8字节对齐的。 比如，无论在32位架构还是64位架构上，下面的代码所示的T类型的x字段在任何情形下总是8字节对齐的。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> T <span class="hljs-keyword">struct</span> &#123;<br>	_ [<span class="hljs-number">0</span>]atomic.Int64<br>	x <span class="hljs-type">int64</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>这里主要是验证内存对齐规则对实际存储空间的影响,并验证了内存对齐的规则.平时工作中不需要关心值地址的对齐保证,编译器已经自动完成了相关的工作.除非打算优化下内存消耗.特别是定义结构体时,可以参照下上面的结论.</p>
+<p>参考文章：<a target="_blank" rel="noopener" href="https://gfw.go101.org/article/memory-layout.html">点击跳转</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/" class="category-chain-item">Go高性能编程</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E9%AB%98%E6%80%A7%E8%83%BD/">#高性能</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Go高性能编程-Go中的类型对齐保证</div>
+      <div>https://gopherlinzy.github.io/2022/10/25/go-memory-layout/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月25日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/31/grpc-rpc/" title="gRPC（一）入门：什么是RPC？">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（一）入门：什么是RPC？</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/11/gorm-transaction/" title="Gorm学习（五）进阶：多态关联、关联标签以及事务">
+                        <span class="hidden-mobile">Gorm学习（五）进阶：多态关联、关联标签以及事务</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

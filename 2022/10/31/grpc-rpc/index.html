@@ -1,0 +1,850 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 本文作为Grpc的开篇，通过文档先了解一下rpc。示例代码已经上传到github：点击跳转  一、RPC1、什么是RPC？RPC（Remote Procedure Call 远程过程调用）是一种软件通信协议，一个程序可以使用该协议向位于网络上另一台计算机中的程序请求服务，而无需了解网络的详细信息。RPC 用于调用远程系统上的其他进程，如本地系统。过程调用有时也称为 函数调用或 子程序调用。">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC（一）入门：什么是RPC？">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/10/31/grpc-rpc/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 本文作为Grpc的开篇，通过文档先了解一下rpc。示例代码已经上传到github：点击跳转  一、RPC1、什么是RPC？RPC（Remote Procedure Call 远程过程调用）是一种软件通信协议，一个程序可以使用该协议向位于网络上另一台计算机中的程序请求服务，而无需了解网络的详细信息。RPC 用于调用远程系统上的其他进程，如本地系统。过程调用有时也称为 函数调用或 子程序调用。">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
+<meta property="article:published_time" content="2022-10-31T11:34:02.000Z">
+<meta property="article:modified_time" content="2022-10-31T11:39:17.574Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="rpc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>gRPC（一）入门：什么是RPC？ - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="gRPC（一）入门：什么是RPC？"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-31 19:34" pubdate>
+          2022年10月31日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          103 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">gRPC（一）入门：什么是RPC？</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>本文作为Grpc的开篇，通过文档先了解一下rpc。<br>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/go-grpc-example">点击跳转</a></p>
+</blockquote>
+<h1 id="一、RPC"><a href="#一、RPC" class="headerlink" title="一、RPC"></a>一、RPC</h1><h2 id="1、什么是RPC？"><a href="#1、什么是RPC？" class="headerlink" title="1、什么是RPC？"></a>1、什么是RPC？</h2><p><code>RPC（Remote Procedure Call 远程过程调用）</code>是一种软件通信协议，一个程序可以使用该协议向位于网络上另一台计算机中的程序请求服务，而无需了解网络的详细信息。RPC 用于调用远程系统上的其他进程，如本地系统。<code>过程调用有时也称为 函数调用或 子程序调用。</code></p>
+<p>RPC是一种客户端-服务器交互形式（调用者是客户端，执行者是服务器），通常通过请求-响应消息传递系统实现。与本地过程调用一样，RPC 是一种 <code>同步</code> 操作，需要<code>阻塞</code>请求程序，直到返回远程过程的结果。但是，使用共享相同地址空间的轻量级进程或 线程 可以同时执行多个 RPC。</p>
+<blockquote>
+<p>通俗的解释：<br>客户端在不知道调用细节的情况下，调用存在于远程计算机上的某个对象，就像调用本地应用程序中的对象一样。</p>
+</blockquote>
+<p>接口定义语言（IDL）——用于描述软件组件的应用程序编程接口（API）的规范语言——通常用于远程过程调用软件。在这种情况下，<code>IDL 在链路两端的机器之间提供了一座桥梁，这些机器可能使用不同的操作系统 (OS) 和计算机语言。</code></p>
+<p>实际场景：</p>
+<p>有两台服务器，分别是服务器 A、服务器 B。在 服务器 A 上的应用 想要调用服务器 B 上的应用，它们可以直接本地调用吗？</p>
+<p>答案是不能的，但走 RPC 的话，十分方便。因此常有人称使用 RPC，就跟本地调用一个函数一样简单。</p>
+<p><img src="/img/grpc_rpc/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="2、HTTP和RPC的区别"><a href="#2、HTTP和RPC的区别" class="headerlink" title="2、HTTP和RPC的区别"></a>2、HTTP和RPC的区别</h2><h3 id="1）概念区别"><a href="#1）概念区别" class="headerlink" title="1）概念区别"></a>1）概念区别</h3><p>RPC是一种方法，而HTTP是一种协议。两者都常用于实现服务，在这个层面最本质的区别是RPC服务主要工作在TCP协议之上（也可以在HTTP协议），而HTTP服务工作在HTTP协议之上。由于HTTP协议基于TCP协议，所以RPC服务天然比HTTP更轻量，效率更胜一筹。</p>
+<p>两者都是基于网络实现的，从这一点上，都是基于Client&#x2F;Server架构。</p>
+<h3 id="2）从协议上区分"><a href="#2）从协议上区分" class="headerlink" title="2）从协议上区分"></a>2）从协议上区分</h3><p>RPC是远端过程调用，其调用协议通常包含：<code>传输协议</code> 和 <code>序列化协议</code>。</p>
+<ul>
+<li>传输协议：著名的 grpc，它底层使用的是 http2 协议；还有 dubbo 一类的自定义报文的 tcp 协议。</li>
+<li>序列化协议：基于文本编码的 json 协议；也有二进制编码的 protobuf、hession 等协议；还有针对 java 高性能、高吞吐量的 kryo 和 ftc 等序列化协议。</li>
+</ul>
+<p>HTTP服务工作在HTTP协议之上，而且HTTP协议基于TCP协议。</p>
+<h2 id="3、RPC如何工作的？"><a href="#3、RPC如何工作的？" class="headerlink" title="3、RPC如何工作的？"></a>3、RPC如何工作的？</h2><p>当调用 RPC 时，调用环境被挂起，过程参数通过网络传送到过程执行的环境，然后在该环境中执行过程。</p>
+<p>当过程完成时，结果将被传送回调用环境，在那里继续执行，就像从常规过程调用返回一样。</p>
+<p>在 RPC 期间，将执行以下步骤：</p>
+<ol>
+<li>客户端调用客户端存根。该调用是本地过程调用，参数以正常方式压入堆栈。</li>
+<li>客户端存根将过程参数打包到消息中并进行系统调用以发送消息。过程参数的打包称为<code>编组</code>。</li>
+<li>客户端的本地操作系统将消息从客户端机器发送到远程服务器机器。</li>
+<li>服务器操作系统将传入的数据包传递给服务器存根。</li>
+<li>服务器存根从消息中解包参数——称为<code>解编组</code>。</li>
+<li>当服务器过程完成时，它返回到服务器存根，它将返回值编组为一条消息。然后服务器 存根将消息交给传输层。</li>
+<li>传输层将生成的消息发送回客户端传输层，传输层将消息返回给客户端存根。</li>
+<li>客户端存根解组返回参数，然后执行返回给调用者。</li>
+</ol>
+<blockquote>
+<p> Client （客户端）：服务调用方。<br>Server（服务端）：服务提供方。<br>Client Stub（客户端存根）：存放服务端的地址消息，负责将客户端的请求参数打包成网络消息，然后通过网络发送给服务提供方。<br>Server Stub（服务端存根）：接收客户端发送的消息，再将客户端请求参数打包成网络消息，然后通过网络远程发送给服务方。</p>
+</blockquote>
+<p><img src="/img/grpc_rpc/grpc2.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="4、RPC的优缺点"><a href="#4、RPC的优缺点" class="headerlink" title="4、RPC的优缺点"></a>4、RPC的优缺点</h2><p>尽管它拥有广泛的好处，但使用 RPC 的人肯定应该注意一些陷阱。</p>
+<p> RPC 为开发人员和应用程序管理人员提供的一些优势：</p>
+<ul>
+<li>帮助客户端通过传统使用高级语言中的过程调用与服务器进行通信。</li>
+<li>可以在分布式环境中使用，也可以在本地环境中使用。</li>
+<li>支持面向进程和面向线程的模型。</li>
+<li>对用户隐藏内部消息传递机制。</li>
+<li>只需极少的努力即可重写和重新开发代码。</li>
+<li>提供抽象，即网络通信的消息传递特性对用户隐藏。</li>
+<li>省略许多协议层以提高性能。</li>
+</ul>
+<p>另一方面，RPC 的一些缺点包括：</p>
+<ul>
+<li>客户端和服务器各自的例程使用不同的执行环境，资源（如文件）的使用也更加复杂。因此，RPC 系统并不总是适合传输大量数据。</li>
+<li>RPC 极易发生故障，因为它涉及一个通信系统、另一台机器和另一个进程。</li>
+<li>RPC没有统一的标准；它可以通过多种方式实现。</li>
+<li>RPC 只是基于交互的，因此它在硬件架构方面没有提供任何灵活性。</li>
+</ul>
+<h2 id="5、常见的RPC框架"><a href="#5、常见的RPC框架" class="headerlink" title="5、常见的RPC框架"></a>5、常见的RPC框架</h2><h3 id="1）跟语言绑定框架"><a href="#1）跟语言绑定框架" class="headerlink" title="1）跟语言绑定框架"></a>1）跟语言绑定框架</h3><ul>
+<li>Dubbo：国内最早开源的 RPC 框架，由阿里巴巴公司开发并于 2011 年末对外开源，仅支持 Java 语言。</li>
+<li>Motan：微博内部使用的 RPC 框架，于 2016 年对外开源，仅支持 Java 语言。</li>
+<li>Tars：腾讯内部使用的 RPC 框架，于 2017 年对外开源，仅支持 C++ 语言。</li>
+<li>Spring Cloud：国外 Pivotal 公司 2014 年对外开源的 RPC 框架，仅支持 Java 语言。</li>
+</ul>
+<h3 id="2）跨语言开源框架"><a href="#2）跨语言开源框架" class="headerlink" title="2）跨语言开源框架"></a>2）跨语言开源框架</h3><ul>
+<li>gRPC：Google 于 2015 年对外开源的跨语言 RPC 框架，支持多种语言。</li>
+<li>Thrift：最初是由Facebook 开发的内部系统跨语言的 RPC 框架，2007 年贡献给了 Apache 基金，成为 Apache 开源项目之一，支持多种语言。</li>
+<li>Rpcx：是一个类似阿里巴巴 Dubbo和微博 Motan的 RPC 框架，开源，支持多种语言。</li>
+</ul>
+<h1 id="二、RPC快速入门"><a href="#二、RPC快速入门" class="headerlink" title="二、RPC快速入门"></a>二、RPC快速入门</h1><p>Go语言标准包(<code>net/rpc</code>)已经提供了对RPC的支持，而且支持三个级别的RPC：<code>TCP、HTTP和JSONRPC</code>。但Go语言的RPC包是独一无二的RPC，它和传统的RPC系统不同，它只支持Go语言开发的服务器与客户端之间的交互，因为在内部，它们采用了<code>Gob</code>来编码。</p>
+<h2 id="1、简单的RPC示例"><a href="#1、简单的RPC示例" class="headerlink" title="1、简单的RPC示例"></a>1、简单的RPC示例</h2><h3 id="1）服务端实现"><a href="#1）服务端实现" class="headerlink" title="1）服务端实现"></a>1）服务端实现</h3><p> 我们先构造一个 HelloService 类型，其中的 SayHi方法用于实现打印功能：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> HelloService <span class="hljs-keyword">struct</span>&#123;&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *HelloService)</span></span> SayHi(request <span class="hljs-type">string</span>, response *<span class="hljs-type">string</span>) <span class="hljs-type">error</span> &#123;<br>	format := time.Now().Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>)<br>	*response = <span class="hljs-string">&quot;hi &quot;</span> + request + <span class="hljs-string">&quot;---&quot;</span> + format<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p> Go 语言的 RPC 规则：方法只能有两个可序列化的参数，其中第二个参数是指针类型，并且返回一个 error 类型，同时必须是公开的方法。</p>
+</blockquote>
+<p>将 HelloService 类型的对象注册为一个 RPC 服务：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//注册服务</span><br>	_ = rpc.RegisterName(<span class="hljs-string">&quot;HiLinzy&quot;</span>, <span class="hljs-built_in">new</span>(HelloService))<br>	<span class="hljs-comment">//监听接口</span><br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-comment">//监听请求</span><br>		accept, err := lis.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Fatalf(<span class="hljs-string">&quot;Accept Error: %s&quot;</span>, err)<br>		&#125;<br>		<span class="hljs-comment">//用goroutine为每个TCP连接提供RPC服务</span><br>		<span class="hljs-keyword">go</span> rpc.ServeConn(accept)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>RegisterName类似于Register，但使用提供的名称作为类型，<code>Register</code> 函数调用会将对象类型中所有满足 RPC 规则的对象方法注册为 RPC 函数，所有注册的方法会放在 “HelloService” 服务空间之下。<br>rpc.ServeConn 函数在该 TCP 连接上为对方提供 RPC 服务。<br>我们的服务支持多个 TCP 连接，然后为每个 TCP 连接提供 RPC 服务。</p>
+</blockquote>
+<h3 id="2）客户端实现"><a href="#2）客户端实现" class="headerlink" title="2）客户端实现"></a>2）客户端实现</h3><p>在客户端请求 HelloService 服务的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//建立连接</span><br>	dial, err := rpc.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(<span class="hljs-string">&quot;Dial error &quot;</span>, err)<br>	&#125;<br>	<span class="hljs-keyword">var</span> result <span class="hljs-type">string</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++ &#123;<br>		<span class="hljs-comment">//发起请求</span><br>		_ = dial.Call(<span class="hljs-string">&quot;HiLinzy.SayHi&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>, &amp;result)<br>		fmt.Println(<span class="hljs-string">&quot;rpc service result:&quot;</span>, result)<br>		time.Sleep(time.Second)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>rpc.Dial 拨号 RPC 服务，然后通过 dial.Call 调用具体的 RPC 方法。<br>在调用 dial.Call 时，第一个参数是用点号连接的 RPC 服务名字和方法名字，第二和第三个参数分别我们定义 RPC 方法的两个参数，第一个是客服端传递的消息，第二个是由服务端产生返回的结果。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务<br>➜ <span class="hljs-keyword">go</span> run  server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">54096</span><br><br># 启动客户端<br>➜ <span class="hljs-keyword">go</span> run  client.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">54100</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">15</span>:<span class="hljs-number">52</span>:<span class="hljs-number">39</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">15</span>:<span class="hljs-number">52</span>:<span class="hljs-number">40</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">15</span>:<span class="hljs-number">52</span>:<span class="hljs-number">41</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">15</span>:<span class="hljs-number">52</span>:<span class="hljs-number">42</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">15</span>:<span class="hljs-number">52</span>:<span class="hljs-number">43</span><br></code></pre></td></tr></table></figure>
+<h2 id="2、更安全的RPC接口"><a href="#2、更安全的RPC接口" class="headerlink" title="2、更安全的RPC接口"></a>2、更安全的RPC接口</h2><p>在涉及 RPC 的应用中，作为开发人员一般至少有三种角色：首先是服务端实现 RPC 方法的开发人员，其次是客户端调用 RPC 方法的人员，最后也是最重要的是制定服务端和客户端 RPC 接口规范的设计人员。在前面的例子中我们为了简化将以上几种角色的工作全部放到了一起，虽然看似实现简单，但是不利于后期的维护和工作的切割。</p>
+<h3 id="1）服务端重构"><a href="#1）服务端重构" class="headerlink" title="1）服务端重构"></a>1）服务端重构</h3><p>如果要重构 HelloService 服务，第一步需要明确服务的名字和接口：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> HelloServiceName = <span class="hljs-string">&quot;server/tcp-server/server.HiLinzy&quot;</span><br><br><span class="hljs-keyword">type</span> HelloServiceInterface <span class="hljs-keyword">interface</span> &#123;<br>	SayHi(request <span class="hljs-type">string</span>, response *<span class="hljs-type">string</span>) <span class="hljs-type">error</span><br>&#125;<br><br><span class="hljs-comment">//封装Register</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">RegisterHelloService</span><span class="hljs-params">(svc HelloServiceInterface)</span></span> <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-keyword">return</span> rpc.RegisterName(HelloServiceName, svc)<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>我们将 RPC 服务的接口规范分为三个部分：首先是服务的名字，然后是服务要实现的详细方法列表，最后是注册该类型服务的函数。<br>为了避免名字冲突，我们在 RPC 服务的名字中增加了包路径前缀（这个是 RPC 服务抽象的包路径，并非完全等价 Go 语言的包路径）。<br>RegisterHelloService 注册服务时，编译器会要求传入的对象满足 HelloServiceInterface 接口。</p>
+</blockquote>
+<p>基于 RPC 接口规范编写真实的服务端代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> HelloService <span class="hljs-keyword">struct</span>&#123;&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *HelloService)</span></span> SayHi(request <span class="hljs-type">string</span>, response *<span class="hljs-type">string</span>) <span class="hljs-type">error</span> &#123;<br>	format := time.Now().Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>)<br>	*response = <span class="hljs-string">&quot;hi &quot;</span> + request + <span class="hljs-string">&quot;---&quot;</span> + format<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//注册服务</span><br>	<span class="hljs-comment">//_ = rpc.RegisterName(&quot;HiLinzy&quot;, new(HelloService))</span><br>	RegisterHelloService(<span class="hljs-built_in">new</span>(HelloService))<br>	<span class="hljs-comment">//监听接口</span><br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-comment">//监听请求</span><br>		accept, err := lis.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Fatalf(<span class="hljs-string">&quot;Accept Error: %s&quot;</span>, err)<br>		&#125;<br>		<span class="hljs-keyword">go</span> rpc.ServeConn(accept)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2）客户端重构"><a href="#2）客户端重构" class="headerlink" title="2）客户端重构"></a>2）客户端重构</h3><p>为了简化客户端用户调用 RPC 函数，我们在可以在接口规范部分增加对客户端的简单包装：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> HelloServiceName = <span class="hljs-string">&quot;server/tcp-server/server.HiLinzy&quot;</span><br><br><span class="hljs-keyword">type</span> HelloServiceClient <span class="hljs-keyword">struct</span> &#123;<br>	*rpc.Client<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">DialHelloService</span><span class="hljs-params">(network, address <span class="hljs-type">string</span>)</span></span> (*HelloServiceClient, <span class="hljs-type">error</span>) &#123;<br>	c, err := rpc.Dial(network, address)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-keyword">return</span> &amp;HelloServiceClient&#123;Client: c&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *HelloServiceClient)</span></span> SayHi(request <span class="hljs-type">string</span>, response *<span class="hljs-type">string</span>) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">//client.Call 的第一个参数用 HelloServiceName+&quot;.SayHi&quot; 代替了 &quot;HiLinzy.SayHi&quot;。</span><br>	<span class="hljs-keyword">return</span> h.Client.Call(HelloServiceName+<span class="hljs-string">&quot;.SayHi&quot;</span>, request, &amp;response)<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>提供了一个 DialHelloService 方法，直接拨号 HelloService 服务。</p>
+</blockquote>
+<p>基于新的客户端接口，我们可以简化客户端用户的代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//建立连接</span><br>	<span class="hljs-comment">//dial, err := rpc.Dial(&quot;tcp&quot;, &quot;127.0.0.1:8888&quot;)</span><br>	client, err := DialHelloService(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(<span class="hljs-string">&quot;dialing:&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-keyword">var</span> result <span class="hljs-type">string</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++ &#123;<br>		<span class="hljs-comment">//发起请求</span><br>		<span class="hljs-comment">//_ = dial.Call(&quot;HiLinzy.SayHi&quot;, &quot;linzy&quot;, &amp;result)</span><br>		err = client.SayHi(<span class="hljs-string">&quot;linzy&quot;</span>, &amp;result)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Fatal(err)<br>		&#125;<br>		fmt.Println(<span class="hljs-string">&quot;rpc service result:&quot;</span>, result)<br>		time.Sleep(time.Second)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>现在客户端用户不用再担心 RPC 方法名字或参数类型不匹配等低级错误的发生。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务<br>➜ <span class="hljs-keyword">go</span> run  server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">56990</span><br><br># 启动客户端<br>➜ <span class="hljs-keyword">go</span> run  client.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">57188</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">16</span>:<span class="hljs-number">55</span>:<span class="hljs-number">12</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">16</span>:<span class="hljs-number">55</span>:<span class="hljs-number">13</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">16</span>:<span class="hljs-number">55</span>:<span class="hljs-number">14</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">16</span>:<span class="hljs-number">55</span>:<span class="hljs-number">15</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">16</span>:<span class="hljs-number">55</span>:<span class="hljs-number">16</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>在新的 RPC 服务端实现中，我们用 RegisterHelloService 函数来注册函数，这样不仅可以避免命名服务名称的工作，同时也保证了传入的服务对象满足了 RPC 接口的定义。</p>
+</blockquote>
+<h2 id="3、跨语言的-RPC"><a href="#3、跨语言的-RPC" class="headerlink" title="3、跨语言的 RPC"></a>3、跨语言的 RPC</h2><p>标准库的RPC默认采用 Go 语言特有的 gob 编码，因此从其他语言调用 Go 语言实现的 RPC 服务将比较困难。在互联网的微服务时代，每个 RPC 以及服务的使用者都可能采用不同的编程语言，因此跨语言是互联网时代 RPC 的一个首要条件。得益于 RPC 的框架设计，Go 语言的 RPC 其实也是很容易实现跨语言支持的。</p>
+<p>Go 语言的 RPC 框架有两个比较有特色的设计：</p>
+<ul>
+<li>RPC 数据打包时可以通过插件实现自定义的编码和解码。</li>
+<li>RPC 建立在抽象的 io.ReadWriterCloser 接口之上的，我们可以将 RPC 架设在不同的通信协议之上。</li>
+</ul>
+<p>这里我们使用Go官方自带的 <code>net/rpc/jsonrpc</code> 扩展实现一个跨语言的rpc。</p>
+<h3 id="1）服务端实现-1"><a href="#1）服务端实现-1" class="headerlink" title="1）服务端实现"></a>1）服务端实现</h3><p>首先是基于 json 编码重新实现 RPC 服务：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//注册服务</span><br>	<span class="hljs-comment">//_ = rpc.RegisterName(&quot;HiLinzy&quot;, new(HelloService))</span><br>	RegisterHelloService(<span class="hljs-built_in">new</span>(HelloService))<br>	<span class="hljs-comment">//监听接口</span><br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">for</span> &#123;<br>		<span class="hljs-comment">//监听请求</span><br>		accept, err := lis.Accept()<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Fatalf(<span class="hljs-string">&quot;Accept Error: %s&quot;</span>, err)<br>		&#125;<br>		<span class="hljs-comment">//go rpc.ServeConn(accept)</span><br>		<span class="hljs-keyword">go</span> rpc.ServeCodec(jsonrpc.NewServerCodec(accept))<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>代码中最大的变化是用 rpc.ServeCodec 函数替代了 rpc.ServeConn 函数，传入的参数是针对服务端的 json 编解码器。</p>
+</blockquote>
+<h3 id="2）客户端实现-1"><a href="#2）客户端实现-1" class="headerlink" title="2）客户端实现"></a>2）客户端实现</h3><p>实现 json 版本的客户端：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//建立TCP连接</span><br>	conn, err := net.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(<span class="hljs-string">&quot;net.Dial:&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">//建立针对客户端的json编解码器</span><br>	client := rpc.NewClientWithCodec(jsonrpc.NewClientCodec(conn))<br><br>	<span class="hljs-keyword">var</span> result <span class="hljs-type">string</span><br>	<span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">5</span>; i++ &#123;<br>		<span class="hljs-comment">//发起请求</span><br>		<span class="hljs-comment">//err = client.SayHi(&quot;linzy&quot;, &amp;result)</span><br>		client.Call(HelloServiceName+<span class="hljs-string">&quot;.SayHi&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>, &amp;result)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			log.Fatal(err)<br>		&#125;<br>		fmt.Println(<span class="hljs-string">&quot;rpc service result:&quot;</span>, result)<br>		time.Sleep(time.Second)<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务<br>➜ <span class="hljs-keyword">go</span> run  server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">59409</span><br><br># 启动客户端<br>➜ <span class="hljs-keyword">go</span> run  client.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">59514</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">19</span>:<span class="hljs-number">09</span>:<span class="hljs-number">52</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">19</span>:<span class="hljs-number">09</span>:<span class="hljs-number">53</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">19</span>:<span class="hljs-number">09</span>:<span class="hljs-number">54</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">19</span>:<span class="hljs-number">09</span>:<span class="hljs-number">55</span><br>rpc service result: hi linzy--<span class="hljs-number">-2022</span><span class="hljs-number">-10</span><span class="hljs-number">-30</span> <span class="hljs-number">19</span>:<span class="hljs-number">09</span>:<span class="hljs-number">56</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>我们先手工调用 net.Dial 函数建立 TCP 连接，然后基于该连接建立针对客户端的 json 编解码器。<br>在确保客户端可以正常调用 RPC 服务的方法之后，我们用一个普通的 TCP 服务代替 Go 语言版本的 RPC 服务，这样可以查看客户端调用时发送的数据格式。</p>
+</blockquote>
+<h3 id="3）分析数据格式"><a href="#3）分析数据格式" class="headerlink" title="3）分析数据格式"></a>3）分析数据格式</h3><p>我们用Wireshark抓个包看看我们直接传递的数据格式：<br><img src="/img/grpc_rpc/grpc3.png" srcset="/img/loading.gif" lazyload><br>这是一个 json 编码的数据，其中 method 部分对应要调用的 rpc 服务和方法组合成的名字，params 部分的第一个元素为参数，id 是由调用端维护的一个唯一的调用编号。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;method&quot;</span>:<span class="hljs-string">&quot;server/tcp-server/server.HiLinzy.SayHi&quot;</span>,<span class="hljs-string">&quot;params&quot;</span>:[<span class="hljs-string">&quot;linzy&quot;</span>],<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>请求的 json 数据对象在内部对应两个结构体：客户端是 clientRequest，服务端是 serverRequest。clientRequest 和 serverRequest 结构体的内容基本是一致的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> clientRequest <span class="hljs-keyword">struct</span> &#123;<br>    Method <span class="hljs-type">string</span>         <span class="hljs-string">`json:&quot;method&quot;`</span><br>    Params [<span class="hljs-number">1</span>]<span class="hljs-keyword">interface</span>&#123;&#125; <span class="hljs-string">`json:&quot;params&quot;`</span><br>    Id     <span class="hljs-type">uint64</span>         <span class="hljs-string">`json:&quot;id&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> serverRequest <span class="hljs-keyword">struct</span> &#123;<br>    Method <span class="hljs-type">string</span>           <span class="hljs-string">`json:&quot;method&quot;`</span><br>    Params *json.RawMessage <span class="hljs-string">`json:&quot;params&quot;`</span><br>    Id     *json.RawMessage <span class="hljs-string">`json:&quot;id&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>我们再来查看服务端响应的结果的数据结构：<br><img src="/img/grpc_rpc/grpc4.png" srcset="/img/loading.gif" lazyload><br>返回的结果也是一个 json 格式的数据：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>,<span class="hljs-string">&quot;result&quot;</span>:<span class="hljs-string">&quot;hilinzy---2022-10-30 19:09:52&quot;</span>,<span class="hljs-string">&quot;error&quot;</span>:null&#125;.<br></code></pre></td></tr></table></figure>
+<p>其中 id 对应输入的 id 参数，result 为返回的结果，error 部分在出问题时表示错误信息。对于顺序调用来说，id 不是必须的。但是 Go 语言的 RPC 框架支持<code>异步调用</code>，当返回结果的顺序和调用的顺序不一致时，可以通过 id 来识别对应的调用。</p>
+<p>返回的 json 数据也是对应内部的两个结构体：客户端是 clientResponse，服务端是 serverResponse。两个结构体的内容同样也是类似的：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> clientResponse <span class="hljs-keyword">struct</span> &#123;<br>    Id     <span class="hljs-type">uint64</span>           <span class="hljs-string">`json:&quot;id&quot;`</span><br>    Result *json.RawMessage <span class="hljs-string">`json:&quot;result&quot;`</span><br>    Error  <span class="hljs-keyword">interface</span>&#123;&#125;      <span class="hljs-string">`json:&quot;error&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> serverResponse <span class="hljs-keyword">struct</span> &#123;<br>    Id     *json.RawMessage <span class="hljs-string">`json:&quot;id&quot;`</span><br>    Result <span class="hljs-keyword">interface</span>&#123;&#125;      <span class="hljs-string">`json:&quot;result&quot;`</span><br>    Error  <span class="hljs-keyword">interface</span>&#123;&#125;      <span class="hljs-string">`json:&quot;error&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>因此无论采用何种语言，只要遵循同样的 json 结构，以同样的流程就可以和 Go 语言编写的 RPC 服务进行通信。这样我们就实现了跨语言的 RPC。</p>
+<h2 id="4、HTTP-上的-RPC"><a href="#4、HTTP-上的-RPC" class="headerlink" title="4、HTTP 上的 RPC"></a>4、HTTP 上的 RPC</h2><p>Go 语言内在的 RPC 框架已经支持在 HTTP 协议上提供 RPC 服务。但是框架的 HTTP 服务同样采用了内置的 gob 协议，并且没有提供采用其它协议的接口，因此<code>从其它语言依然无法访问的</code>。</p>
+<p>在前面的例子中，我们已经实现了在 TCP 协议之上运行 jsonrpc 服务，并且通过Wireshark抓包分析传递的数据 json 数据格式。现在我们尝试在 http 协议上提供 jsonrpc 服务。</p>
+<p>新的 RPC 服务其实是一个类似 REST 规范的接口，接收请求并采用相应处理流程：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> HelloServiceName = <span class="hljs-string">&quot;server/tcp-server/server.HiLinzy&quot;</span><br><br><span class="hljs-keyword">type</span> HelloService <span class="hljs-keyword">struct</span>&#123;&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *HelloService)</span></span> SayHi(request <span class="hljs-type">string</span>, response *<span class="hljs-type">string</span>) <span class="hljs-type">error</span> &#123;<br>	format := time.Now().Format(<span class="hljs-string">&quot;2006-01-02 15:04:05&quot;</span>)<br>	*response = <span class="hljs-string">&quot;hi &quot;</span> + request + <span class="hljs-string">&quot;---&quot;</span> + format<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//注册服务</span><br>	rpc.RegisterName(HelloServiceName, <span class="hljs-built_in">new</span>(HelloService))<br>	<br>	http.HandleFunc(<span class="hljs-string">&quot;/jsonrpc&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;<br>		<span class="hljs-keyword">var</span> conn io.ReadWriteCloser = <span class="hljs-keyword">struct</span> &#123;<br>			io.Writer<br>			io.ReadCloser<br>		&#125;&#123;<br>			ReadCloser: r.Body,<br>			Writer:     w,<br>		&#125;<br><br>		rpc.ServeRequest(jsonrpc.NewServerCodec(conn))<br>	&#125;)<br><br>	http.ListenAndServe(<span class="hljs-string">&quot;:8888&quot;</span>, <span class="hljs-literal">nil</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>RPC 的服务架设在 “&#x2F;jsonrpc” 路径，在处理函数中基于 http.ResponseWriter 和 http.Request 类型的参数构造一个 io.ReadWriteCloser 类型的 conn 通道。<br>然后基于 conn 构建针对服务端的 json 编码解码器。最后通过 rpc.ServeRequest 函数为每次请求处理一次 RPC 方法调用。</p>
+</blockquote>
+<p>用Postman模拟RPC调用过程，向连接<code>localhost:8888/jsonrpc</code>发送一条 json 字符串</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;method&quot;</span>:<span class="hljs-string">&quot;server/tcp-server/server.HiLinzy.SayHi&quot;</span>,<span class="hljs-string">&quot;params&quot;</span>:[<span class="hljs-string">&quot;linzy&quot;</span>],<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/grpc_rpc/grpc5.png" srcset="/img/loading.gif" lazyload><br>这样我们就可用很方便的从不同的语言或者不同的方式来访问RPC服务了。</p>
+<p>参考文章：<br><a target="_blank" rel="noopener" href="https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC">https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC</a></p>
+<p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI5MDAzNTAxMQ==&mid=2455917150&idx=1&sn=8a8325b09e6e2a0e34bf86609967f28c&scene=19#wechat_redirect">https://mp.weixin.qq.com/s__biz&#x3D;MzI5MDAzNTAxMQ&#x3D;&#x3D;&amp;mid&#x3D;2455917150&amp;idx&#x3D;1&amp;sn&#x3D;8a8325b09e6e2a0e34bf86609967f28c&amp;scene&#x3D;19#wechat_redirect</a></p>
+<p><a target="_blank" rel="noopener" href="https://chai2010.cn/advanced-go-programming-book/ch4-rpc/ch4-01-rpc-intro.html">https://chai2010.cn/advanced-go-programming-book/ch4-rpc/ch4-01-rpc-intro.html</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
+      
+        <a href="/tags/rpc/">#rpc</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>gRPC（一）入门：什么是RPC？</div>
+      <div>https://gopherlinzy.github.io/2022/10/31/grpc-rpc/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/31/grpc-protobuf/" title="gRPC（二）入门：Protobuf入门">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（二）入门：Protobuf入门</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/25/go-memory-layout/" title="Go高性能编程-Go中的类型对齐保证">
+                        <span class="hidden-mobile">Go高性能编程-Go中的类型对齐保证</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

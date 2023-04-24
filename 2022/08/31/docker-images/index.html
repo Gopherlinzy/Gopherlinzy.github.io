@@ -1,0 +1,847 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 学习本文需要一些了解Docker的概念以及一些名词。  一、Docker镜像概述1、镜像是什么？镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个软件所需的所有内容，包括代码、运行时的库、环境变量和配置文件。 镜像是一个只读模板，带有创建Docker容器的说明。通常，一个镜像基于另一个镜像，并带有一些额外的定制。例如，您可以构建一个基于ubun">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker镜像概述和分层原理">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/08/31/docker-images/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 学习本文需要一些了解Docker的概念以及一些名词。  一、Docker镜像概述1、镜像是什么？镜像是一种轻量级、可执行的独立软件包，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个软件所需的所有内容，包括代码、运行时的库、环境变量和配置文件。 镜像是一个只读模板，带有创建Docker容器的说明。通常，一个镜像基于另一个镜像，并带有一些额外的定制。例如，您可以构建一个基于ubun">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/docker.jpg">
+<meta property="article:published_time" content="2022-08-31T14:56:42.000Z">
+<meta property="article:modified_time" content="2022-08-31T15:23:13.373Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="容器">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="云原生">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/docker.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Docker镜像概述和分层原理 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg8.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Docker镜像概述和分层原理"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-31 22:56" pubdate>
+          2022年8月31日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          4.5k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          38 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Docker镜像概述和分层原理</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：8 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>学习本文需要一些了解Docker的概念以及一些名词。</p>
+</blockquote>
+<h1 id="一、Docker镜像概述"><a href="#一、Docker镜像概述" class="headerlink" title="一、Docker镜像概述"></a>一、Docker镜像概述</h1><h2 id="1、镜像是什么？"><a href="#1、镜像是什么？" class="headerlink" title="1、镜像是什么？"></a>1、镜像是什么？</h2><p>镜像是一种轻量级、可执行的<strong>独立软件包</strong>，用来打包软件运行环境和基于运行环境开发的软件，它包含运行某个软件所需的所有内容，包括代码、运行时的库、环境变量和配置文件。</p>
+<p>镜像是一个<strong>只读模板</strong>，带有创建Docker容器的说明。通常，一个镜像基于另一个镜像，并带有一些额外的定制。例如，您可以构建一个基于ubuntu镜像的镜像，但是要安装Apache web服务器和您的应用程序，以及运行应用程序所需的配置细节。</p>
+<blockquote>
+<p>Docker 镜像（Image），就相当于是一个 模板，其中包含创建 Docker 容器的说明，可以通过模板来创建容器服务，通过这个镜像我们可以创建多个容器，最终服务运行或项目运行都是在容器中的。</p>
+</blockquote>
+<h2 id="2、如何获取镜像？"><a href="#2、如何获取镜像？" class="headerlink" title="2、如何获取镜像？"></a>2、如何获取镜像？</h2><p>你可以创建自己的镜像，也可以只使用其他人创建并在Docker Hub中发布的镜像。要构建自己的镜像，需要创建一个Dockerfile，使用简单的语法定义创建和运行镜像所需的步骤。Dockerfile中的每一条指令都会在图像中创建一个层。当你更改Dockerfile并重新构建镜像时，只有那些已经更改的层才会重新构建。与其他虚拟化技术相比，这是镜像如此轻量级、小巧和快速的原因之一。</p>
+<ul>
+<li>从Docker Hub上拉取镜像(常用)</li>
+<li>自己制作镜像 Dockerfile 创建</li>
+<li>从别人那边拷贝一份</li>
+</ul>
+<h1 id="二、Docker镜像加载原理"><a href="#二、Docker镜像加载原理" class="headerlink" title="二、Docker镜像加载原理"></a>二、Docker镜像加载原理</h1><h2 id="1、UnionFs-联合文件系统"><a href="#1、UnionFs-联合文件系统" class="headerlink" title="1、UnionFs 联合文件系统"></a>1、UnionFs 联合文件系统</h2><p>Docker的镜像实际上由一层一层的文件系统组成，这种层级的文件系统被称为UnionFS。</p>
+<ul>
+<li><p><strong>Union文件系统</strong>(UnionFs)是一种分层、轻量级并且高性能的文件系统，它支持对文件系统的修改作为一次提交来一层层的叠加，同时可以将不同目录挂载到同一个虚拟文件系统下，而且目录的物理位置是分开的。</p>
+</li>
+<li><p>Union文件系统可以把只读和可读写文件系统合并在一起，具有<strong>Copy-on-Write</strong>功能，允许只读文件系统的修改可以保存到可写文件系统当中。</p>
+</li>
+<li><p>Union文件系统是Docker镜像的基础。<strong>镜像可以通过分层来进行继承</strong>，基于基础镜像(没有父镜像)，可以制作各种具体的应用镜像。</p>
+</li>
+</ul>
+<blockquote>
+<p>特性：一次同时加载多个文件系统，但从外面看起来，只能看到一个文件系统，联合加载会把各层文件系统叠加起来，这样最终的文件系统回包含所有底层的文件和目录。</p>
+</blockquote>
+<h2 id="2、Docker镜像加载原理"><a href="#2、Docker镜像加载原理" class="headerlink" title="2、Docker镜像加载原理"></a>2、Docker镜像加载原理</h2><h3 id="1）base镜像"><a href="#1）base镜像" class="headerlink" title="1）base镜像"></a>1）base镜像</h3><p>base 镜像简单来说就是<strong>不依赖其他任何镜像</strong>，完全从0开始建起，其他镜像都是建立在他的之上，可以比喻为大楼的地基，docker镜像的鼻祖。</p>
+<p>base 镜像的特性：<br>（1）不依赖其他镜像，从 scratch 构建。<br>（2）其他镜像可以之为基础进行扩展。</p>
+<p>所以，能称作 base 镜像的通常都是各种 Linux 发行版的 Docker 镜像，比如 Ubuntu, Debian, CentOS 等。</p>
+<p>我们以 CentOS 为例查看 base 镜像包含哪些内容。<br><img src="/img/docker_images/docker1.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>提问：docker cnetos的镜像大小200多M，和平时的所用的发行版的大小（几G）相差很大，为什么？</p>
+</blockquote>
+<p>Linux 操作系统由内核空间和用户空间组成。</p>
+<ol>
+<li>内核空间是 kernel，Linux 刚启动时会加载 bootfs 文件系统，之后 bootfs 会被卸载掉。</li>
+<li>用户空间的文件系统是 rootfs，包含我们熟悉的 &#x2F;dev, &#x2F;proc, &#x2F;bin 等目录。</li>
+</ol>
+<p><img src="/img/docker_images/docker2.png" srcset="/img/loading.gif" lazyload></p>
+<p><strong>对于 base 镜像来说，底层直接用 Host 的 kernel，自己只需要提供 rootfs 就行了</strong>。<br>而对于一个精简的 OS，rootfs 可以很小，只需要包括最基本的命令、工具和程序库就可以了。相比其他 Linux 发行版，CentOS 的 rootfs 已经算臃肿的了，alpine 还不到 10MB。</p>
+<p>由此可见对于不同的Linux发行版，bootfs基本是一致的，rootfs会有差别，因此不同的发行版可以公用bootfs。</p>
+<p>我们平时安装的 CentOS 除了 rootfs 还会选装很多软件、服务、图形桌面等，需要好几个 GB 就不足为奇了。</p>
+<p>base 镜像提供的是最小安装的 Linux 发行版。</p>
+<h3 id="2）bootfs"><a href="#2）bootfs" class="headerlink" title="2）bootfs"></a>2）bootfs</h3><p>bootfs(boot file system)：主要包含 bootloader 和 kernel。</p>
+<ul>
+<li>bootloader 主要是<strong>引导加载kernel</strong>，Linux刚启动时会加载bootfs文件系统，在Docker镜像的最底层是bootfs，这一层与我们典型的Linux&#x2F;Unix系统是一样的，包含bootfs加载器和内核。当bootfs加载完成之后整个内核就都在内存中了，此时内存的使用权已由bootfs转交给内核，此时系统也会卸载bootfs。</li>
+</ul>
+<h3 id="3）rootfs"><a href="#3）rootfs" class="headerlink" title="3）rootfs"></a>3）rootfs</h3><p>rootfs(root file system)：在bootfs之上，包含类似于典型Linux系统中的&#x2F;dev，&#x2F;proc，&#x2F;bin，&#x2F;etc等标准目录文件。</p>
+<ul>
+<li>rootfs就是各种不同的操作系统发行版，比如Ubuntu，Centos等。</li>
+</ul>
+<h1 id="三、分层原理"><a href="#三、分层原理" class="headerlink" title="三、分层原理"></a>三、分层原理</h1><p>参考文章：<a target="_blank" rel="noopener" href="https://blog.51cto.com/wzlinux/2044797">https://blog.51cto.com/wzlinux/2044797</a></p>
+<p>Docker Hub 中 99% 的镜像都是通过在 base 镜像中安装和配置需要的软件构建出来的。比如我们现在构建一个新的镜像，Dockerfile 如下：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">Version: 0.0.1</span><br>FROM debian               1.新镜像不再是从 scratch 开始，而是直接在 Debian base 镜像上构建。<br>MAINTAINER wzlinux<br>RUN apt-get update &amp;&amp; apt-get install -y emacs        2.安装 emacs 编辑器。<br>RUN apt-get install -y apache2             3.安装 apache2。<br>CMD [&quot;/bin/bash&quot;]              4.容器启动时运行 bash。<br></code></pre></td></tr></table></figure>
+
+<p>构建过程：</p>
+<p><img src="/img/docker_images/docker3.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>可以看到，Docker镜像都起始于一个基础镜像层，新镜像是从 Base 镜像一层一层叠加生成的。<br>当进行修改或增加新的内容时，就会在当前镜像层上，创建新的镜像层。</p>
+</blockquote>
+<h2 id="1、思考：为什么Docker镜像采用分层的结构呢？"><a href="#1、思考：为什么Docker镜像采用分层的结构呢？" class="headerlink" title="1、思考：为什么Docker镜像采用分层的结构呢？"></a>1、思考：为什么Docker镜像采用分层的结构呢？</h2><ol>
+<li>分层最大的优点是<strong>共享资源</strong>。</li>
+<li>多个镜像都可以基于相同的 Base 镜像构建而来，那么宿主机只需在磁盘上保存一份base 镜像即可。</li>
+<li>同时内存中也只需要加载一份 Base 镜像，就可以为所有容器服务，而且镜像的每一层都可以被共享。</li>
+</ol>
+<blockquote>
+<p>如果多个容器共享一份基础镜像，当某个容器修改了基础镜像的内容，比如 &#x2F;etc 下的文件，这时其他容器的 &#x2F;etc 是否也会被修改？<br>答案是不会！<br>修改会被限制在单个容器内。<br>这就是我们接下来要说的容器 <strong>Copy-on-Write(COW)</strong> 特性。</p>
+<ol>
+<li>新数据会直接存放在最上面的容器层。</li>
+<li>修改现有数据会先从镜像层将数据复制到容器层，修改后的数据直接保存在容器层中，镜像层保持不变。</li>
+<li>如果多个层中有命名相同的文件，用户只能看到最上面那层中的文件。</li>
+</ol>
+</blockquote>
+<h2 id="2、Copy-on-Write-COW"><a href="#2、Copy-on-Write-COW" class="headerlink" title="2、Copy-on-Write(COW)"></a>2、Copy-on-Write(COW)</h2><p>Copy-on-write 是一种共享和复制文件以实现最大效率的策略。当我们试图读取一个文件时，Docker 会从上到下一层层去找这个文件，找到的第一个就是我们的文件,所以下面层相同的文件就被“覆盖”了。<br>而修改就是当我们找到这个文件时，将它“复制”到读写层并修改，这样读写层的文件就是我们修改后的文件，并且“覆盖”了镜像中的文件了。这最大限度地减少了 I&#x2F;O 和每个后续层的大小。而删除就是创建了一个特殊的 whiteout 文件，这个 whiteout 文件覆盖的文件即表示删除了。</p>
+<h2 id="3、理解"><a href="#3、理解" class="headerlink" title="3、理解"></a>3、理解</h2><p>这是一个三层的镜像分层结构图，在外部看整个镜像只有6个文件，app2.0 是 app1.0的更新版。</p>
+<p><img src="/img/docker_images/docker4.png" srcset="/img/loading.gif" lazyload></p>
+<p> 在这种情况下，上层镜像层中的文件会覆盖底层镜像层的文件。这样就使得文件的更新版本作为新镜像层添加到镜像中。</p>
+<blockquote>
+<p>Docker 通过存储引擎(新版本采用快照机制)的方式来实现镜像层堆栈，并保证多镜像层对外展示为统一的文件系统。</p>
+<ul>
+<li>存储引擎的选择文档：<a target="_blank" rel="noopener" href="https://docs.docker.com/storage/storagedriver/select-storage-driver/">https://docs.docker.com/storage/storagedriver/select-storage-driver/</a></li>
+</ul>
+</blockquote>
+<p> Linux 上可用存储引擎有 AUFS、Overlay2、Device Mapper、Btrfs 以及 ZFS。顾名思义，每种存储引擎都基于 Linux 中对应的文件系统或者块设备技术，并且每种存储引擎都有其独有的性能特点。</p>
+<p>Docker 在 Windows 上仅支持 Windowsfilter 一种存储引擎，该引擎基于 NTFS 文件系统之上实现了分层和COW。</p>
+<p><img src="/img/docker_images/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="4、特点"><a href="#4、特点" class="headerlink" title="4、特点"></a>4、特点</h2><p>Docker 镜像都是<strong>只读</strong>的，当你创建一个新的容器时，你会在基础层之上添加一个新的可写层，该层通常都称为 <strong>容器层</strong>。</p>
+<p>对正在运行的容器所做的所有更改，例如写入新文件、修改现有文件和删除文件，都被写入这个可写的容器层。</p>
+<p>下图显示了基于ubuntu:15.04图像的容器。<br><img src="/img/docker_images/docker6.png" srcset="/img/loading.gif" lazyload><br>存储引擎处理有关这些层相互交互方式的详细信息。有不同的存储引擎可用，它们在不同的情况下各有优缺点。</p>
+<h1 id="四、Commit镜像"><a href="#四、Commit镜像" class="headerlink" title="四、Commit镜像"></a>四、Commit镜像</h1><h2 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h2><p>将容器提交后，创建为一个新的镜像，命令与git原理类似。</p>
+<h2 id="2、格式："><a href="#2、格式：" class="headerlink" title="2、格式："></a>2、格式：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">docker commit [OPTIONS] 容器id [目标镜像名[:TAG]]<br></code></pre></td></tr></table></figure>
+<h2 id="3、可选项："><a href="#3、可选项：" class="headerlink" title="3、可选项："></a>3、可选项：</h2><table>
+<thead>
+<tr>
+<th>名称，简写</th>
+<th>默认</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>–author,-a</td>
+<td></td>
+<td>作者</td>
+</tr>
+<tr>
+<td>–change,-c</td>
+<td></td>
+<td>将 Dockerfile 指令应用于创建的镜像</td>
+</tr>
+<tr>
+<td>–message,-m</td>
+<td></td>
+<td>提交的描述消息</td>
+</tr>
+<tr>
+<td>–pause,-p</td>
+<td>true</td>
+<td>提交期间暂停容器</td>
+</tr>
+</tbody></table>
+<h2 id="4、说明："><a href="#4、说明：" class="headerlink" title="4、说明："></a>4、说明：</h2><p>将容器的文件更改或设置后创建为新镜像。这允许您通过运行交互式shell调试容器，或者将工作数据集导出到另一个服务器。一般来说，<strong>最好使用Dockerfiles以文档化和可维护的方式来管理映像。</strong></p>
+<p>提交操作将不包括容器内挂载的卷中包含的任何数据。</p>
+<p>默认情况下，正在提交的容器及其进程将在映像提交时暂停。这减少了在创建提交过程中遇到数据损坏的可能性。如果不希望出现这种行为，请将 –pause 选项设置为false。</p>
+<p>–change选项将对所创建的映像应用Dockerfile指令。<br>支持的Dockerfile指令:CMD | ENTRYPOINT | ENV | EXPOSE | LABEL | ONBUILD | USER | VOLUME | WORKDIR</p>
+<h2 id="5、测试"><a href="#5、测试" class="headerlink" title="5、测试"></a>5、测试</h2><h3 id="1）提交一个容器"><a href="#1）提交一个容器" class="headerlink" title="1）提交一个容器"></a>1）提交一个容器</h3><p>docker ps 找到一个新的容器，用commit命令提交一个容器，新增了一个命名为commit&#x2F;test的镜像 tag为test1.0，用docker images查看本地镜像是否成功提交了。<br><img src="/img/docker_images/docker7.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="2）提交一个新配置的容器"><a href="#2）提交一个新配置的容器" class="headerlink" title="2）提交一个新配置的容器"></a>2）提交一个新配置的容器</h3><p>用docker inspect命令查看容器的环境变量<br><img src="/img/docker_images/docker8.png" srcset="/img/loading.gif" lazyload></p>
+<p>提交一个新配置的容器，新增了一个命名为commit&#x2F;test的镜像 tag为test2.0，跟上一个例子区分</p>
+<p><img src="/img/docker_images/docker9.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="3）实战测试"><a href="#3）实战测试" class="headerlink" title="3）实战测试"></a>3）实战测试</h3><ol>
+<li>拉取并启动一个tomcat:9.0的镜像。</li>
+</ol>
+<p><img src="/img/docker_images/docker10.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="2">
+<li>我们用docker exec命令进入tomcat 容器中，官方默认的tomcat镜像时没有 webapps 应用，需要将webapps.dist目录下的基本文件拷贝到webapps目录下。</li>
+</ol>
+<p><img src="/img/docker_images/docker11.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="3">
+<li>验证tomcat，访问<a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088/</a></li>
+</ol>
+<p><img src="/img/docker_images/docker12.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="4">
+<li>将操作过后的tomcat容器提交为一个镜像，下次用的时候直接运行这个修改后的tomcat镜像即可。</li>
+</ol>
+<p><img src="/img/docker_images/docker13.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Docker%E5%AE%B9%E5%99%A8/" class="category-chain-item">Docker容器</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/Docker/">#Docker</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%AE%B9%E5%99%A8/">#容器</a>
+      
+        <a href="/tags/linux/">#linux</a>
+      
+        <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">#云原生</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Docker镜像概述和分层原理</div>
+      <div>https://gopherlinzy.github.io/2022/08/31/docker-images/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月31日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/31/docker-volumes/" title="Docker卷(volumes)">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Docker卷(volumes)</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/26/docker-CommonComands/" title="Docker底层原理和常用命令">
+                        <span class="hidden-mobile">Docker底层原理和常用命令</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

@@ -1,0 +1,881 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、多态关联1、多态关联概述 什么是多态？   多态的概念：通俗来说，就是多种形态，具体点就是去完成某个行为，当不同的对象去完成时会产生出不同的状态。  什么是多态表？  假设我们有一张地址表，其中的地址可能是来自User中的，也可能是来自Orders中的。而区分不同的对象则用type字段。如：type&#x3D;Use">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gorm学习（五）进阶：多态关联、关联标签以及事务">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/10/11/gorm-transaction/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、多态关联1、多态关联概述 什么是多态？   多态的概念：通俗来说，就是多种形态，具体点就是去完成某个行为，当不同的对象去完成时会产生出不同的状态。  什么是多态表？  假设我们有一张地址表，其中的地址可能是来自User中的，也可能是来自Orders中的。而区分不同的对象则用type字段。如：type&#x3D;Use">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/gorm.jpg">
+<meta property="article:published_time" content="2022-10-11T13:51:52.000Z">
+<meta property="article:modified_time" content="2022-10-11T14:00:00.095Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="mysql">
+<meta property="article:tag" content="数据库">
+<meta property="article:tag" content="Gorm">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gorm.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Gorm学习（五）进阶：多态关联、关联标签以及事务 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Gorm学习（五）进阶：多态关联、关联标签以及事务"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-10-11 21:51" pubdate>
+          2022年10月11日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          12k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          100 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Gorm学习（五）进阶：多态关联、关联标签以及事务</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>感谢开源项目<a target="_blank" rel="noopener" href="https://www.gin-vue-admin.com/">gin-vue-admin</a>，以及<a target="_blank" rel="noopener" href="https://www.bilibili.com/video/BV12i4y1x7AG?spm_id_from=333.999.0.0">1010工作室的视频教程</a></p>
+</blockquote>
+<h1 id="一、多态关联"><a href="#一、多态关联" class="headerlink" title="一、多态关联"></a>一、多态关联</h1><h2 id="1、多态关联概述"><a href="#1、多态关联概述" class="headerlink" title="1、多态关联概述"></a>1、多态关联概述</h2><ul>
+<li><p>什么是多态？</p>
+<p>  多态的概念：通俗来说，就是多种形态，具体点就是去完成某个行为，当不同的对象去完成时会产生出不同的状态。</p>
+</li>
+<li><p>什么是多态表？<br>  假设我们有一张地址表，其中的地址可能是来自User中的，也可能是来自Orders中的。而区分不同的对象则用type字段。如：type&#x3D;User时对象是文章表。</p>
+</li>
+</ul>
+<p><img src="/img/gorm_transaction/gorm1.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>什么是多态关联？<br>  多态关联就是多态表和对象表之间的关联性。<code>一个多态关联由使用同一外键发生的两个(或多个)关联组成.</code></li>
+</ul>
+<h2 id="2、为什么用多态关联？"><a href="#2、为什么用多态关联？" class="headerlink" title="2、为什么用多态关联？"></a>2、为什么用多态关联？</h2><p>出现需要外键引用多个表的情况，不可能删除原来表结构，重新添加一个外键ID再建表，所以我们可以建立一个交叉表。让Addres不再依赖于User表或者Order表。<br><img src="/img/gorm_transaction/gorm2.png" srcset="/img/loading.gif" lazyload><br><code>has one</code>的情况解决方案，如果我们希望一个给定的地址，只能够在一张交叉表中出现一次，上面的复合主键已经做到了。</p>
+<p><code>has many</code>的情况解决方案,如果希望一个地址可以在一张交叉表中出现多次，可以取消Address的复合主键。</p>
+<h2 id="3、Has-One"><a href="#3、Has-One" class="headerlink" title="3、Has One"></a>3、Has One</h2><p>GORM 为 <code>has one</code> 和 <code>has many</code> 提供了多态关联支持，它会将拥有者实体的表名、主键值都保存到多态类型的字段中。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	ID      <span class="hljs-type">int</span><br>	Name    <span class="hljs-type">string</span><br>	<span class="hljs-comment">//polymorphic指定多态类型，比如模型名</span><br>	Address Address <span class="hljs-string">`gorm:&quot;polymorphic:Owner;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Order <span class="hljs-keyword">struct</span> &#123;<br>	ID      <span class="hljs-type">int</span><br>	Name    <span class="hljs-type">string</span><br>	Address Address <span class="hljs-string">`gorm:&quot;polymorphic:Owner;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Address <span class="hljs-keyword">struct</span> &#123;<br>	ID        <span class="hljs-type">int</span><br>	Name      <span class="hljs-type">string</span><br>	OwnerID   <span class="hljs-type">int</span><br>	OwnerType <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;, &amp;Order&#123;&#125;, &amp;Address&#123;&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm3.png" srcset="/img/loading.gif" lazyload></p>
+<ul>
+<li>创建记录</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go">db.Create(&amp;User&#123;<br>	Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>	Address: Address&#123;<br>		Name: <span class="hljs-string">&quot;翻斗花园&quot;</span>,<br>	&#125;,<br>&#125;)<br>db.Create(&amp;Order&#123;<br>	Name: <span class="hljs-string">&quot;忘崽牛奶&quot;</span>,<br>	Address: Address&#123;<br>		Name: <span class="hljs-string">&quot;火星幼儿园&quot;</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/gorm_transaction/gorm4.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm5.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm6.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>owner_type就是关联的那张表。<br>owner_id就是关联的表的主键。</p>
+</blockquote>
+<h2 id="4、Has-Many"><a href="#4、Has-Many" class="headerlink" title="4、Has Many"></a>4、Has Many</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	ID      <span class="hljs-type">int</span><br>	Name    <span class="hljs-type">string</span><br>	Address []Address <span class="hljs-string">`gorm:&quot;polymorphic:Owner;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Order <span class="hljs-keyword">struct</span> &#123;<br>	ID      <span class="hljs-type">int</span><br>	Name    <span class="hljs-type">string</span><br>	Address Address <span class="hljs-string">`gorm:&quot;polymorphic:Owner;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Address <span class="hljs-keyword">struct</span> &#123;<br>	ID        <span class="hljs-type">int</span><br>	Name      <span class="hljs-type">string</span><br>	OwnerID   <span class="hljs-type">int</span><br>	OwnerType <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;, &amp;Order&#123;&#125;, &amp;Address&#123;&#125;)<br>	db.Create(&amp;User&#123;<br>		Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>		Address: []Address&#123;<br>			&#123;Name: <span class="hljs-string">&quot;翻斗花园&quot;</span>&#125;,<br>			&#123;Name: <span class="hljs-string">&quot;杭州西湖&quot;</span>&#125;,<br>		&#125;,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm7.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="二、关联标签"><a href="#二、关联标签" class="headerlink" title="二、关联标签"></a>二、关联标签</h1><h2 id="1、polymorphic-amp-polymorphicValue"><a href="#1、polymorphic-amp-polymorphicValue" class="headerlink" title="1、polymorphic &amp; polymorphicValue"></a>1、polymorphic &amp; polymorphicValue</h2><ul>
+<li>polymorphic：通俗讲用来指定id与type的前缀。</li>
+<li>polymorphicValue用来告诉关联表我是谁，默认都是表名。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">int</span><br>	Name <span class="hljs-type">string</span><br>	<span class="hljs-comment">//polymorphic：通俗讲用来指定id与type的前缀</span><br>	Address []Address <span class="hljs-string">`gorm:&quot;polymorphic:Address;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Order <span class="hljs-keyword">struct</span> &#123;<br>	ID      <span class="hljs-type">int</span><br>	Name    <span class="hljs-type">string</span><br>	<span class="hljs-comment">//polymorphicValue用来告诉关联表我是谁，默认都是表名</span><br>	Address Address <span class="hljs-string">`gorm:&quot;polymorphic:Address;polymorphicValue:master&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Address <span class="hljs-keyword">struct</span> &#123;<br>	ID          <span class="hljs-type">int</span><br>	Name        <span class="hljs-type">string</span><br>	AddressID   <span class="hljs-type">int</span><br>	AddressType <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;, &amp;Order&#123;&#125;, &amp;Address&#123;&#125;)<br>	db.Create(&amp;User&#123;<br>		Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>		Address: []Address&#123;<br>			&#123;Name: <span class="hljs-string">&quot;翻斗花园&quot;</span>&#125;,<br>			&#123;Name: <span class="hljs-string">&quot;杭州西湖&quot;</span>&#125;,<br>		&#125;,<br>	&#125;)<br><br>	db.Create(&amp;Order&#123;<br>		Name: <span class="hljs-string">&quot;忘崽牛奶&quot;</span>,<br>		Address: Address&#123;<br>			Name: <span class="hljs-string">&quot;火星幼儿园&quot;</span>,<br>		&#125;,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<img src="/img/gorm_transaction/gorm8.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm9.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm10.png" srcset="/img/loading.gif" lazyload></li>
+</ul>
+<h2 id="2、foreignKey-amp-references"><a href="#2、foreignKey-amp-references" class="headerlink" title="2、foreignKey &amp; references"></a>2、foreignKey &amp; references</h2><ul>
+<li>foreignKey：用来指定连接表的外键。</li>
+<li>references：用来指定引用表的列名与连接表的外键映射。</li>
+</ul>
+<p>GORM里默认是连接表和引用表的主键来作为做外键以及外键映射的。</p>
+<p>Has One的例子：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> CreditCard <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Number <span class="hljs-type">string</span><br>	<span class="hljs-comment">//外键指向CreditCardNumber</span><br>	Info   Info <span class="hljs-string">`gorm:&quot;foreignKey:CreditCardNumber&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Info <span class="hljs-keyword">struct</span> &#123;<br>	ID               <span class="hljs-type">uint</span><br>	Name             <span class="hljs-type">string</span><br>	Age              <span class="hljs-type">int</span><br>	CreditCardNumber <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;CreditCard&#123;&#125;, &amp;Info&#123;&#125;)<br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>		Info: Info&#123;<br>			Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>			Age:  <span class="hljs-number">18</span>,<br>		&#125;,<br>	&#125;)<br><br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;456789&quot;</span>,<br>		Info: Info&#123;<br>			Name: <span class="hljs-string">&quot;slyyy&quot;</span>,<br>			Age:  <span class="hljs-number">66</span>,<br>		&#125;,<br>	&#125;)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_transaction/gorm12.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>注意：credit_card_number并没有自动指向creditcard表里的number字段，他还是会默认指向引用表里的主键，所以在用<code>foreignKey</code>的时候最好类型相同或者使用<code>references</code>搭配使用。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> CreditCard <span class="hljs-keyword">struct</span> &#123;<br>	ID <span class="hljs-type">uint</span><br>	<span class="hljs-comment">//设置唯一和固定长度</span><br>	Number <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>	Info   Info   <span class="hljs-string">`gorm:&quot;foreignKey:CreditCardNumber;references:Number&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Info <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">uint</span><br>	Name <span class="hljs-type">string</span><br>	Age  <span class="hljs-type">int</span><br>	<span class="hljs-comment">//设置唯一和固定长度</span><br>	CreditCardNumber <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;CreditCard&#123;&#125;, &amp;Info&#123;&#125;)<br>	db.Create(&amp;CreditCard&#123;<br>		ID:     <span class="hljs-number">1</span>,<br>		Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>		Info: Info&#123;<br><br>			Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>			Age:  <span class="hljs-number">18</span>,<br>		&#125;,<br>	&#125;)<br><br>	db.Create(&amp;CreditCard&#123;<br>		ID:     <span class="hljs-number">2</span>,<br>		Number: <span class="hljs-string">&quot;456789&quot;</span>,<br>		Info: Info&#123;<br>			Name: <span class="hljs-string">&quot;slyyy&quot;</span>,<br>			Age:  <span class="hljs-number">66</span>,<br>		&#125;,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>注意： 某些数据库只允许在唯一索引字段上创建外键，如果在迁移时会创建外键，则需要指定 <code>index:unique</code> 标签。</p>
+</blockquote>
+<p><img src="/img/gorm_transaction/gorm13.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm14.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>错误：</p>
+<ol>
+<li><code>Error 1170: BLOB/TEXT column &#39;credit_card_number&#39; used in key specification without a key length</code><br>出现这个问题是因为你的外键或者外键映射的字段是text类型也就是不固定长度string类型，不能作为外键或外键映射，必须通过标签<code>size</code>设置固定长度。</li>
+<li><code>Error 1215: Cannot add foreign key constraint</code><br>这个错误是不能创建外键，主要原因可能是你外键映射的字段不是引用表的主键，建议标签设置为唯一 <code>index:unique</code>。</li>
+</ol>
+</blockquote>
+<h2 id="3、Many-to-Many"><a href="#3、Many-to-Many" class="headerlink" title="3、Many to Many"></a>3、Many to Many</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> CreditCard <span class="hljs-keyword">struct</span> &#123;<br>	ID     <span class="hljs-type">uint</span><br>	Number <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>	Infos  []Info <span class="hljs-string">`gorm:&quot;many2many:card_infos;foreignKey:Number;references:Name;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Info <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">uint</span><br>	Name <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>	Age  <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;CreditCard&#123;&#125;, &amp;Info&#123;&#125;)<br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>		Infos: []Info&#123;<br>			&#123;<br>				ID:   <span class="hljs-number">1</span>,<br>				Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>				Age:  <span class="hljs-number">18</span>,<br>			&#125;,<br>		&#125;,<br>	&#125;)<br><br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;456789&quot;</span>,<br>		Infos: []Info&#123;<br>			&#123;<br>				ID:   <span class="hljs-number">2</span>,<br>				Name: <span class="hljs-string">&quot;slyyy&quot;</span>,<br>				Age:  <span class="hljs-number">66</span>,<br>			&#125;,<br>			&#123;<br>				ID:   <span class="hljs-number">3</span>,<br>				Name: <span class="hljs-string">&quot;qhgwueiq&quot;</span>,<br>				Age:  <span class="hljs-number">1</span>,<br>			&#125;,<br>		&#125;,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm15.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm16.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm17.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>注意：在<code>Many to Many</code>的情况下，foreignKey指向的是<code>引用表的外键映射字段</code>，references指向的是<code>关联表的外键字段</code>，一定不要搞混了。</p>
+</blockquote>
+<h2 id="4、joinForeignKey-amp-joinReferences"><a href="#4、joinForeignKey-amp-joinReferences" class="headerlink" title="4、joinForeignKey &amp; joinReferences"></a>4、joinForeignKey &amp; joinReferences</h2><ul>
+<li>joinForeignKey：指定<code>Many to Many</code>产生的连接表中关联外键映射字段的名称。</li>
+<li>joinReferences：指定<code>Many to Many</code>产生的连接表中关联外键字段的名称。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> CreditCard <span class="hljs-keyword">struct</span> &#123;<br>	ID     <span class="hljs-type">uint</span><br>	Number <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>	Infos  []Info <span class="hljs-string">`gorm:&quot;many2many:card_infos;foreignKey:Number;joinForeignKey:card_number;references:Name;joinReferences:name&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Info <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">uint</span><br>	Name <span class="hljs-type">string</span> <span class="hljs-string">`gorm:&quot;index:unique;size:255&quot;`</span><br>	Age  <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;CreditCard&#123;&#125;, &amp;Info&#123;&#125;)<br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>		Infos: []Info&#123;<br>			&#123;<br>				ID:   <span class="hljs-number">1</span>,<br>				Name: <span class="hljs-string">&quot;linzy&quot;</span>,<br>				Age:  <span class="hljs-number">18</span>,<br>			&#125;,<br>		&#125;,<br>	&#125;)<br><br>	db.Create(&amp;CreditCard&#123;<br>		Number: <span class="hljs-string">&quot;456789&quot;</span>,<br>		Infos: []Info&#123;<br>			&#123;<br>				ID:   <span class="hljs-number">2</span>,<br>				Name: <span class="hljs-string">&quot;slyyy&quot;</span>,<br>				Age:  <span class="hljs-number">66</span>,<br>			&#125;,<br>			&#123;<br>				ID:   <span class="hljs-number">3</span>,<br>				Name: <span class="hljs-string">&quot;qhgwueiq&quot;</span>,<br>				Age:  <span class="hljs-number">1</span>,<br>			&#125;,<br>		&#125;,<br>	&#125;)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm18.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="三、事务"><a href="#三、事务" class="headerlink" title="三、事务"></a>三、事务</h1><h2 id="1、事务概述"><a href="#1、事务概述" class="headerlink" title="1、事务概述"></a>1、事务概述</h2><p>数据库事务( transaction)是访问并可能操作各种数据项的一个<code>数据库操作序列</code>，这些操作要么全部执行，要么全部不执行，是一个不可分割的工作单位。 事务由事务开始与事务结束之间执行的全部数据库操作组成。</p>
+<p>数据库事务必须具备的四个特性：</p>
+<ul>
+<li><strong>原子性(Atomicity)</strong><br>事务是数据库的逻辑工作单位，事务中包括的诸操作要么全做，要么全不做。</li>
+<li><strong>一致性(Consistency)</strong><br>事务执行的结果必须是使数据库从一个一致性状态变到另一个一致性状态。一致性与原子性是密切相关的。</li>
+<li><strong>隔离性(Isolation)</strong><br>一个事务的执行不能被其他事务干扰。</li>
+<li><strong>持续性&#x2F;永久性(Durability)</strong><br>一个事务一旦提交，它对数据库中数据的改变就应该是永久性的。</li>
+</ul>
+<h2 id="2、事务操作"><a href="#2、事务操作" class="headerlink" title="2、事务操作"></a>2、事务操作</h2><p>要在事务中执行一系列操作，一般流程如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>	db.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>		<span class="hljs-comment">// 在事务中执行一些 db 操作（从这里开始，应该使用 &#x27;tx&#x27; 而不是 &#x27;db&#x27;）</span><br>		<span class="hljs-keyword">if</span> err := tx.Create(&amp;User&#123;Name: <span class="hljs-string">&quot;Giraffe&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// 返回任何错误都会回滚事务</span><br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> err := tx.Create(&amp;User&#123;Name: <span class="hljs-string">&quot;Lion&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br><br>		<span class="hljs-comment">// 返回 nil 提交事务</span><br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm19.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="1）回滚"><a href="#1）回滚" class="headerlink" title="1）回滚"></a>1）回滚</h3><blockquote>
+<p>注意：返回任何错误都会回滚事务。回滚则事务内的操作一律不执行。</p>
+</blockquote>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>	db.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>		<span class="hljs-comment">// 在事务中执行一些 db 操作（从这里开始，应该使用 &#x27;tx&#x27; 而不是 &#x27;db&#x27;）</span><br>		<span class="hljs-keyword">if</span> err := tx.Create(&amp;User&#123;Name: <span class="hljs-string">&quot;linzy&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-comment">// 返回任何错误都会回滚事务</span><br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> err := tx.Create(&amp;User&#123;Name: <span class="hljs-string">&quot;slyyy&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> err<br>		&#125;<br><br>		<span class="hljs-keyword">if</span> <span class="hljs-literal">true</span> &#123;<br>			<span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;回滚&quot;</span>)<br>		&#125;<br><br>		<span class="hljs-comment">// 返回 nil 提交事务</span><br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm20.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="2）嵌套事务"><a href="#2）嵌套事务" class="headerlink" title="2）嵌套事务"></a>2）嵌套事务</h3><p>嵌套事务的作用在于较大的事务中，你只想回滚一部分操作，例如你去银行转账，已经通过银行卡号和密码登录了，转账的过程是你的银行账户扣去多少钱，同时别人的银行账户加上多少钱，如果中途发生错误，需要回滚，应该回滚到你账号登录后的状态，而不是直接回滚到你账号登录前。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><br><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Name   <span class="hljs-type">string</span><br>	Number <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>	db.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>		tx.Create(&amp;User&#123;<br>			Name:   <span class="hljs-string">&quot;linzy&quot;</span>,<br>			Number: <span class="hljs-number">100</span>,<br>		&#125;)<br>		tx.Create(&amp;User&#123;<br>			Name:   <span class="hljs-string">&quot;slyyy&quot;</span>,<br>			Number: <span class="hljs-number">100</span>,<br>		&#125;)<br>		fmt.Println(<span class="hljs-string">&quot;登陆后&quot;</span>)<br>		tx.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx2 *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>			<span class="hljs-comment">// 在事务中执行一些 db 操作（从这里开始，应该使用 &#x27;tx&#x27; 而不是 &#x27;db&#x27;)</span><br>			<span class="hljs-keyword">if</span> err := tx2.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">80</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-comment">// 返回任何错误都会回滚事务</span><br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br><br>			<span class="hljs-keyword">if</span> err := tx2.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;slyyy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">120</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;)<br>		fmt.Println(<span class="hljs-string">&quot;转账结束&quot;</span>)<br>		<span class="hljs-comment">// 返回 nil 提交事务</span><br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm21.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_transaction/gorm22.png" srcset="/img/loading.gif" lazyload><br>正常的过程应该是这样，如果说嵌套事务发生回滚操作之后的情况呢？</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>	db.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>		tx.Create(&amp;User&#123;<br>			Name:   <span class="hljs-string">&quot;linzy&quot;</span>,<br>			Number: <span class="hljs-number">100</span>,<br>		&#125;)<br>		tx.Create(&amp;User&#123;<br>			Name:   <span class="hljs-string">&quot;slyyy&quot;</span>,<br>			Number: <span class="hljs-number">100</span>,<br>		&#125;)<br>		fmt.Println(<span class="hljs-string">&quot;登陆后&quot;</span>)<br>		tx.Transaction(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(tx2 *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>			<span class="hljs-comment">// 在事务中执行一些 db 操作（从这里开始，应该使用 &#x27;tx&#x27; 而不是 &#x27;db&#x27;)</span><br>			<span class="hljs-keyword">if</span> err := tx2.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">80</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-comment">// 返回任何错误都会回滚事务</span><br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br><br>			<span class="hljs-keyword">if</span> <span class="hljs-literal">true</span> &#123;<br>				fmt.Println(<span class="hljs-string">&quot;转账失败，对面是骗子不能转！！&quot;</span>)<br>				<span class="hljs-keyword">return</span> errors.New(<span class="hljs-string">&quot;转账失败&quot;</span>)<br>			&#125;<br><br>			<span class="hljs-keyword">if</span> err := tx2.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;slyyy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">120</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> err<br>			&#125;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>		&#125;)<br>		fmt.Println(<span class="hljs-string">&quot;转账结束&quot;</span>)<br>		<span class="hljs-comment">// 返回 nil 提交事务</span><br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm23.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_transaction/gorm24.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3、手动事务"><a href="#3、手动事务" class="headerlink" title="3、手动事务"></a>3、手动事务</h2><p>Gorm 支持直接调用事务控制方法（commit、rollback），例如：</p>
+<table>
+<thead>
+<tr>
+<th align="left">事务方法</th>
+<th align="left">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">tx :&#x3D; db.Begin()</td>
+<td align="left">开始事务</td>
+</tr>
+<tr>
+<td align="left">tx.（db操作）</td>
+<td align="left">在事务中执行一些 db 操作</td>
+</tr>
+<tr>
+<td align="left">tx.Rollback()</td>
+<td align="left">遇到错误时回滚事务</td>
+</tr>
+<tr>
+<td align="left">tx.SavePoint()</td>
+<td align="left">设置保存点标记</td>
+</tr>
+<tr>
+<td align="left">tx.RollbackTo()</td>
+<td align="left">回滚到保存点标记</td>
+</tr>
+<tr>
+<td align="left">tx.Commit()</td>
+<td align="left">提交事务</td>
+</tr>
+</tbody></table>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Name   <span class="hljs-type">string</span><br>	Number <span class="hljs-type">int</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>	<span class="hljs-comment">// 开始事务</span><br>	tx := db.Begin()<br><br>	<span class="hljs-comment">// 在事务中执行一些 db 操作（从这里开始，您应该使用 &#x27;tx&#x27; 而不是 &#x27;db&#x27;）</span><br>	tx.Create(&amp;User&#123;<br>		Name:   <span class="hljs-string">&quot;linzy&quot;</span>,<br>		Number: <span class="hljs-number">100</span>,<br>	&#125;)<br>	tx.Create(&amp;User&#123;<br>		Name:   <span class="hljs-string">&quot;slyyy&quot;</span>,<br>		Number: <span class="hljs-number">100</span>,<br>	&#125;)<br>	fmt.Println(<span class="hljs-string">&quot;登陆后&quot;</span>)<br>	<span class="hljs-comment">//设置回滚标记</span><br>	tx.SavePoint(<span class="hljs-string">&quot;登录了&quot;</span>)<br>	flag := <span class="hljs-literal">true</span><br>	&#123;<br>		<span class="hljs-keyword">if</span> err := tx.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">80</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			flag = <span class="hljs-literal">true</span><br>		&#125;<br><br>		<span class="hljs-keyword">if</span> err := tx.Model(&amp;User&#123;&#125;).Where(<span class="hljs-string">&quot;name = ?&quot;</span>, <span class="hljs-string">&quot;slyyy&quot;</span>).Update(<span class="hljs-string">&quot;number&quot;</span>, <span class="hljs-number">120</span>).Error; err != <span class="hljs-literal">nil</span> &#123;<br>			flag = <span class="hljs-literal">true</span><br>		&#125;<br><br>		<span class="hljs-comment">//出现问题了得写在一系列事务之后进行回滚</span><br>		<span class="hljs-keyword">if</span> flag &#123;<br>			fmt.Println(<span class="hljs-string">&quot;转账失败，对面是骗子不能转！！&quot;</span>)<br>			<span class="hljs-comment">//回滚到指定标记</span><br>			tx.RollbackTo(<span class="hljs-string">&quot;登录了&quot;</span>)<br>		&#125;<br>	&#125;<br>	<span class="hljs-comment">// 遇到错误时回滚事务</span><br>	fmt.Println(<span class="hljs-string">&quot;转账结束&quot;</span>)<br>	<span class="hljs-comment">// 否则，提交事务</span><br>	tx.Commit()<br>&#125;<br></code></pre></td></tr></table></figure>
+<p><img src="/img/gorm_transaction/gorm25.png" srcset="/img/loading.gif" lazyload></p>
+<p>官方示例：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">CreateAnimals</span><span class="hljs-params">(db *gorm.DB)</span></span> <span class="hljs-type">error</span> &#123;<br>  <span class="hljs-comment">// 再唠叨一下，事务一旦开始，你就应该使用 tx 处理数据</span><br>  tx := db.Begin()<br>  <span class="hljs-comment">//延迟函数一定要写上，因为出现panic错误时事务可能没办法回滚，需要手动再回滚</span><br>  <span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>    <span class="hljs-keyword">if</span> r := <span class="hljs-built_in">recover</span>(); r != <span class="hljs-literal">nil</span> &#123;<br>      tx.Rollback()<br>    &#125;<br>  &#125;()<br><br>  <span class="hljs-keyword">if</span> err := tx.Error; err != <span class="hljs-literal">nil</span> &#123;<br>    <span class="hljs-keyword">return</span> err<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> err := tx.Create(&amp;Animal&#123;Name: <span class="hljs-string">&quot;Giraffe&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>     tx.Rollback()<br>     <span class="hljs-keyword">return</span> err<br>  &#125;<br><br>  <span class="hljs-keyword">if</span> err := tx.Create(&amp;Animal&#123;Name: <span class="hljs-string">&quot;Lion&quot;</span>&#125;).Error; err != <span class="hljs-literal">nil</span> &#123;<br>     tx.Rollback()<br>     <span class="hljs-keyword">return</span> err<br>  &#125;<br><br>  <span class="hljs-keyword">return</span> tx.Commit().Error<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4、禁用默认事务"><a href="#4、禁用默认事务" class="headerlink" title="4、禁用默认事务"></a>4、禁用默认事务</h2><p>为了确保数据一致性，GORM 会在事务里执行写入操作（创建、更新、删除）。如果没有这方面的要求，您可以在初始化时禁用它，这将获得大约 30%+ 性能提升。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 全局禁用</span><br>db, err := gorm.Open(sqlite.Open(<span class="hljs-string">&quot;gorm.db&quot;</span>), &amp;gorm.Config&#123;<br>  SkipDefaultTransaction: <span class="hljs-literal">true</span>,<br>&#125;)<br><br><span class="hljs-comment">// 持续会话模式</span><br>tx := db.Session(&amp;Session&#123;SkipDefaultTransaction: <span class="hljs-literal">true</span>&#125;)<br>tx.First(&amp;user, <span class="hljs-number">1</span>)<br>tx.Find(&amp;users)<br>tx.Model(&amp;user).Update(<span class="hljs-string">&quot;Age&quot;</span>, <span class="hljs-number">18</span>)<br></code></pre></td></tr></table></figure>
+
+<h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>本章拓展了GORM对数据库的更多支持，关联标签与事务是很重要的内容。</p>
+<ul>
+<li>关联标签：</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="left">标签</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">foreignKey</td>
+<td align="left">指定当前模型的列作为连接表的外键</td>
+</tr>
+<tr>
+<td align="left">references</td>
+<td align="left">指定引用表的列名，其将被映射为连接表外键</td>
+</tr>
+<tr>
+<td align="left">polymorphic</td>
+<td align="left">指定多态类型，比如模型名</td>
+</tr>
+<tr>
+<td align="left">polymorphicValue</td>
+<td align="left">指定多态值、默认表名</td>
+</tr>
+<tr>
+<td align="left">many2many</td>
+<td align="left">指定连接表表名</td>
+</tr>
+<tr>
+<td align="left">joinForeignKey</td>
+<td align="left">指定连接表的外键列名，其将被映射到当前表</td>
+</tr>
+<tr>
+<td align="left">joinReferences</td>
+<td align="left">指定连接表的外键列名，其将被映射到引用表</td>
+</tr>
+</tbody></table>
+<ul>
+<li>事务：</li>
+</ul>
+<p>手动事务适用于小事务操作，出错了直接全部回滚会更好，虽然提供了 <code>SavePoint</code>、<code>Rollbackto</code>方法，来提供保存点以及回滚至保存点功能，但是有一些同步操作操作很不方便。<br>GORM自带事务适用大事务操作，可以使用嵌套事务。</p>
+<blockquote>
+<p>若有写的错误的或者需要改进的地方，希望能直接指出，再次感谢GVA淼哥的教程！</p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Gorm/" class="category-chain-item">Gorm</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/mysql/">#mysql</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
+      
+        <a href="/tags/Gorm/">#Gorm</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Gorm学习（五）进阶：多态关联、关联标签以及事务</div>
+      <div>https://gopherlinzy.github.io/2022/10/11/gorm-transaction/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年10月11日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/10/25/go-memory-layout/" title="Go高性能编程-Go中的类型对齐保证">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Go高性能编程-Go中的类型对齐保证</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/10/11/gorm-associate/" title="Gorm学习（四）基础：关联">
+                        <span class="hidden-mobile">Gorm学习（四）基础：关联</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

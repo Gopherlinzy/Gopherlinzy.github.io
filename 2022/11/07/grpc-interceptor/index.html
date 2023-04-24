@@ -1,0 +1,851 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、拦截器概述1、什么是拦截器？在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。  中间件：中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC（六）进阶：拦截器 interceptor">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/11/07/grpc-interceptor/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、拦截器概述1、什么是拦截器？在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。  中间件：中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
+<meta property="article:published_time" content="2022-11-07T11:51:02.000Z">
+<meta property="article:modified_time" content="2022-11-07T11:55:47.155Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="grpc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>gRPC（六）进阶：拦截器 interceptor - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="gRPC（六）进阶：拦截器 interceptor"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-07 19:51" pubdate>
+          2022年11月7日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          15k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          129 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">gRPC（六）进阶：拦截器 interceptor</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/go-grpc-example">点击跳转</a><br>gRPC官方文档：<a target="_blank" rel="noopener" href="https://grpc.io/docs/languages/go/basics/">点击跳转</a></p>
+</blockquote>
+<h1 id="一、拦截器概述"><a href="#一、拦截器概述" class="headerlink" title="一、拦截器概述"></a>一、拦截器概述</h1><h2 id="1、什么是拦截器？"><a href="#1、什么是拦截器？" class="headerlink" title="1、什么是拦截器？"></a>1、什么是拦截器？</h2><p>在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。</p>
+<blockquote>
+<p>中间件：<br>中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技术、工具和数据库之间的桥梁，例如他可以记录响应时长、记录请求和响应数据日志，身份验证等。<br>中间件可以在拦截到发送给 handler 的请求，且可以拦截 handler 返回给客户端的响应</p>
+</blockquote>
+<p><code>gRPC 不同，它允许在服务器和客户端都使用拦截器。</code></p>
+<ul>
+<li>服务器端拦截器是 gRPC 服务器在到达实际 RPC 方法之前调用的函数。它可以用于多种用途，例如日志记录、跟踪、速率限制、身份验证和授权。</li>
+<li>同样，客户端拦截器是 gRPC 客户端在调用实际 RPC 之前调用的函数。<br><img src="/img/grpc_interceptor/grpc1.png" srcset="/img/loading.gif" lazyload></li>
+</ul>
+<h2 id="2、gRPC-拦截器核心概念"><a href="#2、gRPC-拦截器核心概念" class="headerlink" title="2、gRPC 拦截器核心概念"></a>2、gRPC 拦截器核心概念</h2><ul>
+<li>一元是我们大多数人使用的。就是发送一个请求并获得一个响应。</li>
+<li>流是当您发送或接收 protobuf 消息的数据管道时。这意味着如果一个 gRPC 服务响应一个流，消费者可以在这个流中期望多个响应。</li>
+</ul>
+<blockquote>
+<p>具体可以看我讲<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/03/grpc-stream/">《gRPC流》</a> 其中提到了流和一元的详细概念</p>
+</blockquote>
+<p>拦截器正如他名字的含义，它在 API 请求被执行之前拦截它们。这可用于<code>记录、验证或在处理 API 请求之前发生的任何事情</code>，拦截器还可以做统一接口的认证工作，不需要每一个接口都做一次认证了，多个接口多次访问，只需要在统一个地方认证即可。使用 HTTP API，这在 Golang 中很容易，你可以使用中间件包装 HTTP 处理程序。</p>
+<p>gRPC有两种数据通信方式，那必然有两种拦截器：</p>
+<ul>
+<li><code>UnaryInterceptors</code> — 用于 API 调用，即一个客户端请求和一个服务器响应。</li>
+<li><code>StreamInterceptors</code> —用于 API 调用，其中客户端发送请求但接收回数据流，允许服务器随时间响应多个项目。实际上，由于 gRPC 是双向的，因此客户端也可以使用它来发送数据。</li>
+</ul>
+<h2 id="3、服务端拦截器和客户端拦截器"><a href="#3、服务端拦截器和客户端拦截器" class="headerlink" title="3、服务端拦截器和客户端拦截器"></a>3、服务端拦截器和客户端拦截器</h2><p>gRPC允许在客户端和服务器以及一元和流式调用中使用拦截器，上面提到过<code>gRPC允许在服务器和客户端都使用拦截器</code>，那么我们就有 4 种不同的拦截器。</p>
+<p>如果我们去<a target="_blank" rel="noopener" href="https://pkg.go.dev/google.golang.org/grpc?utm_source=godoc">go-grpc</a>库看看他们是如何处理这个的，我们可以看到四个不同的用例。两种拦截器类型都可用于服务器和客户端。</p>
+<ul>
+<li>UnaryClientInterceptor — 在客户端拦截所有一元 gRPC 调用。</li>
+<li>UnaryServerInterceptor — 在服务器端拦截一元 gRPC 调用。</li>
+<li>StreamClientInterceptor — 拦截器在创建客户端流时触发。</li>
+<li>StreamServerInterceptor — 拦截器在服务器上执行 Stream 之前触发。</li>
+</ul>
+<p><img src="/img/grpc_interceptor/grpc2.png" srcset="/img/loading.gif" lazyload></p>
+<p>关于gRPC拦截器类型的定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> UnaryClientInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, method <span class="hljs-type">string</span>, req, reply <span class="hljs-keyword">interface</span>&#123;&#125;, cc *ClientConn, invoker UnaryInvoker, opts ...CallOption)</span></span> <span class="hljs-type">error</span><br><br><span class="hljs-keyword">type</span> UnaryServerInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, req <span class="hljs-keyword">interface</span>&#123;&#125;, info *UnaryServerInfo, handler UnaryHandler)</span></span> (resp <span class="hljs-keyword">interface</span>&#123;&#125;, err <span class="hljs-type">error</span>)<br><br><span class="hljs-keyword">type</span> StreamClientInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, desc *StreamDesc, cc *ClientConn, method <span class="hljs-type">string</span>, streamer Streamer, opts ...CallOption)</span></span> (ClientStream, <span class="hljs-type">error</span>)<br><br><span class="hljs-keyword">type</span> StreamServerInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(srv <span class="hljs-keyword">interface</span>&#123;&#125;, ss ServerStream, info *StreamServerInfo, handler StreamHandler)</span></span> <span class="hljs-type">error</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="4、Metadata-元数据"><a href="#4、Metadata-元数据" class="headerlink" title="4、Metadata 元数据"></a>4、Metadata 元数据</h2><p>gRPC 允许发送自定义元数据。元数据是键值的一个非常简单的概念。</p>
+<p>如果我们查看<a target="_blank" rel="noopener" href="https://pkg.go.dev/google.golang.org/grpc/metadata#MD">golang 元数据规范</a>，我们可以看到它是一个map[string][]string。</p>
+<blockquote>
+<p>元数据可以作为header或trailer发送</p>
+<ul>
+<li>header应该在数据之前发送。</li>
+<li>trailer应在处理完毕后发送。</li>
+</ul>
+</blockquote>
+<p><code>元数据允许我们在不更改 protobuf 消息的情况下向请求中添加数据。</code>这通常用于添加与请求相关但不属于请求的数据。</p>
+<p>例如，我们可以在请求的元数据中添加 JWT 令牌作为身份验证。这允许我们在不改变实际服务器逻辑的情况下使用逻辑扩展 API 端点。这对于身份验证、速率限制或日志记录很有用。</p>
+<p>理论够了！我相信我们已经准备好开始测试它了。</p>
+<h1 id="二、拦截器的使用"><a href="#二、拦截器的使用" class="headerlink" title="二、拦截器的使用"></a>二、拦截器的使用</h1><h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span>-grpc-example<br>├─client<br>│  ├─hello_client<br>│  │   └──client.<span class="hljs-keyword">go</span><br>│  ├─stream_client<br>│  │   └──client.<span class="hljs-keyword">go</span><br>├─pkg<br>│  ├─Interceptor<br>│  │   └──Interceptor.<span class="hljs-keyword">go</span><br>├─proto<br>│  ├─hello<br>│  ├─stream<br>└─server<br>    ├─hello_server<br>	│  └──server.<span class="hljs-keyword">go</span><br>    ├─stream_server<br>    │  └──server.<span class="hljs-keyword">go</span><br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>偷个懒，这里我们就拿之前的一元和流的示例上使用拦截器<br>示例我们做一个简单的 interceptor 示例，显示拦截器调用RPC方法前的时间、当前运行程序的操作系统、RPC方法结束后的时间，以及调用RPC的方法名。<br>创建<code>pkg/Interceptor</code>目录，在<code>Interceptor.go</code>文件里我们写拦截器的方法。</p>
+</blockquote>
+<h2 id="2、一元拦截器"><a href="#2、一元拦截器" class="headerlink" title="2、一元拦截器"></a>2、一元拦截器</h2><h3 id="1）UnaryClientInterceptor"><a href="#1）UnaryClientInterceptor" class="headerlink" title="1）UnaryClientInterceptor"></a>1）UnaryClientInterceptor</h3><p>作用：这是我们可以使用客户端元数据丰富消息的地方，例如有关客户端运行的硬件或操作系统的一些信息，或者可能启动我们的跟踪流程。</p>
+<p>客户端一元拦截器类型为 <code>grpc.UnaryClientInterceptor</code>，具体如下</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">UnaryClientInterceptor</span><span class="hljs-params">()</span></span> grpc.UnaryClientInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, method <span class="hljs-type">string</span>, req, reply <span class="hljs-keyword">interface</span>&#123;&#125;,</span></span><br><span class="hljs-params"><span class="hljs-function">		cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption)</span></span> <span class="hljs-type">error</span> &#123;<br>		<span class="hljs-comment">// 预处理(pre-processing)</span><br>		start := time.Now()<br>		<span class="hljs-comment">// 获取正在运行程序的操作系统</span><br>		cos := runtime.GOOS<br>		<span class="hljs-comment">// 将操作系统信息附加到传出请求</span><br>		ctx = metadata.AppendToOutgoingContext(ctx, <span class="hljs-string">&quot;client-os&quot;</span>, cos)<br><br>		<span class="hljs-comment">// 可以看做是当前 RPC 方法，一般在拦截器中调用 invoker 能达到调用 RPC 方法的效果，当然底层也是 gRPC 在处理。</span><br>		<span class="hljs-comment">// 调用RPC方法(invoking RPC method)</span><br>		err := invoker(ctx, method, req, reply, cc, opts...)<br><br>		<span class="hljs-comment">// 后处理(post-processing)</span><br>		end := time.Now()<br>		log.Printf(<span class="hljs-string">&quot;RPC: %s,,client-OS: &#x27;%v&#x27; req:%v start time: %s, end time: %s, err: %v&quot;</span>, method, cos, req, start.Format(time.RFC3339), end.Format(time.RFC3339), err)<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><code>invoker(ctx, method, req, reply, cc, opts...)</code> 是真正调用 RPC 方法。因此我们可以在调用前后增加自己的逻辑：比如调用前检查一下参数之类的，调用后记录一下本次请求处理耗时等。</p>
+</blockquote>
+<p>所谓的拦截器其实就是一个函数，可以分为<code>预处理(pre-processing)、调用RPC方法(invoking RPC method)、后处理(post-processing)</code>三个阶段。</p>
+<ul>
+<li>ctx：Go语言中的上下文，一般和 Goroutine 配合使用，起到超时控制的效果</li>
+<li>method：当前调用的 RPC 方法名</li>
+<li>req：本次请求的参数，只有在处理前阶段修改才有效</li>
+<li>reply：本次请求响应，需要在处理后阶段才能获取到</li>
+<li>cc：gRPC 连接信息</li>
+<li>invoker：可以看做是当前 RPC 方法，一般在拦截器中调用 invoker 能达到调用 RPC 方法的效果，当然底层也是 gRPC 在处理。</li>
+<li>opts：本次调用指定的 options 信息</li>
+</ul>
+<p>作为一个客户端拦截器，可以在处理前检查 req 看看本次请求带没带 token 之类的鉴权数据，没有的话就可以在拦截器中加上。</p>
+<p><strong>hello_client</strong><br>建立连接时通过 grpc.WithUnaryInterceptor 指定要加载的拦截器：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//添加一元拦截器</span><br>conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithInsecure(),<br>		grpc.WithUnaryInterceptor(Interceptor.UnaryClientInterceptor()))<br></code></pre></td></tr></table></figure>
+<h3 id="2）UnaryServerInterceptor"><a href="#2）UnaryServerInterceptor" class="headerlink" title="2）UnaryServerInterceptor"></a>2）UnaryServerInterceptor</h3><p>作用：我们可能想要对请求的真实性进行一些检查，例如对其进行授权，或者检查某些字段是否存在&#x2F;验证请求。</p>
+<p>客户端拦截器与服务端拦截器类似：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">UnaryServerInterceptor</span><span class="hljs-params">()</span></span> grpc.UnaryServerInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, req <span class="hljs-keyword">interface</span>&#123;&#125;, info *grpc.UnaryServerInfo,</span></span><br><span class="hljs-params"><span class="hljs-function">		handler grpc.UnaryHandler)</span></span> (resp <span class="hljs-keyword">interface</span>&#123;&#125;, err <span class="hljs-type">error</span>) &#123;<br>		<span class="hljs-comment">// 预处理(pre-processing)</span><br>		start := time.Now()<br>		<span class="hljs-comment">// 从传入上下文获取元数据</span><br>		md, ok := metadata.FromIncomingContext(ctx)<br>		<span class="hljs-keyword">if</span> !ok &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, fmt.Errorf(<span class="hljs-string">&quot;couldn&#x27;t parse incoming context metadata&quot;</span>)<br>		&#125;<br><br>		<span class="hljs-comment">// 检索客户端操作系统，如果它不存在，则此值为空</span><br>		os := md.Get(<span class="hljs-string">&quot;client-os&quot;</span>)<br>		<span class="hljs-comment">// 获取客户端IP地址</span><br>		ip, err := getClientIP(ctx)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br><br>		<span class="hljs-comment">// RPC 方法真正执行的逻辑</span><br>		<span class="hljs-comment">// 调用RPC方法(invoking RPC method)</span><br>		m, err := handler(ctx, req)<br>		end := time.Now()<br>		<span class="hljs-comment">// 记录请求参数 耗时 错误信息等数据</span><br>		<span class="hljs-comment">// 后处理(post-processing)</span><br>		log.Printf(<span class="hljs-string">&quot;RPC: %s,client-OS: &#x27;%v&#x27; and IP: &#x27;%v&#x27; req:%v start time: %s, end time: %s, err: %v&quot;</span>, info.FullMethod, os, ip, req, start.Format(time.RFC3339), end.Format(time.RFC3339), err)<br>		<span class="hljs-keyword">return</span> m, err<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// GetClientIP检查上下文以检索客户机的ip地址</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">getClientIP</span><span class="hljs-params">(ctx context.Context)</span></span> (<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	p, ok := peer.FromContext(ctx)<br>	<span class="hljs-keyword">if</span> !ok &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-string">&quot;&quot;</span>, fmt.Errorf(<span class="hljs-string">&quot;couldn&#x27;t parse client IP address&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">return</span> p.Addr.String(), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p><code> handler(ctx, req)</code> 是真正执行 RPC 方法，与invoker的调用不一样，不要搞混了。因此我们可以在真正执行前后检查数据：比如查看客户端操作系统和客户端IP地址、记录请求参数，耗时，错误信息等数据。</p>
+</blockquote>
+<p>参数具体含义如下：</p>
+<ul>
+<li>ctx：请求上下文</li>
+<li>req：RPC 方法的请求参数</li>
+<li>info：RPC 方法的所有信息</li>
+<li>handler：RPC 方法真正执行的逻辑</li>
+</ul>
+<p><strong>hello_server</strong></p>
+<p>服务端则是在 NewServer 时指定拦截器：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//添加一元拦截器</span><br>server := grpc.NewServer(grpc.UnaryInterceptor(Interceptor.UnaryServerInterceptor()))<br></code></pre></td></tr></table></figure>
+
+<h3 id="3）启动-amp-请求"><a href="#3）启动-amp-请求" class="headerlink" title="3）启动 &amp; 请求"></a>3）启动 &amp; 请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">51081</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">18</span>:<span class="hljs-number">37</span>:<span class="hljs-number">28</span> RPC: /hello.UserService/SayHi,client-OS: <span class="hljs-string">&#x27;[windows]&#x27;</span> and IP: <span class="hljs-string">&#x27;127.0.0.1:51104&#x27;</span> req:name:<span class="hljs-string">&quot;lin钟一&quot;</span> start time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T18:<span class="hljs-number">37</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br>, end time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T18:<span class="hljs-number">37</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, err: &lt;<span class="hljs-literal">nil</span>&gt;<br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">51102</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">18</span>:<span class="hljs-number">37</span>:<span class="hljs-number">28</span> RPC: /hello.UserService/SayHi,,client-OS: <span class="hljs-string">&#x27;windows&#x27;</span> req:name:<span class="hljs-string">&quot;lin钟一&quot;</span> start time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T18:<span class="hljs-number">37</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, end time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T18:<span class="hljs-number">3</span><br><span class="hljs-number">7</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, err: &lt;<span class="hljs-literal">nil</span>&gt;<br>resp: hi lin钟一--<span class="hljs-number">-2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span> <span class="hljs-number">18</span>:<span class="hljs-number">37</span>:<span class="hljs-number">28</span><br></code></pre></td></tr></table></figure>
+<h2 id="3、流式拦截器"><a href="#3、流式拦截器" class="headerlink" title="3、流式拦截器"></a>3、流式拦截器</h2><p>流拦截器过程和一元拦截器有所不同，同样可以分为3个阶段：</p>
+<ul>
+<li>1）预处理(pre-processing)</li>
+<li>2）调用RPC方法(invoking RPC method)</li>
+<li>3）后处理(post-processing)</li>
+</ul>
+<p>预处理阶段和一元拦截器类似，但是调用RPC方法和后处理这两个阶段则完全不同。</p>
+<p>StreamAPI 的请求和响应都是通过 Stream 进行传递的，更进一步是<code>通过 Streamer 调用 SendMsg 和 RecvMsg 这两个方法获取的</code>。</p>
+<p>然后 Streamer 又是调用RPC方法来获取的，所以在流拦截器中我们可以<code>对 Streamer 进行包装</code>，然后实现 <code>SendMsg</code> 和 <code>RecvMsg</code> 这两个方法。</p>
+<h3 id="1）StreamClientInterceptor"><a href="#1）StreamClientInterceptor" class="headerlink" title="1）StreamClientInterceptor"></a>1）StreamClientInterceptor</h3><p>作用：例如，如果我们将 100 个对象的列表传输到服务器，例如文件或视频的块，我们可以在发送每个块之前拦截，并验证校验和等内容是否有效，将元数据添加到帧等。</p>
+<p>本例中通过结构体嵌入的方式，对 Streamer 进行包装，在 SendMsg 和 RecvMsg 之前打印出具体的值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">StreamClientInterceptor</span><span class="hljs-params">()</span></span> grpc.StreamClientInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, desc *grpc.StreamDesc, cc *grpc.ClientConn,</span></span><br><span class="hljs-params"><span class="hljs-function">		method <span class="hljs-type">string</span>, streamer grpc.Streamer, opts ...grpc.CallOption)</span></span> (grpc.ClientStream, <span class="hljs-type">error</span>) &#123;<br>		log.Printf(<span class="hljs-string">&quot;opening client streaming to the server method: %v&quot;</span>, method)<br>		<span class="hljs-comment">// 调用Streamer函数，获得ClientStream</span><br>		stream, err := streamer(ctx, desc, cc, method)<br>		<span class="hljs-keyword">return</span> newStreamClient(stream), err<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 嵌入式 streamClient 允许我们访问SendMsg和RecvMsg函数</span><br><span class="hljs-keyword">type</span> streamClient <span class="hljs-keyword">struct</span> &#123;<br>	grpc.ClientStream<br>&#125;<br><br><span class="hljs-comment">// 对ClientStream进行包装</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newStreamClient</span><span class="hljs-params">(c grpc.ClientStream)</span></span> grpc.ClientStream &#123;<br>	<span class="hljs-keyword">return</span> &amp;streamClient&#123;c&#125;<br>&#125;<br><br><span class="hljs-comment">// RecvMsg从流中接收消息</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(e *streamClient)</span></span> RecvMsg(m <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">// 在这里，我们可以对接收到的消息执行额外的逻辑，例如</span><br>	<span class="hljs-comment">// 验证</span><br>	log.Printf(<span class="hljs-string">&quot;Receive a message (Type: %T) at %v&quot;</span>, m, time.Now().Format(time.RFC3339))<br>	<span class="hljs-keyword">if</span> err := e.ClientStream.RecvMsg(m); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// RecvMsg从流中接收消息</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(e *streamClient)</span></span> SendMsg(m <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">// 在这里，我们可以对接收到的消息执行额外的逻辑，例如</span><br>	<span class="hljs-comment">// 验证</span><br>	log.Printf(<span class="hljs-string">&quot;Send a message (Type: %T) at %v&quot;</span>, m, time.Now().Format(time.RFC3339))<br>	<span class="hljs-keyword">if</span> err := e.ClientStream.SendMsg(m); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>因为SendMsg 和 RecvMsg 方法 ClientStream接口内的方法，我们需要先调用 <code>streamer(ctx, desc, cc, method)</code>函数获取到<code>ClientStream</code>再对他进一步结构体封装，实现他SendMsg 和 RecvMsg 方法。</p>
+</blockquote>
+<p><strong>stream_client</strong><br>通过 grpc.WithStreamInterceptor 指定要加载的拦截器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithInsecure(), grpc.WithStreamInterceptor(Interceptor.StreamClientInterceptor()))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatalf(<span class="hljs-string">&quot;grpc.Dial err: %v&quot;</span>, err)<br>&#125;<br><span class="hljs-keyword">defer</span> conn.Close()<br></code></pre></td></tr></table></figure>
+
+<h3 id="2）-StreamServerInterceptor"><a href="#2）-StreamServerInterceptor" class="headerlink" title="2） StreamServerInterceptor"></a>2） StreamServerInterceptor</h3><p>作用：例如，如果我们正在接收上述文件块，也许我们想确定在传输过程中没有丢失任何内容，并在存储之前再次验证校验和。</p>
+<p>与客户端类似：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">StreamServerInterceptor</span><span class="hljs-params">()</span></span> grpc.StreamServerInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(srv <span class="hljs-keyword">interface</span>&#123;&#125;, ss grpc.ServerStream,</span></span><br><span class="hljs-params"><span class="hljs-function">		info *grpc.StreamServerInfo, handler grpc.StreamHandler)</span></span> <span class="hljs-type">error</span> &#123;<br>		wrapper := newStreamServer(ss)<br>		<span class="hljs-keyword">return</span> handler(srv, wrapper)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 嵌入式EdgeServerStream允许我们访问RecvMsg函数</span><br><span class="hljs-keyword">type</span> streamServer <span class="hljs-keyword">struct</span> &#123;<br>	grpc.ServerStream<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">newStreamServer</span><span class="hljs-params">(s grpc.ServerStream)</span></span> grpc.ServerStream &#123;<br>	<span class="hljs-keyword">return</span> &amp;streamServer&#123;s&#125;<br>&#125;<br><br><span class="hljs-comment">// RecvMsg从流中接收消息</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(e *streamServer)</span></span> RecvMsg(m <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">// 在这里，我们可以对接收到的消息执行额外的逻辑，例如</span><br>	<span class="hljs-comment">// 验证</span><br>	log.Printf(<span class="hljs-string">&quot;Receive a message (Type: %T) at %v&quot;</span>, m, time.Now().Format(time.RFC3339))<br>	<span class="hljs-keyword">if</span> err := e.ServerStream.RecvMsg(m); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-comment">// RecvMsg从流中接收消息</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(e *streamServer)</span></span> SendMsg(m <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">error</span> &#123;<br>	<span class="hljs-comment">// 在这里，我们可以对接收到的消息执行额外的逻辑，例如</span><br>	<span class="hljs-comment">// 验证</span><br>	log.Printf(<span class="hljs-string">&quot;Send a message (Type: %T) at %v&quot;</span>, m, time.Now().Format(time.RFC3339))<br>	<span class="hljs-keyword">if</span> err := e.ServerStream.SendMsg(m); err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> err<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>StreamServerInterceptor 拦截器自带 ServerStream 参数，我们直接同样的形式进行结构体嵌入封装，在实现他的方法。</p>
+</blockquote>
+<p><strong>stream_server</strong><br>通过 grpc.StreamInterceptor 指定要加载的拦截器</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">server := grpc.NewServer(grpc.StreamInterceptor(Interceptor.StreamServerInterceptor()))<br></code></pre></td></tr></table></figure>
+
+<h3 id="3）启动-amp-请求-1"><a href="#3）启动-amp-请求-1" class="headerlink" title="3）启动 &amp; 请求"></a>3）启动 &amp; 请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">54096</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span>              <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>  <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">18</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">18</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>  <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">19</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">19</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>  <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">20</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">20</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">21</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">22</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">22</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">22</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">22</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">23</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">23</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> stream.Recv pt.name: gRPC Stream Client: Route, pt.value: <span class="hljs-number">1111</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> Receive a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">24</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> Send a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">24</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">54108</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> opening client streaming to the server method: /proto.StreamService/Route<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>    <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">0</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">17</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">17</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">18</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">1</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">18</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">18</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">19</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">2</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">19</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">19</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">20</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">3</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">20</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">20</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">21</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">21</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">22</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">4</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">22</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">22</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">23</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">5</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">23</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">23</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> Send a message (Type: *stream.StreamRequest) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">24</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> resp: pj.name: gRPC Stream Server: Route, pt.value: <span class="hljs-number">6</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">07</span>:<span class="hljs-number">24</span> Receive a message (Type: *stream.StreamResponse) at <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">07</span>:<span class="hljs-number">24</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br>Server Closed<br></code></pre></td></tr></table></figure>
+
+<h2 id="4、实现多个拦截器"><a href="#4、实现多个拦截器" class="headerlink" title="4、实现多个拦截器"></a>4、实现多个拦截器</h2><p>gRPC框架中只能为每个服务一起配置一元和流拦截器，，gRPC 会根据不同方法选择对应类型的拦截器执行，因此所有的工作只能在一个函数中完成。</p>
+<p>开源的<code>grpc-ecosystem</code>项目中的<a target="_blank" rel="noopener" href="https://github.com/grpc-ecosystem/go-grpc-middleware">go-grpc-middleware</a>包已经基于gRPC对拦截器实现了链式拦截的支持。</p>
+<h3 id="1）Interceptor-新增一个一元客户端拦截器："><a href="#1）Interceptor-新增一个一元客户端拦截器：" class="headerlink" title="1）Interceptor 新增一个一元客户端拦截器："></a>1）Interceptor 新增一个一元客户端拦截器：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">UnaryClientInterceptorTwo</span><span class="hljs-params">()</span></span> grpc.UnaryClientInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, method <span class="hljs-type">string</span>, req, reply <span class="hljs-keyword">interface</span>&#123;&#125;,</span></span><br><span class="hljs-params"><span class="hljs-function">		cc *grpc.ClientConn, invoker grpc.UnaryInvoker, opts ...grpc.CallOption)</span></span> <span class="hljs-type">error</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;我是第二个拦截器&quot;</span>)<br>		<span class="hljs-comment">// 可以看做是当前 RPC 方法，一般在拦截器中调用 invoker 能达到调用 RPC 方法的效果，当然底层也是 gRPC 在处理。</span><br>		<span class="hljs-comment">// 调用RPC方法(invoking RPC method)</span><br>		_ = invoker(ctx, method, req, reply, cc, opts...)<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="2）Client-使用go-grpc-middleware实现链式拦截器："><a href="#2）Client-使用go-grpc-middleware实现链式拦截器：" class="headerlink" title="2）Client 使用go-grpc-middleware实现链式拦截器："></a>2）Client 使用go-grpc-middleware实现链式拦截器：</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go">conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithInsecure(),<br>		grpc.WithUnaryInterceptor(<br>			<span class="hljs-comment">// 按照顺序依次执行截取器</span><br>			grpc_middleware.ChainUnaryClient(Interceptor.UnaryClientInterceptor(),<br>				Interceptor.UnaryClientInterceptorTwo()),<br>		))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;grpc.Dial err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br></code></pre></td></tr></table></figure>
+<h3 id="3）启动-amp-请求-2"><a href="#3）启动-amp-请求-2" class="headerlink" title="3）启动 &amp; 请求"></a>3）启动 &amp; 请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">55823</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">32</span>:<span class="hljs-number">28</span> RPC: /hello.UserService/SayHi,client-OS: <span class="hljs-string">&#x27;[windows]&#x27;</span> and IP: <span class="hljs-string">&#x27;127.0.0.1:55829&#x27;</span> req:name:<span class="hljs-string">&quot;lin钟一&quot;</span> start time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">32</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span><br>, end time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">32</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, err: &lt;<span class="hljs-literal">nil</span>&gt;<br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>我是第一个拦截器<br>我是第二个拦截器<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">07</span> <span class="hljs-number">19</span>:<span class="hljs-number">32</span>:<span class="hljs-number">28</span> RPC: /hello.UserService/SayHi,,client-OS: <span class="hljs-string">&#x27;windows&#x27;</span> req:name:<span class="hljs-string">&quot;lin钟一&quot;</span> start time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">32</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, end time: <span class="hljs-number">2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span>T19:<span class="hljs-number">3</span><br><span class="hljs-number">2</span>:<span class="hljs-number">28</span>+<span class="hljs-number">08</span>:<span class="hljs-number">00</span>, err: &lt;<span class="hljs-literal">nil</span>&gt;<br>resp: hi lin钟一--<span class="hljs-number">-2022</span><span class="hljs-number">-11</span><span class="hljs-number">-07</span> <span class="hljs-number">19</span>:<span class="hljs-number">32</span>:<span class="hljs-number">28</span><br></code></pre></td></tr></table></figure>
+
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>1、拦截器分类与定义 gRPC 拦截器可以分为：一元拦截器和流拦截器，服务端拦截器和客户端拦截器。一共有以下4种类型:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">grpc.UnaryServerInterceptor<br>grpc.StreamServerInterceptor<br>grpc.UnaryClientInterceptor<br>grpc.StreamClientInterceptor<br></code></pre></td></tr></table></figure>
+
+<p><code>拦截器本质上就是一个特定类型的函数，所以实现拦截器只需要实现对应类型方法（方法签名相同）即可。</code></p>
+<p>2、拦截器执行过程</p>
+<p>一元拦截器</p>
+<ul>
+<li>1）预处理</li>
+<li>2）调用RPC方法</li>
+<li>3）后处理</li>
+</ul>
+<p>流拦截器</p>
+<ul>
+<li>1）预处理</li>
+<li>2）调用RPC方法 获取 Streamer</li>
+<li>3）后处理<ul>
+<li>调用 SendMsg 、RecvMsg 之前</li>
+<li>调用 SendMsg 、RecvMsg</li>
+<li>调用 SendMsg 、RecvMsg 之后</li>
+</ul>
+</li>
+</ul>
+<p>3、拦截器使用及执行顺序</p>
+<p>配置多个拦截器时，会按照参数传入顺序依次执行</p>
+<p>所以，如果想配置一个 Recovery 拦截器则必须放在第一个，放在最后则无法捕获前面执行的拦截器中触发的 panic。</p>
+<p>参考：<br><a target="_blank" rel="noopener" href="https://www.lixueduan.com/posts/grpc/05-interceptor/#4-streaminterceptor">https://www.lixueduan.com/posts/grpc/05-interceptor/#4-streaminterceptor</a></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
+      
+        <a href="/tags/grpc/">#grpc</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>gRPC（六）进阶：拦截器 interceptor</div>
+      <div>https://gopherlinzy.github.io/2022/11/07/grpc-interceptor/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月7日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（七）进阶：自定义身份验证</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/03/grpc-TLS/" title="gRPC（五）进阶：通过TLS建立安全连接">
+                        <span class="hidden-mobile">gRPC（五）进阶：通过TLS建立安全连接</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

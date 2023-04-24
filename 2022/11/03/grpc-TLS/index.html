@@ -1,0 +1,818 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、明文传输先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。 我们抓个包查看一下：是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。 二、TL">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC（五）进阶：通过TLS建立安全连接">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/11/03/grpc-TLS/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、明文传输先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。 我们抓个包查看一下：是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。 二、TL">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
+<meta property="article:published_time" content="2022-11-03T12:36:53.000Z">
+<meta property="article:modified_time" content="2022-11-09T05:29:16.928Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="grpc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>gRPC（五）进阶：通过TLS建立安全连接 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="gRPC（五）进阶：通过TLS建立安全连接"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-03 20:36" pubdate>
+          2022年11月3日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          10k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          84 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">gRPC（五）进阶：通过TLS建立安全连接</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：5 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/go-grpc-example">点击跳转</a><br>gRPC官方文档：<a target="_blank" rel="noopener" href="https://grpc.io/docs/languages/go/basics/">点击跳转</a></p>
+</blockquote>
+<h1 id="一、明文传输"><a href="#一、明文传输" class="headerlink" title="一、明文传输"></a>一、明文传输</h1><p>先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。</p>
+<p>我们抓个包查看一下：<br><img src="/img/grpc_TLS/grpc1.png" srcset="/img/loading.gif" lazyload><br><img src="/img/grpc_TLS/grpc2.png" srcset="/img/loading.gif" lazyload><br>是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。</p>
+<h1 id="二、TLS概述"><a href="#二、TLS概述" class="headerlink" title="二、TLS概述"></a>二、TLS概述</h1><p>传输层安全 (TLS) 对通过 Internet 发送的数据进行加密，以确保窃听者和黑客无法看到您传输的内容，这对于密码、信用卡号和个人通信等私人和敏感信息特别有用。</p>
+<h2 id="1、什么是TLS？"><a href="#1、什么是TLS？" class="headerlink" title="1、什么是TLS？"></a>1、什么是TLS？</h2><p>传输层安全 (TLS) 是一种 Internet 工程任务组 ( IETF ) 标准协议，可在两个通信计算机应用程序之间提供身份验证、隐私和数据完整性。它是当今使用最广泛部署的安全协议，最适合需要通过网络安全交换数据的 Web 浏览器和其他应用程序。这包括 Web 浏览会话、文件传输、虚拟专用网络 (VPN) 连接、远程桌面会话和 IP 语音 (VoIP)。最近，TLS 被集成到包括 5G 在内的现代蜂窝传输技术中，以保护整个无线电接入网络 ( RAN ) 的核心网络功能。</p>
+<h2 id="2、TLS的工作流程"><a href="#2、TLS的工作流程" class="headerlink" title="2、TLS的工作流程"></a>2、TLS的工作流程</h2><p>TLS 使用客户端-服务器握手机制来建立加密和安全的连接，并确保通信的真实性。</p>
+<ul>
+<li>通信设备交换加密功能。</li>
+<li>使用数字证书进行身份验证过程以帮助证明服务器是它声称的实体。</li>
+<li>发生会话密钥交换。在此过程中，客户端和服务器必须就密钥达成一致，以建立安全会话确实在客户端和服务器之间的事实——而不是在中间试图劫持会话的东西。</li>
+</ul>
+<p><img src="/img/grpc_TLS/grpc3.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="三、gRPC建立安全连接"><a href="#三、gRPC建立安全连接" class="headerlink" title="三、gRPC建立安全连接"></a>三、gRPC建立安全连接</h1><h2 id="1、概述"><a href="#1、概述" class="headerlink" title="1、概述"></a>1、概述</h2><p>gRPC建立在HTTP&#x2F;2协议之上，对TLS提供了很好的支持。当不需要证书认证时,可通过grpc.WithInsecure()选项跳过了对服务器证书的验证，没有启用证书的gRPC服务和客户端进行的是明文通信，信息面临被任何第三方监听的风险。为了保证gRPC通信不被第三方监听、篡改或伪造，可以对服务器启动TLS加密特性。</p>
+<p>gRPC 内置了以下 encryption 机制：</p>
+<ul>
+<li>SSL &#x2F; TLS：通过证书进行数据加密；</li>
+<li>ALTS：Google开发的一种双向身份验证和传输加密系统。<ul>
+<li>只有运行在 Google Cloud Platform 才可用，一般不用考虑。</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、gRPC-加密类型"><a href="#2、gRPC-加密类型" class="headerlink" title="2、gRPC 加密类型"></a>2、gRPC 加密类型</h2><ul>
+<li>1）insecure connection：不使用TLS加密</li>
+<li>2）server-side TLS：仅服务端TLS加密</li>
+<li>3）mutual TLS：客户端、服务端都使用TLS加密</li>
+</ul>
+<p>我们前面的例子都是明文传输的，使用的都是 insecure connection，通过指定 WithInsecure option 来建立 insecure connection，不建议在生产环境使用。</p>
+<p>后面我们了解如何使用 TLS 来建立安全连接。</p>
+<h2 id="3、server-side-TLS"><a href="#3、server-side-TLS" class="headerlink" title="3、server-side TLS"></a>3、server-side TLS</h2><h3 id="1）流程"><a href="#1）流程" class="headerlink" title="1）流程"></a>1）流程</h3><p>服务端 TLS 具体包含以下几个步骤：</p>
+<ul>
+<li>制作证书，包含服务端证书和 CA 证书；</li>
+<li>服务端启动时加载证书；</li>
+<li>客户端连接时使用CA 证书校验服务端证书有效性。</li>
+</ul>
+<blockquote>
+<p>也可以不使用 CA证书，即服务端证书自签名。</p>
+</blockquote>
+<h3 id="2）什么是CA？CA证书又是什么？"><a href="#2）什么是CA？CA证书又是什么？" class="headerlink" title="2）什么是CA？CA证书又是什么？"></a>2）什么是CA？CA证书又是什么？</h3><ul>
+<li>CA是Certificate Authority的缩写，也叫<code>“证书授权中心”</code>。它是负责管理和签发证书的第三方机构，作用是检查证书持有者身份的合法性，并签发证书，以防证书被伪造或篡改。</li>
+</ul>
+<blockquote>
+<p>CA实际上是一个机构，负责“证件”印制核发。就像负责颁发身份证的公安局、负责发放行驶证、驾驶证的车管所。</p>
+</blockquote>
+<ul>
+<li><p>CA 证书就是CA颁发的证书。我们常听到的数字证书就是CA证书,CA证书包含信息有:<code>证书拥有者的身份信息，CA机构的签名，公钥和私钥。</code></p>
+<ul>
+<li>身份信息: 用于证明证书持有者的身份</li>
+<li>CA机构的签名: 用于保证身份的真实性</li>
+<li>公钥和私钥: 用于通信过程中加解密，从而保证通讯信息的安全性</li>
+</ul>
+</li>
+</ul>
+<h3 id="3）什么是SAN？"><a href="#3）什么是SAN？" class="headerlink" title="3）什么是SAN？"></a>3）什么是SAN？</h3><p>SAN(Subject Alternative Name)是 SSL 标准 x509 中定义的一个扩展。使用了 SAN 字段的 SSL 证书，可以扩展此证书支持的域名，使得一个证书可以支持多个不同域名的解析。</p>
+<p>我们在用go 1.15版本以上，用gRPC通过TLS建立安全连接时，会出现证书报错问题：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-built_in">panic</span>: rpc <span class="hljs-type">error</span>: code = Unavailable desc = connection <span class="hljs-type">error</span>: desc = <span class="hljs-string">&quot;transport: authentication handshake failed: x509: certificate</span><br><span class="hljs-string">is not valid for any names, but wanted to match localhost&quot;</span><br></code></pre></td></tr></table></figure>
+<p>造成这个panic的原因是从go 1.15 版本开始废弃 CommonName，我们没有使用官方推荐的 SAN 证书（默认是没有开启SAN扩展）而出现的错误，导致客户端和服务端无法建立连接。</p>
+<h3 id="4）目录结构"><a href="#4）目录结构" class="headerlink" title="4）目录结构"></a>4）目录结构</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span>-grpc-example<br>├── client<br>│  	└──TLS_client<br>│   │   └──client.<span class="hljs-keyword">go</span><br>├── conf<br>│   └──ca.conf<br>│   └──server.conf<br>├── proto<br>│   └──search<br>│   │   └──search.proto<br>├── server<br>│  	└──TLS_server<br>│   │   └──server.<span class="hljs-keyword">go</span><br>├── Makefile<br></code></pre></td></tr></table></figure>
+<h3 id="5）生成CA根证书"><a href="#5）生成CA根证书" class="headerlink" title="5）生成CA根证书"></a>5）生成CA根证书</h3><p>在ca.conf里写入内容如下:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">4096</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = GB<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = linzyblog.netlify.app<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br></code></pre></td></tr></table></figure>
+
+
+<ol>
+<li>生成ca私钥，得到ca.key</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl genrsa -out ca.key <span class="hljs-number">4096</span><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>openssl genrsa：生成RSA私钥，命令的最后一个参数，将指定生成密钥的位数，如果没有指定，默认512</p>
+</blockquote>
+<ol start="2">
+<li>生成ca证书签发请求，得到ca.csr</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go">$ openssl req -<span class="hljs-built_in">new</span> -sha256 -out ca.csr -key ca.key -config ca.conf<br>GB [CN]:<br>State or Province Name (full name) [ZheJiang]:<br>Locality Name (eg, city) [HuZhou]:<br>Organization Name (eg, company) [Step]:<br>linzyblog.netlify.app [linzyblog.netlify.app]:<br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>这里一直回车就好了<br>openssl req：生成自签名证书，-new指生成证书请求、-sha256指使用sha256加密、-key指定私钥文件、-x509指输出证书、-days 3650为有效期，此后则输入证书拥有者信息</p>
+</blockquote>
+<ol start="3">
+<li>生成ca根证书，得到ca.crt</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -in ca.csr -signkey ca.key -out ca.crt<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/grpc_TLS/grpc4.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="6）生成终端用户证书"><a href="#6）生成终端用户证书" class="headerlink" title="6）生成终端用户证书"></a>6）生成终端用户证书</h3><p>在server.conf写入以下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">2048</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = Country Name (<span class="hljs-number">2</span> letter code)<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = CommonName (e.g. server FQDN or YOUR name)<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br><br>[ req_ext ]<br>subjectAltName = @alt_names<br><br>[alt_names]<br>DNS<span class="hljs-number">.1</span>   = <span class="hljs-keyword">go</span>-grpc-example（这里很重要，客户端需要此字段做匹配）<br>IP      = <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><br></code></pre></td></tr></table></figure>
+<ol>
+<li>生成私钥，得到server.key</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl genrsa -out server.key <span class="hljs-number">4096</span><br></code></pre></td></tr></table></figure>
+<ol start="2">
+<li>生成证书签发请求，得到server.csr</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl req -<span class="hljs-built_in">new</span> -sha256 -out server.csr -key server.key -config server.conf<br></code></pre></td></tr></table></figure>
+<p>这里也一直回车就好。</p>
+<ol start="3">
+<li>用CA证书生成终端用户证书，得到server.crt</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.pem -extensions req_ext -extfile server.conf<br></code></pre></td></tr></table></figure>
+
+<p><img src="/img/grpc_TLS/grpc5.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="7）server"><a href="#7）server" class="headerlink" title="7）server"></a>7）server</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 根据服务端输入的证书文件和密钥构造 TLS 凭证</span><br>	c, err := credentials.NewServerTLSFromFile(<span class="hljs-string">&quot;./conf/server.pem&quot;</span>, <span class="hljs-string">&quot;./conf/server.key&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewServerTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">// 返回一个 ServerOption，用于设置服务器连接的凭据。</span><br>	<span class="hljs-comment">// 用于 grpc.NewServer(opt ...ServerOption) 为 gRPC Server 设置连接选项</span><br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:&quot;</span>+PORT) <span class="hljs-comment">//创建 Listen，监听 TCP 端口</span><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewServerTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	search.RegisterSearchServiceServer(s, &amp;service&#123;&#125;)<br><br>	s.Serve(lis)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="8）client"><a href="#8）client" class="headerlink" title="8）client"></a>8）client</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 根据客户端输入的证书文件和密钥构造 TLS 凭证。</span><br>	<span class="hljs-comment">// 第二个参数 serverNameOverride 为服务名称。</span><br>	c, err := credentials.NewClientTLSFromFile(<span class="hljs-string">&quot;./conf/server.pem&quot;</span>, <span class="hljs-string">&quot;go-grpc-example&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewClientTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">// 返回一个配置连接的 DialOption 选项。</span><br>	<span class="hljs-comment">// 用于 grpc.Dial(target string, opts ...DialOption) 设置连接选项</span><br>	conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithTransportCredentials(c))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;grpc.Dial err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	client := pb.NewSearchServiceClient(conn)<br>	resp, err := client.Search(context.Background(), &amp;pb.SearchRequest&#123;<br>		Request: <span class="hljs-string">&quot;gRPC&quot;</span>,<br>	&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;client.Search err: %v&quot;</span>, err)<br>	&#125;<br><br>	log.Printf(<span class="hljs-string">&quot;resp: %s&quot;</span>, resp.GetResponse())<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="8）启动-amp-请求"><a href="#8）启动-amp-请求" class="headerlink" title="8）启动 &amp; 请求"></a>8）启动 &amp; 请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">53981</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">54328</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">03</span> <span class="hljs-number">19</span>:<span class="hljs-number">35</span>:<span class="hljs-number">10</span> resp: gRPC Server<br></code></pre></td></tr></table></figure>
+
+<p>抓个包再看看<br><img src="/img/grpc_TLS/grpc6.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="4、mutual-TLS"><a href="#4、mutual-TLS" class="headerlink" title="4、mutual TLS"></a>4、mutual TLS</h2><h3 id="1）生成服务端证书"><a href="#1）生成服务端证书" class="headerlink" title="1）生成服务端证书"></a>1）生成服务端证书</h3><p>新增server.conf</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">2048</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = Country Name (<span class="hljs-number">2</span> letter code)<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = CommonName (e.g. server FQDN or YOUR name)<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br><br>[ req_ext ]<br>subjectAltName = @alt_names<br><br>[alt_names]<br>DNS<span class="hljs-number">.1</span>   = <span class="hljs-keyword">go</span>-grpc-example（这里很重要，客户端需要此字段做匹配）<br>IP      = <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 1. 生成私钥，得到server.key</span><br>openssl genrsa -out server.key <span class="hljs-number">2048</span><br><br><span class="hljs-comment">//2. 生成证书签发请求，得到server.csr</span><br>openssl req -<span class="hljs-built_in">new</span> -sha256 -out server.csr -key server.key -config server.conf<br><br><span class="hljs-comment">//3. 用CA证书生成终端用户证书，得到server.crt</span><br>openssl x509 -req -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -days <span class="hljs-number">365</span> -in server.csr -out se<br>rver.crt -extensions req_ext -extfile server.conf<br></code></pre></td></tr></table></figure>
+
+<h3 id="2）生成客户端证书"><a href="#2）生成客户端证书" class="headerlink" title="2）生成客户端证书"></a>2）生成客户端证书</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 1. 生成私钥，得到client.key</span><br>openssl genrsa -out client.key <span class="hljs-number">2048</span><br><br><span class="hljs-comment">//2. 生成证书签发请求，得到client.csr</span><br>openssl req -<span class="hljs-built_in">new</span> -key client.key -out client.csr <br><br><br><span class="hljs-comment">//3. 用CA证书生成客户端证书，得到client.crt</span><br> openssl x509 -req -sha256 -CA ca.crt -CAkey ca.key -CAcreateserial -days <span class="hljs-number">365</span>  -in client.csr -out client.crt<br></code></pre></td></tr></table></figure>
+<p><img src="/img/grpc_TLS/grpc7.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="3）整理目录"><a href="#3）整理目录" class="headerlink" title="3）整理目录"></a>3）整理目录</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go">conf<br>├── ca.conf<br>├── ca.crt<br>├── ca.csr<br>├── ca.key<br>├── client<br>│   ├── client.csr<br>│   ├── client.key<br>│   └── client.pem<br>├── server<br>│   ├── server.conf<br>|   └── server.crt<br>│   ├── server.csr<br>|   ├── server.key<br>└─server_side_TLS<br></code></pre></td></tr></table></figure>
+
+<h3 id="4）server"><a href="#4）server" class="headerlink" title="4）server"></a>4）server</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 公钥中读取和解析公钥/私钥对</span><br>	cert, err := tls.LoadX509KeyPair(<span class="hljs-string">&quot;./conf/server/server.crt&quot;</span>, <span class="hljs-string">&quot;./conf/server/server.key&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;LoadX509KeyPair error&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-comment">// 创建一组根证书</span><br>	certPool := x509.NewCertPool()<br>	ca, err := ioutil.ReadFile(<span class="hljs-string">&quot;./conf/ca.crt&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;read ca pem error &quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-comment">// 解析证书</span><br>	<span class="hljs-keyword">if</span> ok := certPool.AppendCertsFromPEM(ca); !ok &#123;<br>		fmt.Println(<span class="hljs-string">&quot;AppendCertsFromPEM error &quot;</span>)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	c := credentials.NewTLS(&amp;tls.Config&#123;<br>		<span class="hljs-comment">//设置证书链，允许包含一个或多个</span><br>		Certificates: []tls.Certificate&#123;cert&#125;,<br>		<span class="hljs-comment">//要求必须校验客户端的证书</span><br>		ClientAuth: tls.RequireAndVerifyClientCert,<br>		<span class="hljs-comment">//设置根证书的集合，校验方式使用ClientAuth设定的模式</span><br>		ClientCAs: certPool,<br>	&#125;)<br>	s := grpc.NewServer(grpc.Creds(c))<br>	lis, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;:&quot;</span>+PORT) <span class="hljs-comment">//创建 Listen，监听 TCP 端口</span><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewServerTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">//将 SearchService（其包含需要被调用的服务端接口）注册到 gRPC Server 的内部注册中心。</span><br>	<span class="hljs-comment">//这样可以在接受到请求时，通过内部的服务发现，发现该服务端接口并转接进行逻辑处理</span><br>	search.RegisterSearchServiceServer(s, &amp;service&#123;&#125;)<br><br>	<span class="hljs-comment">//gRPC Server 开始 lis.Accept，直到 Stop 或 GracefulStop</span><br>	s.Serve(lis)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="5）client"><a href="#5）client" class="headerlink" title="5）client"></a>5）client</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> PORT = <span class="hljs-string">&quot;8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 公钥中读取和解析公钥/私钥对</span><br>	cert, err := tls.LoadX509KeyPair(<span class="hljs-string">&quot;./conf/client/client.crt&quot;</span>, <span class="hljs-string">&quot;./conf/client/client.key&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;LoadX509KeyPair error &quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-comment">// 创建一组根证书</span><br>	certPool := x509.NewCertPool()<br>	ca, err := ioutil.ReadFile(<span class="hljs-string">&quot;./conf/ca.crt&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;ReadFile ca.crt error &quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-comment">// 解析证书</span><br>	<span class="hljs-keyword">if</span> ok := certPool.AppendCertsFromPEM(ca); !ok &#123;<br>		fmt.Println(<span class="hljs-string">&quot;certPool.AppendCertsFromPEM error &quot;</span>)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	c := credentials.NewTLS(&amp;tls.Config&#123;<br>		Certificates: []tls.Certificate&#123;cert&#125;,<br>		ServerName:   <span class="hljs-string">&quot;go-grpc-example&quot;</span>,<br>		RootCAs:      certPool,<br>	&#125;)<br><br>	conn, err := grpc.Dial(<span class="hljs-string">&quot;:&quot;</span>+PORT, grpc.WithTransportCredentials(c))<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;grpc.Dial err: %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br><br>	client := pb.NewSearchServiceClient(conn)<br>	resp, err := client.Search(context.Background(), &amp;pb.SearchRequest&#123;<br>		Request: <span class="hljs-string">&quot;gRPC&quot;</span>,<br>	&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;client.Search err: %v&quot;</span>, err)<br>	&#125;<br><br>	log.Printf(<span class="hljs-string">&quot;resp: %s&quot;</span>, resp.GetResponse())<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h3 id="6）启动-amp-请求"><a href="#6）启动-amp-请求" class="headerlink" title="6）启动 &amp; 请求"></a>6）启动 &amp; 请求</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">56036</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">56364</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">03</span> <span class="hljs-number">20</span>:<span class="hljs-number">21</span>:<span class="hljs-number">55</span> resp: gRPC Server<br><br># 更改ServerName为linzy<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">56424</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">03</span> <span class="hljs-number">20</span>:<span class="hljs-number">23</span>:<span class="hljs-number">17</span> client.Search err: rpc <span class="hljs-type">error</span>: code = Unavailable desc = connection <span class="hljs-type">error</span>: desc = <span class="hljs-string">&quot;transport: authentication handshake failed: x509: cer</span><br><span class="hljs-string">tificate is valid for go-grpc-example, not linzy&quot;</span><br></code></pre></td></tr></table></figure>
+<p>抓个包看看<br><img src="/img/grpc_TLS/grpc8.png" srcset="/img/loading.gif" lazyload><br><img src="/img/grpc_TLS/grpc9.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
+      
+        <a href="/tags/grpc/">#grpc</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>gRPC（五）进阶：通过TLS建立安全连接</div>
+      <div>https://gopherlinzy.github.io/2022/11/03/grpc-TLS/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月3日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/07/grpc-interceptor/" title="gRPC（六）进阶：拦截器 interceptor">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（六）进阶：拦截器 interceptor</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/03/grpc-stream/" title="gRPC（四）基础：gRPC流">
+                        <span class="hidden-mobile">gRPC（四）基础：gRPC流</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

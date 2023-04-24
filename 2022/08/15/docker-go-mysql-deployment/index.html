@@ -1,0 +1,835 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 友情提示 本文学习需要了解一些Linux简单命令和Docker的一些命令 使用的项目我已经上传到github：https:&#x2F;&#x2F;github.com&#x2F;Gopherlinzy&#x2F;gin-gorm-example  一、获取一个可执行的项目我自己写了一个简单的gin-gorm项目，github下载地址：https:&#x2F;&#x2F;github.com&#x2F;Gopherlinzy&#x2F;gin-gorm-example 1">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Docker部署Golang项目和Mysql镜像">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/08/15/docker-go-mysql-deployment/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 友情提示 本文学习需要了解一些Linux简单命令和Docker的一些命令 使用的项目我已经上传到github：https:&#x2F;&#x2F;github.com&#x2F;Gopherlinzy&#x2F;gin-gorm-example  一、获取一个可执行的项目我自己写了一个简单的gin-gorm项目，github下载地址：https:&#x2F;&#x2F;github.com&#x2F;Gopherlinzy&#x2F;gin-gorm-example 1">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/docker.jpg">
+<meta property="article:published_time" content="2022-08-15T13:43:22.000Z">
+<meta property="article:modified_time" content="2022-08-31T15:17:55.428Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="Docker">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="容器">
+<meta property="article:tag" content="linux">
+<meta property="article:tag" content="云原生">
+<meta property="article:tag" content="运维">
+<meta property="article:tag" content="mysql">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/docker.jpg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Docker部署Golang项目和Mysql镜像 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg8.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Docker部署Golang项目和Mysql镜像"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-08-15 21:43" pubdate>
+          2022年8月15日 晚上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          5.4k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          46 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Docker部署Golang项目和Mysql镜像</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：8 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p><strong>友情提示</strong><br> 本文学习需要了解一些Linux简单命令和Docker的一些命令<br> 使用的项目我已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/gin-gorm-example">https://github.com/Gopherlinzy/gin-gorm-example</a></p>
+</blockquote>
+<h1 id="一、获取一个可执行的项目"><a href="#一、获取一个可执行的项目" class="headerlink" title="一、获取一个可执行的项目"></a>一、获取一个可执行的项目</h1><p>我自己写了一个简单的gin-gorm项目，github下载地址：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/gin-gorm-example">https://github.com/Gopherlinzy/gin-gorm-example</a><br><img src="/img/docker_go_mysql_deployment/docker1.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="1、拉取项目"><a href="#1、拉取项目" class="headerlink" title="1、拉取项目"></a>1、拉取项目</h2><p>打开Windows终端，输入命令：</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">go get github.com/Gopherlinzy/<span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-example</span><br></code></pre></td></tr></table></figure>
+<h2 id="2、配置"><a href="#2、配置" class="headerlink" title="2、配置"></a>2、配置</h2><p>只需要拉取下来，修改 conf&#x2F;app.ini 配置文件</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs powershell">[<span class="hljs-type">database</span>]<br><span class="hljs-built_in">Type</span> = mysql<br>User = 数据库名称<br>Password = 数据库密码<br>//数据库的IP地址<br>Host = <span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">3306</span><br>//数据库名称 <br>Name = blog<br>TablePrefix = blog_<br></code></pre></td></tr></table></figure>
+
+<h1 id="二、编写Dockerfile文件"><a href="#二、编写Dockerfile文件" class="headerlink" title="二、编写Dockerfile文件"></a>二、编写Dockerfile文件</h1><p><strong>Dockerfile文件就是单纯的文件并没有文件后缀</strong>，我们来了解一下，Dockerfile的作用。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs powershell">FROM golang:latest<br><br>ENV GOPROXY https://goproxy.cn,direct<br>WORKDIR <span class="hljs-variable">$GOPATH</span>/github.com/Gopherlinzy/go<span class="hljs-literal">-gorm-example</span><br><span class="hljs-built_in">COPY</span> . <span class="hljs-variable">$GOPATH</span>/github.com/Gopherlinzy/go<span class="hljs-literal">-gorm-example</span><br>RUN go build .<br><br>EXPOSE <span class="hljs-number">8080</span><br>ENTRYPOINT [<span class="hljs-string">&quot;./gin-gorm-example&quot;</span>]<br></code></pre></td></tr></table></figure>
+<h2 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h2><ol>
+<li>golang:latest 镜像为基础镜像，将工作目录设置为 <strong>$GOPATH&#x2F;src&#x2F;gin-gorm-example</strong> ，并将当前上下文目录的内容复制到 $GOPATH&#x2F;src&#x2F;gin-gorm-example 中。</li>
+<li>在进行 go build 编译完毕后，将容器启动程序设置为 <strong>.&#x2F;gin-gorm-example</strong>，也就是我们所编译的可执行文件。</li>
+<li>注意：<strong>gin-gorm-example</strong> 在 docker 容器里编译，并没有在宿主机现场编译</li>
+</ol>
+<h2 id="2、说明"><a href="#2、说明" class="headerlink" title="2、说明"></a>2、说明</h2><p>Dockerfile 文件是用于定义 Docker 镜像生成流程的配置文件，文件内容是一条条指令，每一条指令构建一层，因此每一条指令的内容，就是描述该层应当如何构建；这些指令应用于基础镜像并最终创建一个新的镜像</p>
+<h3 id="1）FROM"><a href="#1）FROM" class="headerlink" title="1）FROM"></a>1）FROM</h3><p>指定基础镜像（必须有的指令，并且必须是第一条指令）</p>
+<h3 id="2）WORKDIR"><a href="#2）WORKDIR" class="headerlink" title="2）WORKDIR"></a>2）WORKDIR</h3><p>使用 WORKDIR 指令可以来指定工作目录（或者称为当前目录），以后各层的当前目录就被改为指定的目录，如果目录不存在，WORKDIR 会帮你建立目录</p>
+<p>格式： WORKDIR &lt;工作目录路径&gt;</p>
+<h3 id="3）COPY"><a href="#3）COPY" class="headerlink" title="3）COPY"></a>3）COPY</h3><p><strong>COPY</strong> 指令将从构建上下文目录中 &lt;源路径&gt; 的文件&#x2F;目录复制到新的一层的镜像内的 &lt;目标路径&gt; 位置</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">COPY</span> &lt;源路径&gt;... &lt;目标路径&gt;<br><span class="hljs-built_in">COPY</span> [<span class="hljs-string">&quot;&lt;源路径1&gt;&quot;</span>,<span class="hljs-type">...</span> <span class="hljs-string">&quot;&lt;目标路径&gt;&quot;</span>]<br></code></pre></td></tr></table></figure>
+
+<h3 id="4）RUN"><a href="#4）RUN" class="headerlink" title="4）RUN"></a>4）RUN</h3><p>用于执行命令行命令</p>
+<p>格式：<strong>RUN</strong> &lt;命令&gt;</p>
+<h3 id="5）EXPOSE"><a href="#5）EXPOSE" class="headerlink" title="5）EXPOSE"></a>5）EXPOSE</h3><p><strong>EXPOSE</strong> 指令是声明运行时容器提供服务端口，这只是一个声明，在运行时并不会因为这个声明应用就会开启这个端口的服务</p>
+<p>格式： <strong>EXPOSE</strong> &lt;端口 1&gt; [&lt;端口 2&gt;…]</p>
+<p>在 Dockerfile 中写入这样的声明有两个好处</p>
+<ul>
+<li>帮助镜像使用者理解这个镜像服务的守护端口，以方便配置映射</li>
+<li>运行时使用随机端口映射时，也就是 <strong>docker run -P</strong> 时，会自动随机映射 <strong>EXPOSE</strong> 的端口</li>
+</ul>
+<h3 id="6）ENTRYPOINT"><a href="#6）ENTRYPOINT" class="headerlink" title="6）ENTRYPOINT"></a>6）ENTRYPOINT</h3><p><strong>ENTRYPOINT</strong> 指令是指定容器启动程序及参数</p>
+<p>ENTRYPOINT 的格式和 RUN 指令格式一样，分为两种格式</p>
+<ul>
+<li>exec 格式：</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">&lt;ENTRYPOINT&gt; <span class="hljs-string">&quot;&lt;CMD&gt;&quot;</span><br></code></pre></td></tr></table></figure>
+<ul>
+<li>shell 格式：</li>
+</ul>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">ENTRYPOINT [ <span class="hljs-string">&quot;curl&quot;</span>, <span class="hljs-string">&quot;-s&quot;</span>, <span class="hljs-string">&quot;http://ip.cn&quot;</span> ]<br></code></pre></td></tr></table></figure>
+
+<h1 id="三、构建Docker镜像"><a href="#三、构建Docker镜像" class="headerlink" title="三、构建Docker镜像"></a>三、构建Docker镜像</h1><p>gin-gorm-example 的项目根目录下执行 <strong>docker build -t gin-gorm-docker .</strong><br>该命令作用是创建&#x2F;构建镜像，-t 指定名称为 gin-gorm-docker，**.** 构建内容为当前上下文目录<br><img src="/img/docker_go_mysql_deployment/docker2.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="四、验证镜像"><a href="#四、验证镜像" class="headerlink" title="四、验证镜像"></a>四、验证镜像</h1><p>查看所有的镜像，确定刚刚构建的 <strong>gin-gorm-docker</strong>  镜像是否存在<br><img src="/img/docker_go_mysql_deployment/docker3.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="五、创建并运行一个新容器"><a href="#五、创建并运行一个新容器" class="headerlink" title="五、创建并运行一个新容器"></a>五、创建并运行一个新容器</h1><p>执行命令 docker run -p 8080:8080 gin-gorm-docker<br><img src="/img/docker_go_mysql_deployment/docker4.png" srcset="/img/loading.gif" lazyload></p>
+<p>测试我们项目的API文档网址：<a target="_blank" rel="noopener" href="http://localhost:8080/swagger/index.html">http://localhost:8080/swagger/index.html</a></p>
+<p><img src="/img/docker_go_mysql_deployment/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<p>运行成功了么？</p>
+<p>我们再测试一下用户登录这块，我在用户表自动创建这块自动插入了一条用户信息用户：admin和密码:123456，用我们的postman测试一下，测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a>。<br><img src="/img/docker_go_mysql_deployment/docker6.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们仔细看看控制台的输出了一条错误<br><img src="/img/docker_go_mysql_deployment/docker7.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们可以发现问题是在访问MySQL数据库的时候，连接数据库超时了！</p>
+<p>这就是我们接下来要解决的问题</p>
+<h1 id="六、MySQL"><a href="#六、MySQL" class="headerlink" title="六、MySQL"></a>六、MySQL</h1><h2 id="1、拉取镜像"><a href="#1、拉取镜像" class="headerlink" title="1、拉取镜像"></a>1、拉取镜像</h2><p>从 Docker 的公共仓库 Dockerhub 下载 MySQL 镜像（国内建议配个镜像），用pull指令拉取镜像，格式指令 docker pull 镜像名:版本号，不写版本号默认拉取最新版。</p>
+<p>我们这里就用5.7版本的MySQL数据库就好了。</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker pull mysql:<span class="hljs-number">5.7</span><br></code></pre></td></tr></table></figure>
+<h2 id="2、创建并运行一个MySQL容器"><a href="#2、创建并运行一个MySQL容器" class="headerlink" title="2、创建并运行一个MySQL容器"></a>2、创建并运行一个MySQL容器</h2><p>用run指令创建并运行容器</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker run <span class="hljs-literal">--name</span> mysql <span class="hljs-literal">-p</span> <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span> <span class="hljs-literal">-e</span> MYSQL_ROOT_PASSWORD=<span class="hljs-number">123456</span> <span class="hljs-literal">-d</span> mysql<br></code></pre></td></tr></table></figure>
+
+<blockquote>
+<p>说明：<br>–name mysql：指定容器名称为mysql，方便查找和使用<br>-p xxxx:yyyy：宿主机上xxxx端口对应容器中yyyy端口，在外部访问时用的是宿主机上的端口<br>-e MYSQL_ROOT_PASSWORD&#x3D;123456：给root用户设置默认密码为123456<br>-d：容器后台运行<br>mysql：镜像名称</p>
+</blockquote>
+<h2 id="3、连接数据库"><a href="#3、连接数据库" class="headerlink" title="3、连接数据库"></a>3、连接数据库</h2><p>我用的是Navicat连接MySQL。<br><img src="/img/docker_go_mysql_deployment/docker8.png" srcset="/img/loading.gif" lazyload></p>
+<p>初始化的 Mysql 应该如图<br><img src="/img/docker_go_mysql_deployment/docker9.png" srcset="/img/loading.gif" lazyload><br>创建我们的blog数据库，后续测试需要<br><img src="/img/docker_go_mysql_deployment/docker10.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="七、关联Golang项目和MySQL"><a href="#七、关联Golang项目和MySQL" class="headerlink" title="七、关联Golang项目和MySQL"></a>七、关联Golang项目和MySQL</h1><h2 id="1、删除原来的项目镜像"><a href="#1、删除原来的项目镜像" class="headerlink" title="1、删除原来的项目镜像"></a>1、删除原来的项目镜像</h2><p>由于原本的镜像存在问题，我们需要修改Dockerfile文件里的数据库的地址，我们需要删除它，此处有几种做法</p>
+<ul>
+<li>删除原本有问题的镜像，重新构建一个新镜像</li>
+<li>重新构建一个不同 name、tag 的新镜像</li>
+</ul>
+<p>删除原本的有问题的镜像，-f 是强制删除及其关联状态</p>
+<p>若不执行 -f，你需要执行 <strong>docker ps -a</strong> 查到所关联的容器，将其 rm 解除两者依赖关系</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker rmi <span class="hljs-operator">-f</span> <span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-docker</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2、修改配置文件"><a href="#2、修改配置文件" class="headerlink" title="2、修改配置文件"></a>2、修改配置文件</h2><p>将项目的配置文件 <strong>conf&#x2F;app.ini</strong>，内容修改为</p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-comment">#debug or release</span><br>RUN_MODE = debug<br><br>[<span class="hljs-type">app</span>]<br>PAGE_SIZE = <span class="hljs-number">10</span><br>JWT_SECRET = <span class="hljs-number">233</span><br><br>[<span class="hljs-type">server</span>]<br>HTTP_PORT = <span class="hljs-number">8080</span><br>READ_TIMEOUT = <span class="hljs-number">60</span><br>WRITE_TIMEOUT = <span class="hljs-number">60</span><br><br>[<span class="hljs-type">database</span>]<br><span class="hljs-built_in">TYPE</span> = mysql<br>USER = root<br>PASSWORD = <span class="hljs-number">123456</span><br>//IP地址为 容器名称：端口号<br>HOST = mysql:<span class="hljs-number">3306</span><br>NAME = blog<br>TABLE_PREFIX = blog_<br></code></pre></td></tr></table></figure>
+
+<h2 id="3、重新构建镜像"><a href="#3、重新构建镜像" class="headerlink" title="3、重新构建镜像"></a>3、重新构建镜像</h2><p>重复先前的步骤，回到 gin-gorm 的项目根目录下执行 </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker build <span class="hljs-literal">-t</span> <span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-docker</span> .<br></code></pre></td></tr></table></figure>
+<h2 id="4、创建关联并运行一个新容器"><a href="#4、创建关联并运行一个新容器" class="headerlink" title="4、创建关联并运行一个新容器"></a>4、创建关联并运行一个新容器</h2><p>我们如何将项目容器和MySQL容器创建关联？</p>
+<p>在run指令内增加命令 <strong>–link mysql:mysql</strong> 让 <strong>Golang</strong> 容器与 <strong>Mysql</strong> 容器互联；通过 <strong>–link</strong>，可以在容器内直接使用其关联的容器别名进行访问，而不通过 IP，但是–link只能解决单机容器间的关联，在分布式多机的情况下，需要通过别的方式进行连接。</p>
+<p>执行命令 </p>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker run <span class="hljs-literal">--link</span> mysql:mysql <span class="hljs-literal">-p</span> <span class="hljs-number">8080</span>:<span class="hljs-number">8080</span> <span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-docker</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/docker_go_mysql_deployment/docker11.png" srcset="/img/loading.gif" lazyload><br>MySQL容器的数据库也成功自动创建了三个数据表。<br><img src="/img/docker_go_mysql_deployment/docker12.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们测试一下数据库是否已经关联，用户登录测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a><br><img src="/img/docker_go_mysql_deployment/docker13.png" srcset="/img/loading.gif" lazyload><br>大功告成！</p>
+<h1 id="八、持久化数据库"><a href="#八、持久化数据库" class="headerlink" title="八、持久化数据库"></a>八、持久化数据库</h1><p>我们在每次启动一个 Mysql 容器时，数据库都是空的。另外容器删除之后，数据就丢失了。<br>我们学习了Docker Volume卷技术，了解了如何将数据生命周期独立于容器的生命周期之外，来更新一下我们的Mysql容器吧！</p>
+<blockquote>
+<p>Docker Volume文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46618592/article/details/126591142?spm=1001.2014.3001.5501">https://blog.csdn.net/weixin_46618592&#x2F;article&#x2F;details&#x2F;126591142?spm&#x3D;1001.2014.3001.5501</a></p>
+</blockquote>
+<h2 id="1、数据卷"><a href="#1、数据卷" class="headerlink" title="1、数据卷"></a>1、数据卷</h2><p><strong>数据卷</strong> 是被设计用来持久化数据的，数据卷的生命周期独立于容器的生命周期，Docker 不会在容器被删除后自动删除 数据卷，并且也不存在垃圾回收这样的机制来处理没有任何容器引用的 数据卷。</p>
+<p>数据卷 是一个可供一个或多个容器使用的特殊目录，它绕过 UFS，可以提供很多有用的特性：</p>
+<ul>
+<li>数据卷可以在容器之间共享和重用。</li>
+<li>对数据卷的修改会立马生效。</li>
+<li>对数据卷的更新，不会影响镜像。</li>
+<li>数据卷默认会一直存在，即使容器被删除。</li>
+</ul>
+<blockquote>
+<p>注意：<br>数据卷的使用，类似于 Linux 下对目录或文件进行 mount，镜像中的被指定为挂载点的目录中的文件会隐藏掉，能显示看的是挂载的数据卷。</p>
+</blockquote>
+<h2 id="2、如何挂载？"><a href="#2、如何挂载？" class="headerlink" title="2、如何挂载？"></a>2、如何挂载？</h2><ol>
+<li>首先创建一个目录用于存放数据卷；示例目录 E:&#x2F;home&#x2F;docker-mysql。</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">docker run --name mysql -d -p <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="hljs-number">123456</span> -v E:/home/docker-mysql:/<span class="hljs-keyword">var</span>/lib/mysql mysql:<span class="hljs-number">5.7</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/docker_go_mysql_deployment/docker14.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="2">
+<li>检查目录 E:&#x2F;home&#x2F;docker-mysql，多了很多数据库文件。</li>
+</ol>
+<p><img src="/img/docker_go_mysql_deployment/docker15.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3、验证"><a href="#3、验证" class="headerlink" title="3、验证"></a>3、验证</h2><ol>
+<li>新建一个blog数据库，并启动我们的gin-gorm-docker容器</li>
+</ol>
+<p><img src="/img/docker_go_mysql_deployment/docker16.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker17.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker18.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="2">
+<li>登录验证一下：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a></li>
+</ol>
+<p><img src="/img/docker_go_mysql_deployment/docker19.png" srcset="/img/loading.gif" lazyload></p>
+<ol start="3">
+<li>用我们的token，去新增tags数据表的记录<br><a target="_blank" rel="noopener" href="http://localhost:8080/api/v1/tags?token=(%E7%99%BB%E5%BD%95%E5%90%8E%E6%8B%BF%E5%88%B0%E7%9A%84token)&amp;name=linzy&amp;state=1&amp;created_by=linzy">http://localhost:8080/api/v1/tags?token=(登录后拿到的token)&amp;name=linzy&amp;state=1&amp;created_by=linzy</a></li>
+</ol>
+<p><img src="/img/docker_go_mysql_deployment/docker20.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker21.png" srcset="/img/loading.gif" lazyload><br>4. 删除MySQL容器，在重新用镜像启动</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"># 查看容器列表<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker ps<br>CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                               NAMES<br>e57733001baa   gin-gorm-docker   <span class="hljs-string">&quot;./go-gin-example&quot;</span>       <span class="hljs-number">7</span> minutes ago    Up <span class="hljs-number">7</span> minutes    <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>:<span class="hljs-number">8080</span>-&gt;<span class="hljs-number">8080</span>/tcp              beautiful_curran<br>c44788bd68d4   mysql:<span class="hljs-number">5.7</span>         <span class="hljs-string">&quot;docker-entrypoint.s…&quot;</span>   <span class="hljs-number">35</span> minutes ago   Up <span class="hljs-number">21</span> minutes   <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>:<span class="hljs-number">3306</span>-&gt;<span class="hljs-number">3306</span>/tcp, <span class="hljs-number">33060</span>/tcp   mysql<br><br># 停止正在运行的MySQL容器<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker stop c44788bd68d4<br>c44788bd68d4<br><br># 删除MySQL容器<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker rm c44788bd68d4<br>c44788bd68d4<br><br># 重新将容器挂载到原来的目录<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker run --name mysql -d -p <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="hljs-number">123456</span> -v E:/home/docker-mysql:/<span class="hljs-keyword">var</span>/lib/mysql mysql:<span class="hljs-number">5.7</span><br><span class="hljs-number">2</span>de27acad62b21693c79cc0687453ae2c7cb3d0f8f1f478c8715303afcdf497a<br></code></pre></td></tr></table></figure>
+<p><img src="/img/docker_go_mysql_deployment/docker22.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker23.png" srcset="/img/loading.gif" lazyload></p>
+<blockquote>
+<p>验证完毕，你也可以操作一下：创建一些测试表和数据，然后删除当前容器，重新创建的容器，数据库数据也依然存在（当然了数据卷指向要一致）</p>
+</blockquote>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Docker%E5%AE%B9%E5%99%A8/" class="category-chain-item">Docker容器</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/Docker/">#Docker</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%AE%B9%E5%99%A8/">#容器</a>
+      
+        <a href="/tags/linux/">#linux</a>
+      
+        <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/">#云原生</a>
+      
+        <a href="/tags/%E8%BF%90%E7%BB%B4/">#运维</a>
+      
+        <a href="/tags/mysql/">#mysql</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Docker部署Golang项目和Mysql镜像</div>
+      <div>https://gopherlinzy.github.io/2022/08/15/docker-go-mysql-deployment/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年8月15日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/08/26/docker-CommonComands/" title="Docker底层原理和常用命令">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Docker底层原理和常用命令</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/08/15/docker-begin/" title="Docker的入门与安装">
+                        <span class="hidden-mobile">Docker的入门与安装</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

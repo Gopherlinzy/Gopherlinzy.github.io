@@ -1,0 +1,823 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="一、Casbin概述Casbin 是一个强大的、高效的开源访问控制框架，其权限管理机制支持多种访问控制模型。Casbin参考文档链接：https:&#x2F;&#x2F;casbin.org&#x2F;github项目链接：https:&#x2F;&#x2F;github.com&#x2F;casbin&#x2F;casbin Casbin 可以：  支持自定义请求的格式，默认的请求格式为 **{subject, object, action}**。 具有访问控制模">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Gin框架入门-Casbin入门指南(ACL、RBAC、域内RBAC模型)">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/07/19/gin-Casbin1/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="一、Casbin概述Casbin 是一个强大的、高效的开源访问控制框架，其权限管理机制支持多种访问控制模型。Casbin参考文档链接：https:&#x2F;&#x2F;casbin.org&#x2F;github项目链接：https:&#x2F;&#x2F;github.com&#x2F;casbin&#x2F;casbin Casbin 可以：  支持自定义请求的格式，默认的请求格式为 **{subject, object, action}**。 具有访问控制模">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+<meta property="article:published_time" content="2022-07-18T23:38:49.000Z">
+<meta property="article:modified_time" content="2022-07-19T00:00:37.647Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="gin">
+<meta property="article:tag" content="casbin">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Gin框架入门-Casbin入门指南(ACL、RBAC、域内RBAC模型) - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg3.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Gin框架入门-Casbin入门指南(ACL、RBAC、域内RBAC模型)"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-07-19 07:38" pubdate>
+          2022年7月19日 早上
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.2k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          60 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Gin框架入门-Casbin入门指南(ACL、RBAC、域内RBAC模型)</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：9 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="一、Casbin概述"><a href="#一、Casbin概述" class="headerlink" title="一、Casbin概述"></a>一、Casbin概述</h1><p>Casbin 是一个强大的、高效的开源访问控制框架，其权限管理机制支持多种访问控制模型。<br>Casbin参考文档链接：<a target="_blank" rel="noopener" href="https://casbin.org/">https://casbin.org/</a><br>github项目链接：<a target="_blank" rel="noopener" href="https://github.com/casbin/casbin">https://github.com/casbin/casbin</a></p>
+<p><strong>Casbin 可以</strong>：</p>
+<ol>
+<li>支持自定义请求的格式，默认的请求格式为 **{subject, object, action}**。</li>
+<li>具有访问控制<strong>模型model</strong>和<strong>策略policy</strong>两个核心概念。</li>
+<li>支持RBAC中的<strong>多层角色继承</strong>，不止主体可以有角色，资源也可以具有角色。</li>
+<li>支持内置的<strong>超级用户</strong> 例如：root 或 administrator。超级用户可以执行任何操作而无需显式的权限声明。</li>
+<li>支持多种内置的<strong>操作符</strong>，如 keyMatch，方便对路径式的资源进行管理，如 &#x2F;foo&#x2F;bar 可以映射到 &#x2F;foo*</li>
+</ol>
+<p><strong>Casbin 不能</strong>：</p>
+<ol>
+<li><strong>身份认证</strong> authentication（即验证用户的用户名和密码），Casbin 只负责访问控制。应该有其他专门的组件负责身份认证，然后由 Casbin 进行访问控制，二者是相互配合的关系。</li>
+<li><strong>管理用户列表或角色列表</strong>。 Casbin 认为由项目自身来管理用户、角色列表更为合适， 用户通常有他们的密码，但是 Casbin 的设计思想并不是把它作为一个存储密码的容器。 而是存储RBAC方案中用户和角色之间的映射关系。</li>
+</ol>
+<h1 id="二、Casbin工作原理"><a href="#二、Casbin工作原理" class="headerlink" title="二、Casbin工作原理"></a>二、Casbin工作原理</h1><p>在 Casbin 中, 访问控制模型被抽象为基于 <strong>PERM (Policy, Effect, Request, Matcher)</strong> 的一个文件。 因此，切换或升级项目的授权机制与修改配置一样简单。 您可以通过组合可用的模型来定制您自己的访问控制模型。 例如，您可以在一个model中结合RBAC角色和ABAC属性，并共享一组policy规则。</p>
+<p>PERM模式由四个基础 <strong>(Policy, Effect, Request, Matcher)</strong> 组成，描述了资源与用户之间的关系。</p>
+<h1 id="三、Model语法"><a href="#三、Model语法" class="headerlink" title="三、Model语法"></a>三、Model语法</h1><ul>
+<li><p>Model CONF 至少应包含四个部分: **[request_definition], [policy_definition], [policy_effect], [matchers]**。</p>
+</li>
+<li><p>如果 model 使用 RBAC, 还需要添加 <strong>[role_definition]</strong> 部分。</p>
+</li>
+<li><p>Model CONF 文件可以包含注释。注释以 <strong>#</strong> 开头， <strong>#</strong> 会注释该行剩余部分。</p>
+</li>
+</ul>
+<h2 id="1、Request定义"><a href="#1、Request定义" class="headerlink" title="1、Request定义"></a>1、Request定义</h2><p><strong>Request</strong> 定义请求参数。基本请求是一个元组对象，至少需要<strong>主题</strong>(访问实体)、<strong>对象</strong>(访问资源) 和<strong>动作</strong>(访问方式)</p>
+<blockquote>
+<p>例如，一个请求可能长这样： <strong>r&#x3D;{sub,obj,act}</strong><br>它实际上定义了我们应该提供访问控制匹配功能的参数名称和顺序。</p>
+</blockquote>
+<p><strong>[request_definition]</strong> 部分用于request的定义，它明确了 e.Enforce(…) 函数中参数的含义。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[request_definition]<br>r = sub, obj, act<br></code></pre></td></tr></table></figure>
+<p><strong>sub, obj, act</strong> 表示经典三元组: 访问实体 (Subject)，访问资源 (Object) 和访问方法 (Action)。 但是, 你可以自定义你自己的请求表单, 如果不需要指定特定资源，则可以这样定义 <strong>sub、act</strong> ，或者如果有两个访问实体, 则为 <strong>sub、sub2、obj、act</strong>。</p>
+<h2 id="2、Policy定义"><a href="#2、Policy定义" class="headerlink" title="2、Policy定义"></a>2、Policy定义</h2><p><strong>Policy</strong> 定义访问策略模式。事实上，它是在<strong>Policy</strong>规则文件中定义字段的名称和顺序。</p>
+<blockquote>
+<p>例如： p&#x3D;{sub, obj, act} 或 p&#x3D;{sub, obj, act, eft}<br>注：如果未定义eft (policy result)，则策略文件中的结果字段将不会被读取， 和匹配的策略结果将<strong>默认被允许</strong> allow。</p>
+</blockquote>
+<p><strong>[policy_definition]</strong> 部分是对policy的定义，以下文的 model 配置为例:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">[policy_definition]<br>p = sub, obj, act<br>p2 = sub, act<br></code></pre></td></tr></table></figure>
+<ul>
+<li>这些是我们对policy规则的具体描述<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">p, alice, data1, read<br>p2, bob, write-all-objects<br></code></pre></td></tr></table></figure></li>
+</ul>
+<p>policy部分的每一行称之为一个策略规则， 每条策略规则通常以形如<strong>p, p2</strong>的<strong>policy type</strong>开头。 如果存在多个policy定义，那么我们会根据前文提到的<strong>policy type</strong>与具体的某条定义匹配。 上面的policy的绑定关系将会在matcher中使用， 罗列如下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">(alice, data1, read) -&gt; (p.sub, p.obj, p.act)<br>(bob, write-all-objects) -&gt; (p2.sub, p2.act)<br></code></pre></td></tr></table></figure>
+<h2 id="3、Matcher定义"><a href="#3、Matcher定义" class="headerlink" title="3、Matcher定义"></a>3、Matcher定义</h2><p><strong>Matcher</strong> 匹配请求 <strong>Request</strong> 和策略 <strong>Policy</strong> 的规则。</p>
+<blockquote>
+<p>例如： m &#x3D; r.sub &#x3D;&#x3D; p.sub &amp;&amp; r.act &#x3D;&#x3D; p.act &amp;&amp; r.obj &#x3D;&#x3D; p.obj<br>这个匹配规则意味着如果请求Request的参数(访问实体，访问资源和访问方式)匹配， 可以在策略 Policy 中找到资源和方法，那么策略 Policy 结果（p.eft）便会返回。 策略的结果将保存在 p.eft 中。</p>
+</blockquote>
+<p><strong>[matchers]</strong> 是策略匹配程序的定义。匹配程序是表达式。它定义了如何根据请求评估策略规则。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[matchers]<br>m = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act<br></code></pre></td></tr></table></figure>
+<p>上述匹配器是最简单的，这意味着请求中的主题、对象和行动应该与策略规则中的匹配。</p>
+<p>您可以在匹配器中使用诸如  +, -, *, &#x2F;  和逻辑操作员，例如 <strong>&amp;&amp;, ||, !</strong></p>
+<h2 id="4、Policy-effect定义"><a href="#4、Policy-effect定义" class="headerlink" title="4、Policy effect定义"></a>4、Policy effect定义</h2><p><strong>effect</strong> 可以被理解为一种模型，在这种模型中，对匹配结果再次作出逻辑组合判断。</p>
+<blockquote>
+<p>例如： e &#x3D; some (where (p.eft &#x3D;&#x3D; allow))<br>这句话意味着，如果匹配的策略结果存在，并且 p.eft 是 <strong>allow</strong> 允许的，那么最终结果为 true。</p>
+</blockquote>
+<p><strong>[policy_effect]</strong> 是策略效果的定义。 它确定如果多项政策规则与请求相符，是否应批准访问请求。 例如，一项规则允许，另一项规则则加以拒绝。</p>
+<h3 id="1）some-where-p-eft-x3D-x3D-allow"><a href="#1）some-where-p-eft-x3D-x3D-allow" class="headerlink" title="1）some(where (p.eft &#x3D;&#x3D; allow))"></a>1）some(where (p.eft &#x3D;&#x3D; allow))</h3><p>策略效果表示如果有任何匹配的策略规则 <strong>allow</strong>, 最终效果是 <strong>allow</strong> (aka allow-override). p.eft 是策略的效果，它可以 <strong>allow</strong> 或 <strong>deny</strong>。 它是可选的，默认值是 <strong>allow</strong>。 因为我们没有在上面指定它，所以它使用默认值。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[policy_effect]<br>e = some(where (p.eft == allow))<br></code></pre></td></tr></table></figure>
+<h3 id="2）some-where-p-eft-x3D-x3D-deny"><a href="#2）some-where-p-eft-x3D-x3D-deny" class="headerlink" title="2）some(where (p.eft &#x3D;&#x3D; deny))"></a>2）some(where (p.eft &#x3D;&#x3D; deny))</h3><p>这意味着如果没有匹配的策略规则<strong>deny</strong>，最终效果是<strong>allow</strong>（又名拒绝覆盖）。<strong>some</strong>表示：如果存在一个匹配的策略规则。<strong>any</strong>表示：所有匹配的策略规则（此处未使用）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[policy_effect]<br>e = !some(where (p.eft == deny))<br></code></pre></td></tr></table></figure>
+
+<h3 id="3）some-where-p-eft-x3D-x3D-allow-amp-amp-some-where-p-eft-x3D-x3D-deny"><a href="#3）some-where-p-eft-x3D-x3D-allow-amp-amp-some-where-p-eft-x3D-x3D-deny" class="headerlink" title="3）some(where (p.eft &#x3D;&#x3D; allow)) &amp;&amp; !some(where (p.eft &#x3D;&#x3D; deny))"></a>3）some(where (p.eft &#x3D;&#x3D; allow)) &amp;&amp; !some(where (p.eft &#x3D;&#x3D; deny))</h3><p>表示至少有一个匹配的策略规则 <strong>allow</strong>，并且没有匹配的策略规则<strong>deny</strong>。因此，通过这种方式，允许和拒绝授权都受支持，并且拒绝覆盖。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[policy_effect]<br>e = some(where (p.eft == allow)) &amp;&amp; !some(where (p.eft == deny))<br></code></pre></td></tr></table></figure>
+
+<h2 id="5、Role-定义"><a href="#5、Role-定义" class="headerlink" title="5、Role 定义"></a>5、Role 定义</h2><p><strong>[role_definition]</strong> 是RBAC角色继承关系的定义。 Casbin 支持 RBAC 系统的多个实例, 例如, <strong>用户可以具有角色及其继承关系</strong>, <strong>资源也可以具有角色及其继承关系</strong>。 这两个 RBAC 系统不会互相干扰。</p>
+<p>此部分是可选的。 如果在模型中不使用 RBAC 角色, 则省略此部分。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">[role_definition]<br>g = _, _<br>g2 = _, _<br></code></pre></td></tr></table></figure>
+
+<p>g 是一个 <strong>RBAC系统</strong>, g2 是另一个 <strong>RBAC 系统</strong>。 _, _表示角色继承关系的前项和后项，即<strong>前项继承后项角色的权限</strong>。 一般来讲，如果您需要进行角色和用户的绑定，直接使用g 即可。 当您需要表示角色（或者组）与用户和资源的绑定关系时，可以使用g 和 g2 这样的表现形式。</p>
+<p>在Casbin里，我们以policy表示中实际的用户角色映射关系 (或是资源-角色映射关系)，例如:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">p, data2_admin, data2, read<br>g, alice, data2_admin<br></code></pre></td></tr></table></figure>
+
+<p>这意味着 <strong>alice</strong> 是角色 <strong>data2_admin</strong>的一个成员。 <strong>alice</strong> 在这里可以是用户、资源或角色。 Cabin 只是将其识别为一个字符串。</p>
+<p>接下来在matcher中，应该像下面的例子一样检查角色信息：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[matchers]<br>m = g(r.sub, p.sub) &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act<br></code></pre></td></tr></table></figure>
+<p>这意味着在请求 Request 中应该在policy中包含sub角色。<br>例如 r &#x3D; {sub, dom, obj, act}</p>
+<blockquote>
+<p><strong>NOTE</strong></p>
+<ol>
+<li>Casbin 只存储用户角色的映射关系。</li>
+<li>Cabin 没有验证用户是否是有效的用户，或者角色是一个有效的角色。 这应该通过认证来解决。</li>
+<li>RBAC 系统中的用户名称和角色名称不应相同。因为Casbin将用户名和角色识别为字符串， 所以当前语境下Casbin无法得出这个字面量到底指代用户 <strong>alice</strong> 还是角色 <strong>alice</strong>。 这时，使用明确的 <strong>role_alice</strong> ，问题便可迎刃而解。</li>
+<li>假设<strong>A</strong>具有角色 <strong>B</strong>，<strong>B</strong> 具有角色 <strong>C</strong>，并且 <strong>A</strong> 有角色 <strong>C</strong>。 这种传递性在当前版本会造成死循环。</li>
+</ol>
+</blockquote>
+<h1 id="四、ASL模型"><a href="#四、ASL模型" class="headerlink" title="四、ASL模型"></a>四、ASL模型</h1><p><strong>在线编辑</strong><br>您还可以使用在线编辑器 ( <a target="_blank" rel="noopener" href="https://casbin.org/editor/">https://casbin.org/editor/</a> ) 在 Web 浏览器中编写您的 Casbin 模型和策略。 </p>
+<h2 id="1、Model"><a href="#1、Model" class="headerlink" title="1、Model"></a>1、Model</h2><p>Model规定了权限由 <strong>sub、obj、act</strong>三要素组成，只有在策略Policy列表中存在于请求Request完全相同的策略时，该请求才能通过。匹配器的结构通过 <strong>p.eft</strong> 获取， <strong>some(where (p.eft &#x3D;&#x3D; allow))</strong> 表示有任意一条 policy rule 满足, 则最终结果为 allow</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs go"># 请求<br># sub ——&gt; 想要访问资源的用户角色(Subject)——请求实体<br># obj ——&gt; 访问的资源(Object)<br># act ——&gt; 访问的方法(Action: get、post...)<br>[request_definition]<br>r = sub,obj,act<br><br><br># 策略(.csv文件p的格式，定义的每一行为policy rule;p为policy rule的名字。)<br>[policy_definition]<br>p = sub,obj,act<br><br><br># 策略效果<br>[policy_effect]<br>e = some(where (p.eft == allow))<br># 上面表示有任意一条 policy rule 满足, 则最终结果为 allow；p.eft它可以是allow或deny，它是可选的，默认是allow<br><br># 匹配器<br>[matchers]<br>m = r.sub == p.sub &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act<br></code></pre></td></tr></table></figure>
+<h2 id="2、Policy"><a href="#2、Policy" class="headerlink" title="2、Policy"></a>2、Policy</h2><p>Policy表示谁能对什么资源进行什么操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">p, linzy, data1, read<br>p, hhh, data2, write<br></code></pre></td></tr></table></figure>
+<p>linzy 对 资源 data1 有 read 权限<br>hhh 对 资源 data2 有 write 权限</p>
+<h2 id="3、Request"><a href="#3、Request" class="headerlink" title="3、Request"></a>3、Request</h2><p>Request请求的策略</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">linzy, data1, read<br>linzy, data2, read<br>hhh, data2, write<br>hhh, data2, read<br></code></pre></td></tr></table></figure>
+
+<h2 id="4、Enforcement-Result"><a href="#4、Enforcement-Result" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gin_Casbin1/csb1.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="五、RBAC模型"><a href="#五、RBAC模型" class="headerlink" title="五、RBAC模型"></a>五、RBAC模型</h1><p>将某些具有特定模式的<strong>主题</strong>、<strong>对象</strong>或<strong>域&#x2F;租户</strong>自动授予角色。RBAC 中的模式匹配函数可以帮助您做到这一点。</p>
+<p><strong>[role_definition]</strong> 是RBAC角色继承关系的定义。 Casbin 支持 RBAC 系统的多个实例, 例如, <strong>用户可以具有角色及其继承关系</strong>, <strong>资源也可以具有角色及其继承关系</strong>，****。 </p>
+<h2 id="1、Model-1"><a href="#1、Model-1" class="headerlink" title="1、Model"></a>1、Model</h2><p>Model规定了权限由 <strong>sub、obj、act</strong>三要素组成，只有在策略Policy列表中<strong>请求Request</strong> 或者 <strong>继承的角色</strong>里存在完全相同的策略时，该请求才能通过。匹配器的结构通过 <strong>p.eft</strong> 获取， <strong>some(where (p.eft &#x3D;&#x3D; allow))</strong> 表示有任意一条 policy rule 满足, 则最终结果为 allow</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go">#请求入参 （实体, 资源, 方法）<br>[request_definition]<br>r = sub, obj, act<br><br>#策略 （实体, 资源, 方法）<br>[policy_definition]<br>p = sub, obj, act<br><br>#按照角色权限，g = 用户, 角色<br>#用户继承角色的资源和方法<br>[role_definition]<br>g = _, _<br><br>#策列效果 表示有任意一条 policy rule 满足, 则最终结果为 allow；p.eft它可以是allow或deny，它是可选的，默认是allow<br>[policy_effect]<br>e = some(where (p.eft == allow))<br><br>#在权限表 p 中是否能找到用户和继承的角色的资源和方法<br>[matchers]<br>m = g(r.sub, p.sub) &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act<br></code></pre></td></tr></table></figure>
+<h2 id="2、Policy-1"><a href="#2、Policy-1" class="headerlink" title="2、Policy"></a>2、Policy</h2><p>Policy表示谁能对什么资源进行什么操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">p, linzy, data1, read<br>p, hhh, data2, write<br>p, data1_admin, data1, write<br>p, data2_admin, data2, read<br><br>g, linzy, data2_admin<br>g, hhh, data1_admin<br></code></pre></td></tr></table></figure>
+<p>linzy 对 资源 data1 和 data2 有 read 权限<br>hhh 对 资源 data2 和 data 1有 write 权限<br>data1_admin 对 资源 data1 有 write 权限<br>data2_admin 对 资源 data2 有 read 权限</p>
+<p>linzy 继承了 角色data2_admin 的所有权限<br>hhh 继承了 角色 data1_admin 的所有权限</p>
+<h2 id="3、Request-1"><a href="#3、Request-1" class="headerlink" title="3、Request"></a>3、Request</h2><p>Request请求的策略</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">linzy, data1, read<br>linzy, data2, write<br>hhh, data1, read<br>hhh, data2, write<br>data2_admin, data1, read<br></code></pre></td></tr></table></figure>
+
+<h2 id="4、Enforcement-Result-1"><a href="#4、Enforcement-Result-1" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gin_Casbin1/csb2.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="六、域内RBAC模型"><a href="#六、域内RBAC模型" class="headerlink" title="六、域内RBAC模型"></a>六、域内RBAC模型</h1><h2 id="1、域租户的角色定义"><a href="#1、域租户的角色定义" class="headerlink" title="1、域租户的角色定义"></a>1、域租户的角色定义</h2><p>在Casbin中的RBAC角色可以是全局或是基于特定于域的。 特定域的角色意味着当用户处于不同的域&#x2F;租户群体时，用户所表现的角色也不尽相同。 这对于像云服务这样的大型系统非常有用，因为用户通常分属于不同的租户群体。</p>
+<p>域&#x2F;租户的角色定义应该类似于:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[role_definition]<br>g = _, _, _<br></code></pre></td></tr></table></figure>
+<p>第三个 <strong>_</strong> 表示域&#x2F;租户的名称, 此部分不应更改。</p>
+<h2 id="2、Model"><a href="#2、Model" class="headerlink" title="2、Model"></a>2、Model</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go">#请求入参 (实体, 域/租户, 资源, 方法)<br>[request_definition]<br>r = sub, dom, obj, act<br><br>#权限模型 (实体, 域/租户, 资源, 方法)<br>[policy_definition]<br>p = sub, dom, obj, act<br><br># 域匹配规则 g = 用户, 角色, 域/租户<br>[role_definition]<br>g = _, _, _<br><br>#策略效果<br>[policy_effect]<br>e = some(where (p.eft == allow))<br><br>#在权限表 (p)中同一域/租户中的请求是否存在 相同的资源和方法<br>[matchers]<br>m = g(r.sub, p.sub, r.dom) &amp;&amp; r.dom == p.dom &amp;&amp; r.obj == p.obj &amp;&amp; r.act == p.act<br></code></pre></td></tr></table></figure>
+
+<h2 id="3、Policy"><a href="#3、Policy" class="headerlink" title="3、Policy"></a>3、Policy</h2><p>Policy表示谁能对什么资源进行什么操作</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">p, admin, domain1, data1, read<br>p, admin, domain1, data1, write<br>p, admin, domain2, data2, read<br>p, admin, domain2, data2, write<br><br>g, linzy, admin, domain1<br>g, hhh, admin, domain2<br></code></pre></td></tr></table></figure>
+
+<p>admin 在 domain1 域中  对 资源data1 有 read 和 write 权限<br>admin 在 domain2 域中 对 资源data2 有 read 和 write 权限</p>
+<p>用户 linzy 继承 admin 在 domain1 域中 的所有权限<br>用户 hhh 继承 admin 在 domain2 域中 的所有权限</p>
+<h2 id="3、Request-2"><a href="#3、Request-2" class="headerlink" title="3、Request"></a>3、Request</h2><p>Request请求的策略</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">linzy, domain1, data1, read<br>linzy, domain1, data2, read<br>hhh, domain2, data1, read<br>hhh, domain2, data2, read<br>admin, domain1, data1, read<br></code></pre></td></tr></table></figure>
+<h2 id="4、Enforcement-Result-2"><a href="#4、Enforcement-Result-2" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/gin_Casbin1/csb3.png" srcset="/img/loading.gif" lazyload></p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Gin%E6%A1%86%E6%9E%B6/" class="category-chain-item">Gin框架</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/gin/">#gin</a>
+      
+        <a href="/tags/casbin/">#casbin</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Gin框架入门-Casbin入门指南(ACL、RBAC、域内RBAC模型)</div>
+      <div>https://gopherlinzy.github.io/2022/07/19/gin-Casbin1/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年7月19日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/07/19/gin-Casbin2/" title="Gin框架入门-Casbin进阶之策略管理API使用方法">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">Gin框架入门-Casbin进阶之策略管理API使用方法</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/07/19/gin-JWT/" title="Gin框架入门-JWT认证">
+                        <span class="hidden-mobile">Gin框架入门-JWT认证</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>

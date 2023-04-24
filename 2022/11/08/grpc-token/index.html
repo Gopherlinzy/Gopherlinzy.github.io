@@ -1,0 +1,779 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断">
+<meta property="og:type" content="article">
+<meta property="og:title" content="gRPC（七）进阶：自定义身份验证">
+<meta property="og:url" content="https://gopherlinzy.github.io/2022/11/08/grpc-token/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
+<meta property="article:published_time" content="2022-11-08T05:19:06.000Z">
+<meta property="article:modified_time" content="2022-11-08T05:26:37.554Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="go">
+<meta property="article:tag" content="微服务">
+<meta property="article:tag" content="grpc">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>gRPC（七）进阶：自定义身份验证 - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="gRPC（七）进阶：自定义身份验证"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2022-11-08 13:19" pubdate>
+          2022年11月8日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          7.8k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          65 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">gRPC（七）进阶：自定义身份验证</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：6 个月前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/go-grpc-example">点击跳转</a><br>gRPC官方文档：<a target="_blank" rel="noopener" href="https://grpc.io/docs/languages/go/basics/">点击跳转</a><br>在前面的章节中，我们介绍了两种可全局认证的方法：</p>
+<ul>
+<li><a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/03/grpc-tls/">基于 CA 的 TLS 证书认证</a></li>
+<li><a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/07/grpc-interceptor/">拦截器 interceptor</a></li>
+</ul>
+<p>而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。</p>
+</blockquote>
+<h1 id="一、概述"><a href="#一、概述" class="headerlink" title="一、概述"></a>一、概述</h1><p>gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断用户是否登陆、以及权限等，实现Token认证的前提是，需要定义一个结构体，并实现<code>credentials.PerRPCCredentials</code>接口。</p>
+<h2 id="1、credentials-PerRPCCredentials-接口"><a href="#1、credentials-PerRPCCredentials-接口" class="headerlink" title="1、credentials.PerRPCCredentials 接口"></a>1、credentials.PerRPCCredentials 接口</h2><p>类型定义：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PerRPCCredentials <span class="hljs-keyword">interface</span> &#123;<br>	<span class="hljs-comment">// 返回需要认证的必要信息</span><br>	GetRequestMetadata(ctx context.Context, uri ...<span class="hljs-type">string</span>) (<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>)<br>	<span class="hljs-comment">// 是否使用安全链接(TLS)</span><br>	RequireTransportSecurity() <span class="hljs-type">bool</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<p>在 gRPC 中默认定义了 <code>PerRPCCredentials</code>，是 gRPC 默认提供用于自定义认证的接口，它的作用是将所需的安全认证信息添加到每个 RPC 方法的上下文中。其包含 2 个方法：</p>
+<ul>
+<li><code>GetRequestMetadata</code>：获取当前请求认证所需的元数据（metadata），以 map 的形式返回本次调用的授权信息，ctx 是用来控制超时的</li>
+<li><code>RequireTransportSecurity</code>：是否需要基于 TLS 认证进行安全传输，如果返回 true 则说明该 Credentials 需要在一个有 TLS 认证的安全连接上传输，如果当前连接并没有使用 TLS 则会报错：</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">transport: cannot send secure credentials on an insecure connection<br></code></pre></td></tr></table></figure>
+
+<h2 id="2、实现流程"><a href="#2、实现流程" class="headerlink" title="2、实现流程"></a>2、实现流程</h2><ul>
+<li>在发出请求之前，gRPC 会将 Credentials（认证凭证）存放在 metadata（元数据）中进行传递。</li>
+<li>在真正发起调用之前，gRPC 会通过 GetRequestMetadata函数，将用户定义的 Credentials（认证凭证）提取出来，并添加到 metadata（元数据）中，随着请求一起传递到服务端。</li>
+<li>然后服务端从 metadata 中取出 Credentials 进行有效性校验。</li>
+</ul>
+<h1 id="二、实现自定义身份验证"><a href="#二、实现自定义身份验证" class="headerlink" title="二、实现自定义身份验证"></a>二、实现自定义身份验证</h1><p>具体分为以下两步：</p>
+<ul>
+<li>1）客户端请求时带上 Credentials；</li>
+<li>2）服务端取出 Credentials，并验证有效性，一般配合拦截器使用（这里我们使用两种方法，拦截器以及RPC方法）。</li>
+</ul>
+<h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span>-grpc-example<br>├─client<br>│  ├─token_client<br>│  │   └──client.<span class="hljs-keyword">go</span><br>├─pkg<br>│  ├─token<br>│  │   └──token.<span class="hljs-keyword">go</span><br>├─proto<br>│  ├─token<br>│  │   └──token.proto<br>└─server<br>    ├─token_server<br>	│  └──server.<span class="hljs-keyword">go</span><br></code></pre></td></tr></table></figure>
+
+<h2 id="2、编写IDL"><a href="#2、编写IDL" class="headerlink" title="2、编写IDL"></a>2、编写IDL</h2><p>在 proto&#x2F;token 文件夹下的 token.proto 文件中，写入如下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go">syntax = <span class="hljs-string">&quot;proto3&quot;</span>;<br><br>option go_package = <span class="hljs-string">&quot;./proto/token;token&quot;</span>;<br><span class="hljs-keyword">package</span> tokenservice;<br><br><span class="hljs-comment">// 验证参数</span><br>message TokenValidateParam &#123;<br>  <span class="hljs-type">string</span> token = <span class="hljs-number">1</span>;<br>  <span class="hljs-type">int32</span> uid = <span class="hljs-number">2</span>;<br>&#125;<br><br><span class="hljs-comment">// 请求参数</span><br>message Request &#123;<br>  <span class="hljs-type">string</span> name = <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-comment">// 请求返回</span><br>message Response &#123;<br>  <span class="hljs-type">int32</span> uid = <span class="hljs-number">1</span>;<br>  <span class="hljs-type">string</span> name = <span class="hljs-number">2</span>;<br>&#125;<br><br><span class="hljs-comment">// 服务</span><br>service TokenService &#123;<br>  rpc Token(Request) returns (Response);<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>在Makefile文件中写入：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">token:<br>	protoc --go_out=. --<span class="hljs-keyword">go</span>-grpc_out=. ./proto/token<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
+<p>用<code>make token</code>指令生成Go代码：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">➜ <span class="hljs-built_in">make</span> token<br>protoc --go_out=. --<span class="hljs-keyword">go</span>-grpc_out=. ./proto/token<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
+<p><img src="/img/grpc_token/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3、编写基础模板和空定义"><a href="#3、编写基础模板和空定义" class="headerlink" title="3、编写基础模板和空定义"></a>3、编写基础模板和空定义</h2><p>我们先把基础的模板和空定义写出来在进行完善</p>
+<h3 id="1）server-go"><a href="#1）server-go" class="headerlink" title="1）server.go"></a>1）server.go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> Address = <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span><br><br><span class="hljs-keyword">type</span> TokenService <span class="hljs-keyword">struct</span> &#123;<br>	token.UnimplementedTokenServiceServer<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, Address)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;start error:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	<span class="hljs-keyword">var</span> opts []grpc.ServerOption<br>	<br>	server := grpc.NewServer(opts...)<br>	token.RegisterTokenServiceServer(server, &amp;TokenService&#123;&#125;)<br><br>	fmt.Println(<span class="hljs-string">&quot;服务启动成功....&quot;</span>)<br>	server.Serve(listen)<br>&#125;<br><br></code></pre></td></tr></table></figure>
+
+<h3 id="2）client-go"><a href="#2）client-go" class="headerlink" title="2）client.go"></a>2）client.go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> Address = <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> opts []grpc.DialOption<br>	<br>	conn, err := grpc.Dial(Address, opts...)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;grpc.Dial error:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">defer</span> conn.Close()<br>	<span class="hljs-comment">// 实例化客户端</span><br>	client := token.NewTokenServiceClient(conn)<br><br>	<span class="hljs-comment">// 调用具体方法</span><br>	token, err := client.Token(context.Background(), &amp;token.Request&#123;Name: <span class="hljs-string">&quot;linzy&quot;</span>&#125;)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;client.Token error:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	fmt.Println(<span class="hljs-string">&quot;return result:&quot;</span>, token)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="4、实现PerRPCCredentials-接口"><a href="#4、实现PerRPCCredentials-接口" class="headerlink" title="4、实现PerRPCCredentials 接口"></a>4、实现PerRPCCredentials 接口</h2><p>我们在 pkg&#x2F;token 目录里的 token.go 文件内实现PerRPCCredentials 接口的方法：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> IsTLS = <span class="hljs-literal">false</span><br><br><span class="hljs-comment">// 定义一个认证的结构体，这里是因为我在porto写好了一个数据结构</span><br><span class="hljs-comment">// 也可以自定义认证字段</span><br><span class="hljs-keyword">type</span> TokenAuth <span class="hljs-keyword">struct</span> &#123;<br>	token.TokenValidateParam<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(x *TokenAuth)</span></span> GetRequestMetadata(ctx context.Context, uri ...<span class="hljs-type">string</span>) (<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// 将 Credentials（认证凭证）存放在 metadata（元数据）中进行传递。</span><br>	<span class="hljs-keyword">return</span> <span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">string</span>&#123;<br>		<span class="hljs-string">&quot;uid&quot;</span>:   strconv.FormatInt(<span class="hljs-type">int64</span>(x.GetUid()), <span class="hljs-number">10</span>),<br>		<span class="hljs-string">&quot;token&quot;</span>: x.GetToken(),<br>	&#125;, <span class="hljs-literal">nil</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(x *TokenAuth)</span></span> RequireTransportSecurity() <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> IsTLS<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="5、实现认证功能"><a href="#5、实现认证功能" class="headerlink" title="5、实现认证功能"></a>5、实现认证功能</h2><p>我们已经实现了客户端请求时带上 Credentials 凭证，后面就需要实现服务端的功能，在获取授权信息并校验有效性。</p>
+<h3 id="1）实现拦截器认证"><a href="#1）实现拦截器认证" class="headerlink" title="1）实现拦截器认证"></a>1）实现拦截器认证</h3><p>在 <code>pkg/Interceptor</code> 目录下的 Interceptor.go 文件内写入以下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 用一元拦截器实现认证</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">ServerInterceptorCheckToken</span><span class="hljs-params">()</span></span> grpc.UnaryServerInterceptor &#123;<br>	<span class="hljs-keyword">return</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, req <span class="hljs-keyword">interface</span>&#123;&#125;, info *grpc.UnaryServerInfo,</span></span><br><span class="hljs-params"><span class="hljs-function">		handler grpc.UnaryHandler)</span></span> (resp <span class="hljs-keyword">interface</span>&#123;&#125;, err <span class="hljs-type">error</span>) &#123;<br>		<span class="hljs-comment">// 验证token</span><br>		_, err = CheckToken(ctx)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(<span class="hljs-string">&quot;Interceptor 拦截器内token认证失败\n&quot;</span>)<br>			<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>		&#125;<br>		fmt.Println(<span class="hljs-string">&quot;Interceptor 拦截器内token认证成功\n&quot;</span>)<br>		<span class="hljs-keyword">return</span> handler(ctx, req)<br>	&#125;<br>&#125;<br><br><span class="hljs-comment">// 验证</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">CheckToken</span><span class="hljs-params">(ctx context.Context)</span></span> (*token.Response, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// 取出元数据</span><br>	md, b := metadata.FromIncomingContext(ctx)<br>	<span class="hljs-keyword">if</span> !b &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, status.Error(codes.InvalidArgument, <span class="hljs-string">&quot;token信息不存在&quot;</span>)<br>	&#125;<br><br>	<span class="hljs-keyword">var</span> token, uid <span class="hljs-type">string</span><br>	<span class="hljs-comment">// 取出token</span><br>	tokenInfo, ok := md[<span class="hljs-string">&quot;token&quot;</span>]<br>	<span class="hljs-keyword">if</span> !ok &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, status.Error(codes.InvalidArgument, <span class="hljs-string">&quot;token不存在&quot;</span>)<br>	&#125;<br><br>	token = tokenInfo[<span class="hljs-number">0</span>]<br><br>	<span class="hljs-comment">// 取出uid</span><br>	uidTmp, ok := md[<span class="hljs-string">&quot;uid&quot;</span>]<br>	<span class="hljs-keyword">if</span> !ok &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, status.Error(codes.InvalidArgument, <span class="hljs-string">&quot;uid不存在&quot;</span>)<br>	&#125;<br>	uid = uidTmp[<span class="hljs-number">0</span>]<br><br>	<span class="hljs-comment">//验证</span><br>	sum := md5.Sum([]<span class="hljs-type">byte</span>(uid))<br>	md5Str := fmt.Sprintf(<span class="hljs-string">&quot;%x&quot;</span>, sum)<br>	<span class="hljs-keyword">if</span> md5Str != token &#123;<br>		fmt.Println(<span class="hljs-string">&quot;md5Str:&quot;</span>, md5Str)<br>		fmt.Println(<span class="hljs-string">&quot;uid:&quot;</span>, uid)<br>		fmt.Println(<span class="hljs-string">&quot;token:&quot;</span>, token)<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, status.Error(codes.InvalidArgument, <span class="hljs-string">&quot;token验证失败&quot;</span>)<br>	&#125;<br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span><br>&#125;<br><br></code></pre></td></tr></table></figure>
+<blockquote>
+<p>gPRC 传输的时候把授权信息存放在 metada 的，所以需要先获取 metadata。通过<code>metadata.FromIncomingContext</code>可以从 ctx 中取出本次调用的 metadata，然后再从 md 中取出授权信息并校验即可。</p>
+</blockquote>
+<p>在server.go文件内添加拦截器：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">opts = <span class="hljs-built_in">append</span>(opts, grpc.UnaryInterceptor(Interceptor.ServerInterceptorCheckToken()))<br></code></pre></td></tr></table></figure>
+
+<h3 id="2）实现RPC方法认证"><a href="#2）实现RPC方法认证" class="headerlink" title="2）实现RPC方法认证"></a>2）实现RPC方法认证</h3><p>实现了校验有效性我们就需要在 <code>server.go</code> 服务端实现Token RPC的方法进行授权认证：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> TokenService <span class="hljs-keyword">struct</span> &#123;<br>	token.UnimplementedTokenServiceServer<br>	tokenAuth.TokenAuth<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(u TokenService)</span></span> Token(ctx context.Context, r *token.Request) (*token.Response, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// 验证token</span><br>	_, err := Interceptor.CheckToken(ctx)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;Token RPC方法内token认证失败\n&quot;</span>)<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	fmt.Printf(<span class="hljs-string">&quot;%v Token RPC方法内token认证成功\n&quot;</span>, r.GetName())<br>	<span class="hljs-keyword">return</span> &amp;token.Response&#123;Name: r.GetName()&#125;, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>同样的在<code>client.go</code> 文件内输入token信息，并调用<code>grpc.WithPerRPCCredentials</code>:</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// token信息</span><br>auth := tokenAuth.TokenAuth&#123;<br>	token.TokenValidateParam&#123;<br>		Token: <span class="hljs-string">&quot;81dc9bdb52d04dc20036dbd8313ed055&quot;</span>,<br>		Uid:   <span class="hljs-number">1234</span>,<br>	&#125;,<br>&#125;<br>opts = <span class="hljs-built_in">append</span>(opts, grpc.WithPerRPCCredentials(&amp;auth))<br></code></pre></td></tr></table></figure>
+
+<h2 id="6、启动-amp-请求"><a href="#6、启动-amp-请求" class="headerlink" title="6、启动 &amp; 请求"></a>6、启动 &amp; 请求</h2><p>输入一个正确的token：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">52505</span><br>服务启动成功....<br>Interceptor 拦截器内token认证成功<br><br>linzy Token RPC方法内token认证成功<br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">52545</span><br><span class="hljs-keyword">return</span> result: name:<span class="hljs-string">&quot;linzy&quot;</span><br></code></pre></td></tr></table></figure>
+
+<p>修改token信息为：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// token信息</span><br>	auth := tokenAuth.TokenAuth&#123;<br>		token.TokenValidateParam&#123;<br>			Token: <span class="hljs-string">&quot;81dc9bdb52d0ed0585&quot;</span>,<br>			Uid:   <span class="hljs-number">1234</span>,<br>		&#125;,<br>	&#125;<br></code></pre></td></tr></table></figure>
+<p>测试一下：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run server.<span class="hljs-keyword">go</span><br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">52505</span><br>服务启动成功....<br>md5Str: <span class="hljs-number">81</span>dc9bdb52d04dc20036dbd8313ed055<br>uid: <span class="hljs-number">1234</span><br>token: <span class="hljs-number">81</span>dc9bdb52d0ed0585<br>Interceptor 拦截器内token认证失败<br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client.<span class="hljs-keyword">go</span> <br>API server listening at: <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span>:<span class="hljs-number">52857</span><br>client.Token <span class="hljs-type">error</span>: rpc <span class="hljs-type">error</span>: code = InvalidArgument desc = token验证失败<br></code></pre></td></tr></table></figure>
+
+<h2 id="7、实现RequireTransportSecurity-方法"><a href="#7、实现RequireTransportSecurity-方法" class="headerlink" title="7、实现RequireTransportSecurity()方法"></a>7、实现RequireTransportSecurity()方法</h2><p>身份认证功能已经完成，但是我们gRPC通信还是明文传输，对于如此重要的信息肯定要建立安全连接，所以要实现 RequireTransportSecurity 方法。</p>
+<p>方法实现很简单，我们只需要建立安全连接的时候，返回一个true就行，使用我们之前的证书进行TLS连接即可。</p>
+<blockquote>
+<p>具体可以看我的上一篇<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/03/grpc-tls/">《通过TLS建立安全连接》</a></p>
+</blockquote>
+<p>server.go添加以下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">if</span> tokenAuth.IsTLS &#123;<br>	<span class="hljs-comment">// TLS认证</span><br>	<span class="hljs-comment">// 根据服务端输入的证书文件和密钥构造 TLS 凭证</span><br>	c, err := credentials.NewServerTLSFromFile(<span class="hljs-string">&quot;./conf/server_side_TLS/server.pem&quot;</span>, <span class="hljs-string">&quot;./conf/server_side_TLS/server.key&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewServerTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.Creds(c))<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>client.go添加以下内容：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">if</span> tokenAuth.IsTLS &#123;<br>	<span class="hljs-comment">//打开tls 走tls认证</span><br>	<span class="hljs-comment">// 根据客户端输入的证书文件和密钥构造 TLS 凭证。</span><br>	<span class="hljs-comment">// 第二个参数 serverNameOverride 为服务名称。</span><br>	c, err := credentials.NewClientTLSFromFile(<span class="hljs-string">&quot;./conf/server_side_TLS/server.pem&quot;</span>, <span class="hljs-string">&quot;go-grpc-example&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewClientTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.WithTransportCredentials(c))<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.WithInsecure())<br>&#125;<br></code></pre></td></tr></table></figure>
+<p>我们只需要修改token.go文件内的<code>IsTLS</code>变量就可以实现是否使用安全链接(TLS)。</p>
+<p>启动 &amp; 请求之后我们抓个包看一下是否已经建立安全链接了了。</p>
+<p><img src="/img/grpc_token/grpc2.png" srcset="/img/loading.gif" lazyload><br><img src="/img/grpc_token/grpc3.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>1）实现<code>credentials.PerRPCCredentials</code>接口就可以把数据当做 gRPC 中的 Credential 在添加到 metadata 中，跟着请求一起传递到服务端；<br>2）服务端从 ctx 中解析 metadata，然后从 metadata 中获取 授权信息并进行验证；<br>3）可以借助 Interceptor 实现全局身份验证。</p>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/go/">#go</a>
+      
+        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
+      
+        <a href="/tags/grpc/">#grpc</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>gRPC（七）进阶：自定义身份验证</div>
+      <div>https://gopherlinzy.github.io/2022/11/08/grpc-token/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2022年11月8日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                      <a href="/2022/11/10/grpc-gateway/" title="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api">
+                        <i class="iconfont icon-arrowleft"></i>
+                        <span class="hidden-mobile">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</span>
+                        <span class="visible-mobile">上一篇</span>
+                      </a>
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2022/11/07/grpc-interceptor/" title="gRPC（六）进阶：拦截器 interceptor">
+                        <span class="hidden-mobile">gRPC（六）进阶：拦截器 interceptor</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
