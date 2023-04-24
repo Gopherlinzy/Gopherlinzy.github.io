@@ -1,0 +1,979 @@
+
+
+<!DOCTYPE html>
+<html lang="zh-CN" data-default-color-scheme=auto>
+
+
+
+<head>
+  <meta charset="UTF-8">
+  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
+  <link rel="icon" href="/img/fluid.png">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  
+  <meta name="theme-color" content="#2f4154">
+  <meta name="author" content="孙禄毅">
+  <meta name="keywords" content="">
+  
+    <meta name="description" content="前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Go基础：数据结构（定义和go语言实现）">
+<meta property="og:url" content="https://gopherlinzy.github.io/2023/04/24/go-dataStructure/index.html">
+<meta property="og:site_name" content="linzy">
+<meta property="og:description" content="前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数">
+<meta property="og:locale" content="zh_CN">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+<meta property="article:published_time" content="2023-04-24T08:32:57.000Z">
+<meta property="article:modified_time" content="2023-04-24T08:34:52.372Z">
+<meta property="article:author" content="孙禄毅">
+<meta property="article:tag" content="学习">
+<meta property="article:tag" content="golang">
+<meta property="article:tag" content="数据结构">
+<meta property="article:tag" content="算法">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+  
+  
+    <meta name="referrer" content="no-referrer-when-downgrade">
+  
+  
+  <title>Go基础：数据结构（定义和go语言实现） - linzy</title>
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
+
+
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
+
+  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
+
+
+
+<!-- 主题依赖的图标库，不要自行修改 -->
+<!-- Do not modify the link that theme dependent icons -->
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
+
+
+
+<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
+
+
+<link  rel="stylesheet" href="/css/main.css" />
+
+
+  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
+  
+    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
+  
+
+
+
+
+  <script id="fluid-configs">
+    var Fluid = window.Fluid || {};
+    Fluid.ctx = Object.assign({}, Fluid.ctx)
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+
+    if (CONFIG.web_analytics.follow_dnt) {
+      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
+      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+    }
+  </script>
+  <script  src="/js/utils.js" ></script>
+  <script  src="/js/color-schema.js" ></script>
+  
+
+
+  
+<meta name="generator" content="Hexo 6.3.0"></head>
+
+
+<body>
+  
+
+  <header>
+    
+
+<div class="header-inner" style="height: 70vh;">
+  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
+  <div class="container">
+    <a class="navbar-brand" href="/">
+      <strong>LinzyBlog</strong>
+    </a>
+
+    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
+            data-target="#navbarSupportedContent"
+            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+      <div class="animated-icon"><span></span><span></span><span></span></div>
+    </button>
+
+    <!-- Collapsible content -->
+    <div class="collapse navbar-collapse" id="navbarSupportedContent">
+      <ul class="navbar-nav ml-auto text-center">
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/">
+                <i class="iconfont icon-home-fill"></i>
+                首页
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/archives/">
+                <i class="iconfont icon-archive-fill"></i>
+                归档
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/categories/">
+                <i class="iconfont icon-category-fill"></i>
+                分类
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/tags/">
+                <i class="iconfont icon-tags-fill"></i>
+                标签
+              </a>
+            </li>
+          
+        
+          
+          
+          
+          
+            <li class="nav-item">
+              <a class="nav-link" href="/about/">
+                <i class="iconfont icon-user-fill"></i>
+                关于
+              </a>
+            </li>
+          
+        
+        
+          <li class="nav-item" id="search-btn">
+            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
+              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
+            </a>
+          </li>
+          
+        
+        
+          <li class="nav-item" id="color-toggle-btn">
+            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
+                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
+          </li>
+        
+      </ul>
+    </div>
+  </div>
+</nav>
+
+  
+
+<div id="banner" class="banner" parallax=true
+     style="background: url('/img/pkg7.jpg') no-repeat center center; background-size: cover;">
+  <div class="full-bg-img">
+    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
+      <div class="banner-text text-center fade-in-up">
+        <div class="h2">
+          
+            <span id="subtitle" data-typed-text="Go基础：数据结构（定义和go语言实现）"></span>
+          
+        </div>
+
+        
+          
+  <div class="mt-3">
+    
+    
+      <span class="post-meta">
+        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
+        <time datetime="2023-04-24 16:32" pubdate>
+          2023年4月24日 下午
+        </time>
+      </span>
+    
+  </div>
+
+  <div class="mt-1">
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-chart"></i>
+        
+          9.3k 字
+        
+      </span>
+    
+
+    
+      <span class="post-meta mr-2">
+        <i class="iconfont icon-clock-fill"></i>
+        
+        
+        
+          78 分钟
+        
+      </span>
+    
+
+    
+    
+      
+        <span id="busuanzi_container_page_pv" style="display: none">
+          <i class="iconfont icon-eye" aria-hidden="true"></i>
+          <span id="busuanzi_value_page_pv"></span> 次
+        </span>
+        
+      
+    
+  </div>
+
+
+        
+      </div>
+
+      
+    </div>
+  </div>
+</div>
+
+</div>
+
+  </header>
+
+  <main>
+    
+      
+
+<div class="container-fluid nopadding-x">
+  <div class="row nomargin-x">
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+
+    </div>
+
+    <div class="col-lg-8 nopadding-x-md">
+      <div class="container nopadding-x-md" id="board-ctn">
+        <div id="board">
+          <article class="post-content mx-auto">
+            <!-- SEO header -->
+            <h1 style="display: none">Go基础：数据结构（定义和go语言实现）</h1>
+            
+              <p class="note note-info">
+                
+                  
+                    本文最后更新于：几秒前
+                  
+                
+              </p>
+            
+            
+              <div class="markdown-body">
+                
+                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+<p>最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构</p>
+</blockquote>
+<h1 id="一、数组-Array"><a href="#一、数组-Array" class="headerlink" title="一、数组 (Array)"></a>一、数组 (Array)</h1><p><code>数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。</code>在Go语言中，数组是一种值类型，声明数组时必须指定长度，长度不能被修改。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义一个长度为5的整型数组</span><br><span class="hljs-keyword">var</span> a [<span class="hljs-number">5</span>]<span class="hljs-type">int</span><br><br><span class="hljs-comment">// 访问数组元素，下标从0开始</span><br>a[<span class="hljs-number">0</span>] = <span class="hljs-number">1</span><br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点"><a href="#1、优缺点" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>数组的访问速度很快，因为它们是在内存中连续存储的</li>
+<li>数组是一种简单、清晰的数据结构，易于理解和实现</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>数组的长度是固定的，无法动态增加或缩小</li>
+<li>插入或删除元素时需要移动数组中的其他元素，效率较低</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景"><a href="#2、适用场景和不适用场景" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>当需要在一个集合中存储相同类型的元素时，可以使用数组，例如存储身份证号、学号等</li>
+<li>当需要快速访问数组中的元素时，可以使用数组</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>当需要动态地添加或删除元素时，不适合使用数组</li>
+<li>当需要支持不同类型的元素时，不适合使用数组</li>
+</ul>
+</li>
+</ul>
+<h1 id="二、切片-Slice"><a href="#二、切片-Slice" class="headerlink" title="二、切片 (Slice)"></a>二、切片 (Slice)</h1><p><code>切片是一个引用类型，由三个部分组成：指向底层数组的指针、切片的长度和切片的容量。</code>切片的底层数组包含了切片中存储的所有元素，而切片则提供了访问这些元素的方法。Go 语言中的切片是动态数组，它可以根据需要动态增长和收缩。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义一个长度为0的整型切片</span><br><span class="hljs-keyword">var</span> b []<span class="hljs-type">int</span><br><br><span class="hljs-comment">// 使用 make 函数初始化一个长度为5的切片</span><br>b := <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, <span class="hljs-number">5</span>)<br><br><span class="hljs-comment">// 使用切片的 append 方法向末尾添加元素</span><br>b = <span class="hljs-built_in">append</span>(b, <span class="hljs-number">1</span>)<br><br><span class="hljs-comment">// 获取切片长度</span><br>l = <span class="hljs-built_in">len</span>(b)<br><br><span class="hljs-comment">// 获取切片容量</span><br>c = <span class="hljs-built_in">cap</span>(b)<br><br><span class="hljs-comment">// 删除指定 index 下标的元素</span><br>b = <span class="hljs-built_in">append</span>(b[:index], b[index+<span class="hljs-number">1</span>:])<br><br><span class="hljs-comment">// 同理删除区间[left,right] 内的元素</span><br>b = <span class="hljs-built_in">append</span>(b[:left], b[right+<span class="hljs-number">1</span>:])<br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点-1"><a href="#1、优缺点-1" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点:<ul>
+<li>切片具有动态扩容的能力，可以在运行时根据实际需求自动增加容量，并且在传递函数参数时可以避免复制整个数组</li>
+<li>切片还具有可索引、可迭代、可排序等特性</li>
+</ul>
+</li>
+<li>缺点:<ul>
+<li>切片对内存的占用会比数组更大，因为切片会存储指向底层数组的指针、切片长度和容量等信息</li>
+<li>切片的底层数组是由 Go 运行时自动分配的，因此在内存分配和垃圾回收方面可能会对性能产生影响</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-1"><a href="#2、适用场景和不适用场景-1" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>切片适用于需要动态扩容的情况，例如读取未知长度的文件或者从网络上接收数据。由于切片可以在传递函数参数时避免复制整个数组，因此它也适用于需要在函数间传递大量数据的场景</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>切片不适用于需要固定长度的数组场景，例如矩阵计算、游戏开发等。由于切片可能会对性能产生影响，因此在性能要求较高的场景中也需要谨慎使用</li>
+</ul>
+</li>
+</ul>
+<h1 id="三、链表-Linked-List"><a href="#三、链表-Linked-List" class="headerlink" title="三、链表 (Linked List)"></a>三、链表 (Linked List)</h1><p><code>链表由一系列节点组成，每个节点包含两部分：数据域和指针域。数据域用于存储数据，指针域用于指向下一个节点。</code>链表分为单向链表和双向链表，单向链表的每个节点只包含指向下一个节点的指针，而双向链表的每个节点既包含指向下一个节点的指针，也包含指向上一个节点的指针。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> ListNode <span class="hljs-keyword">struct</span> &#123;<br>    Val  <span class="hljs-type">int</span><br>    Next *ListNode<br>&#125;<br><br><span class="hljs-comment">// 在链表末尾插入一个节点</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">insert</span><span class="hljs-params">(head *ListNode, val <span class="hljs-type">int</span>)</span></span> *ListNode &#123;<br>    <span class="hljs-keyword">if</span> head == <span class="hljs-literal">nil</span> &#123;<br>        <span class="hljs-keyword">return</span> &amp;ListNode&#123;val, <span class="hljs-literal">nil</span>&#125;<br>    &#125;<br>    node := head<br>    <span class="hljs-keyword">for</span> node.Next != <span class="hljs-literal">nil</span> &#123;<br>        node = node.Next<br>    &#125;<br>    node.Next = &amp;ListNode&#123;val, <span class="hljs-literal">nil</span>&#125;<br>    <span class="hljs-keyword">return</span> head<br>&#125;<br><br><span class="hljs-comment">// 删除链表中的指定节点</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">deleteNode</span><span class="hljs-params">(head *ListNode, val <span class="hljs-type">int</span>)</span></span> *ListNode &#123;<br>    <span class="hljs-keyword">if</span> head == <span class="hljs-literal">nil</span> &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>    &#125;<br>    <span class="hljs-keyword">if</span> head.Val == val &#123;<br>        <span class="hljs-keyword">return</span> head.Next<br>    &#125;<br>    node := head<br>    <span class="hljs-keyword">for</span> node.Next != <span class="hljs-literal">nil</span> &#123;<br>        <span class="hljs-keyword">if</span> node.Next.Val == val &#123;<br>            node.Next = node.Next.Next<br>            <span class="hljs-keyword">break</span><br>        &#125;<br>        node = node.Next<br>    &#125;<br>    <span class="hljs-keyword">return</span> head<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点-2"><a href="#1、优缺点-2" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>链表可以高效地进行元素的插入和删除操作，而无需进行元素移动</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>链表难以进行随机访问，并且需要额外的空间来存储指针</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-2"><a href="#2、适用场景和不适用场景-2" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>链表适合用于需要频繁进行元素插入和删除的场景，比如实现栈、队列和哈希表等数据结构</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>链表不适合用于需要进行随机访问的场景，比如需要根据下标获取元素的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="四、栈（Stack）"><a href="#四、栈（Stack）" class="headerlink" title="四、栈（Stack）"></a>四、栈（Stack）</h1><p><code>栈是一种线性数据结构，具有后进先出（LIFO）的特点。</code>栈通常有两个基本操作：push（推入）和pop（弹出）。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Stack []<span class="hljs-type">int</span><br><br><span class="hljs-comment">// 将元素添加到栈的顶部</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Stack)</span></span> Push(x <span class="hljs-type">int</span>) &#123;<br>    *s = <span class="hljs-built_in">append</span>(*s, x)<br>&#125;<br><span class="hljs-comment">// 从栈的顶部移除元素</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Stack)</span></span> Pop() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">if</span> s.IsEmpty() &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>    &#125;<br>    x := (*s)[<span class="hljs-built_in">len</span>(*s)<span class="hljs-number">-1</span>]<br>    *s = (*s)[:<span class="hljs-built_in">len</span>(*s)<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> x<br>&#125;<br><br><span class="hljs-comment">// 栈是否为空</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Stack)</span></span> IsEmpty() <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(*s) == <span class="hljs-number">0</span><br>&#125;<br><br><span class="hljs-comment">// 栈大小</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Stack)</span></span> Size() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(*s)<br>&#125;<br><br><span class="hljs-comment">// 返回栈顶元素</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Stack)</span></span> Top() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">if</span> s.IsEmpty() &#123;<br>        <span class="hljs-keyword">return</span> <span class="hljs-number">-1</span><br>    &#125;<br>    <span class="hljs-keyword">return</span> (*s)[<span class="hljs-built_in">len</span>(*s)<span class="hljs-number">-1</span>]<br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点-3"><a href="#1、优缺点-3" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>简单易懂，易于实现</li>
+<li>可以快速访问栈顶元素</li>
+<li>可以方便地实现递归算法</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>无法随机访问其他位置的元素，只能访问栈顶元素</li>
+<li>如果栈空间不够用，需要扩容或者重新分配空间</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-3"><a href="#2、适用场景和不适用场景-3" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>在编程语言中，栈用于函数调用和返回，以及表达式求值</li>
+<li>栈在实现DFS（深度优先搜索）算法、回溯算法等场景中也经常使用</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>需要随机访问元素时不适合使用栈</li>
+</ul>
+</li>
+</ul>
+<h1 id="五、队列（Queue）"><a href="#五、队列（Queue）" class="headerlink" title="五、队列（Queue）"></a>五、队列（Queue）</h1><p><code>队列是一种线性数据结构，它按照先进先出（FIFO）的原则存储元素，即新元素总是添加到队列的末尾，然后在队列的另一端删除旧元素。</code></p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Queue []<span class="hljs-type">int</span><br><br><span class="hljs-comment">// 将元素添加到队列的末尾</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(q *Queue)</span></span> Enqueue(v <span class="hljs-type">int</span>) &#123;<br>    *q = <span class="hljs-built_in">append</span>(*q, v)<br>&#125;<br><span class="hljs-comment">// 从队列的头部删除元素并返回</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(q *Queue)</span></span> Dequeue() <span class="hljs-type">int</span> &#123;<br>    head := (*q)[<span class="hljs-number">0</span>]<br>    *q = (*q)[<span class="hljs-number">1</span>:]<br>    <span class="hljs-keyword">return</span> head<br>&#125;<br><br><span class="hljs-comment">// 检查队列是否为空</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(q *Queue)</span></span> IsEmpty() <span class="hljs-type">bool</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(*q) == <span class="hljs-number">0</span><br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1、优缺点-4"><a href="#1、优缺点-4" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>能够有效地对数据进行排序，而且处理起来非常高效，可以快速地添加或删除元素</li>
+<li>队列通常用于需要按顺序处理数据的场景，如任务调度、缓冲等</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>只能从一端插入元素，从另一端删除元素，因此不太适合需要随机访问数据的场景</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-4"><a href="#2、适用场景和不适用场景-4" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>需要按照先进先出的顺序处理数据的场景</li>
+<li>需要实现任务调度、缓冲等场景</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>需要随机访问数据的场景</li>
+<li>需要在队列中间插入或删除元素的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="六、哈希表（Hash-Table）"><a href="#六、哈希表（Hash-Table）" class="headerlink" title="六、哈希表（Hash Table）"></a>六、哈希表（Hash Table）</h1><p><code>哈希表（Hash Table）是一种基于散列函数（Hash Function）实现的数据结构，它可以提供快速的插入、查找和删除操作。</code>哈希表的实现基于数组和链表，通过散列函数将键（Key）映射到数组索引上，将对应的值（Value）存储在对应的数组单元格中。哈希表的优点是高效，平均情况下的时间复杂度为O(1)，适用于需要快速查找的场景。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 创建map</span><br>m := <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-type">string</span>]<span class="hljs-type">int</span>)<br><br><span class="hljs-comment">// 向map中添加元素</span><br>m[<span class="hljs-string">&quot;apple&quot;</span>] = <span class="hljs-number">1</span><br>m[<span class="hljs-string">&quot;banana&quot;</span>] = <span class="hljs-number">2</span><br><br><span class="hljs-comment">// 通过key来获取value</span><br>v := m[<span class="hljs-string">&quot;apple&quot;</span>]<br><br><span class="hljs-comment">// 判断某个key是否存在</span><br>_, ok := m[<span class="hljs-string">&quot;orange&quot;</span>]<br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点-5"><a href="#1、优缺点-5" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>快速查找，平均情况下的时间复杂度为O(1)，适用于需要快速查找的场景。</li>
+<li>可以动态地添加、删除元素</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>不保证元素的顺序</li>
+<li>内存占用较高</li>
+<li>容易产生哈希冲突，冲突会导致散列表的性能下降，因此需要解决冲突的方法</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-5"><a href="#2、适用场景和不适用场景-5" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>需要快速查找的场景</li>
+<li>对于缓存，数据量不大的情况下，可以使用哈希表来存储数据，方便快速查询</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>如果需要有序遍历所有元素，那么哈希表不适合</li>
+<li>哈希表对内存的利用率不高，如果数据量非常大，会占用大量的内存空间，导致性能下降</li>
+</ul>
+</li>
+</ul>
+<h1 id="七、集合（Set）"><a href="#七、集合（Set）" class="headerlink" title="七、集合（Set）"></a>七、集合（Set）</h1><p><code>集合（Set）是一种不允许重复元素的数据结构，通常用于查找、去重、求交集、求并集等场景。</code>集合可以用数组、链表、哈希表等数据结构实现。</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Set <span class="hljs-keyword">struct</span> &#123;<br>    m <span class="hljs-keyword">map</span>[<span class="hljs-keyword">interface</span>&#123;&#125;]<span class="hljs-type">bool</span><br>&#125;<br><br><span class="hljs-comment">// 创建一个新的集合</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewSet</span><span class="hljs-params">()</span></span> *Set &#123;<br>    <span class="hljs-keyword">return</span> &amp;Set&#123;m: <span class="hljs-built_in">make</span>(<span class="hljs-keyword">map</span>[<span class="hljs-keyword">interface</span>&#123;&#125;]<span class="hljs-type">bool</span>)&#125;<br>&#125;<br><br><span class="hljs-comment">// 添加元素到集合中</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Set)</span></span> Add(item <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    s.m[item] = <span class="hljs-literal">true</span><br>&#125;<br><br><span class="hljs-comment">// 从集合中删除元素</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Set)</span></span> Remove(item <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    <span class="hljs-built_in">delete</span>(s.m, item)<br>&#125;<br><br><span class="hljs-comment">// 判断集合中是否包含某个元素</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Set)</span></span> Contains(item <span class="hljs-keyword">interface</span>&#123;&#125;) <span class="hljs-type">bool</span> &#123;<br>    _, ok := s.m[item]<br>    <span class="hljs-keyword">return</span> ok<br>&#125;<br><br><span class="hljs-comment">// 获取集合中元素的数量</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Set)</span></span> Size() <span class="hljs-type">int</span> &#123;<br>    <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(s.m)<br>&#125;<br><br><span class="hljs-comment">// 将集合转换成切片</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(s *Set)</span></span> ToList() []<span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    list := <span class="hljs-built_in">make</span>([]<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-number">0</span>, <span class="hljs-built_in">len</span>(s.m))<br>    <span class="hljs-keyword">for</span> item := <span class="hljs-keyword">range</span> s.m &#123;<br>        list = <span class="hljs-built_in">append</span>(list, item)<br>    &#125;<br>    <span class="hljs-keyword">return</span> list<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1、优缺点-6"><a href="#1、优缺点-6" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>集合不允许重复元素，能够保证数据的唯一性</li>
+<li>集合可以进行去重、求交集、求并集等操作，方便数据处理</li>
+<li>集合的元素可以是任意类型，灵活性高</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>集合的实现需要额外的存储空间，相比数组或链表，占用更多内存</li>
+<li>集合不支持随机访问，只能遍历或判断是否包含某个元素</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-6"><a href="#2、适用场景和不适用场景-6" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>需要去重或者判断元素是否存在的场景</li>
+<li>需要求交集、求并集等操作的场景</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>需要随机访问元素的场景，应该使用数组或链表</li>
+<li>需要有序访问元素的场景，应该使用链表或树结构</li>
+</ul>
+</li>
+</ul>
+<h1 id="八、树（Tree）"><a href="#八、树（Tree）" class="headerlink" title="八、树（Tree）"></a>八、树（Tree）</h1><p><code>树是一种非线性数据结构，它由若干个节点组成，每个节点有零个或多个子节点。</code>树具有以下特点：</p>
+<ul>
+<li>树中只有一个节点，称为根节点。</li>
+<li>每个节点最多有一个父节点，除了根节点没有父节点。</li>
+<li>每个节点可以有多个子节点。</li>
+<li>如果一个节点没有子节点，则称为叶子节点。</li>
+<li>如果从一个节点可以到达另一个节点，则称这两个节点具有父子关系。</li>
+</ul>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> TreeNode <span class="hljs-keyword">struct</span> &#123;<br>    Val <span class="hljs-type">int</span><br>    Left *TreeNode<br>    Right *TreeNode<br>&#125;<br><br><span class="hljs-comment">// 创建一个新的树节点</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewTreeNode</span><span class="hljs-params">(val <span class="hljs-type">int</span>, left *TreeNode, right *TreeNode)</span></span> *TreeNode &#123;<br>    <span class="hljs-keyword">return</span> &amp;TreeNode&#123;val, left, right&#125;<br>&#125;<br><br><span class="hljs-comment">// 插入一个节点</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(node *TreeNode)</span></span> Insert(val <span class="hljs-type">int</span>) *TreeNode &#123;<br>    <span class="hljs-keyword">if</span> node == <span class="hljs-literal">nil</span> &#123;<br>        <span class="hljs-keyword">return</span> NewTreeNode(val, <span class="hljs-literal">nil</span>, <span class="hljs-literal">nil</span>)<br>    &#125;<br>    <span class="hljs-keyword">if</span> val &lt; node.Val &#123;<br>        node.Left = node.Left.Insert(val)<br>    &#125; <span class="hljs-keyword">else</span> &#123;<br>        node.Right = node.Right.Insert(val)<br>    &#125;<br>    <span class="hljs-keyword">return</span> node<br>&#125;<br><br><span class="hljs-comment">// 查找一个节点</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(node *TreeNode)</span></span> Find(val <span class="hljs-type">int</span>) *TreeNode &#123;<br>    <span class="hljs-keyword">if</span> node == <span class="hljs-literal">nil</span> || node.Val == val &#123;<br>        <span class="hljs-keyword">return</span> node<br>    &#125;<br>    <span class="hljs-keyword">if</span> val &lt; node.Val &#123;<br>        <span class="hljs-keyword">return</span> node.Left.Find(val)<br>    &#125;<br>    <span class="hljs-keyword">return</span> node.Right.Find(val)<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1、优缺点-7"><a href="#1、优缺点-7" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>树是一种非常高效的数据结构，插入、查找、删除操作的时间复杂度均为O(log n)</li>
+<li>树结构天生就是具有层次性的，非常适合表示一些具有层次性质的问题，如文件系统、目录结构等</li>
+<li>树结构可以用于快速排序、二叉搜索树等算法</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>树结构的缺点是占用空间较大</li>
+<li>树结构在处理一些非层次性问题时，效率可能不高</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-7"><a href="#2、适用场景和不适用场景-7" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>表示层次性结构的问题，如文件系统、目录结构等</li>
+<li>快速排序、二叉搜索树等算法</li>
+<li>表示树形结构的问题，如语法树、家谱等</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>对空间有较高要求的场景，如嵌入式系统等</li>
+<li>处理非层次性问题的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="九、堆（Heap）"><a href="#九、堆（Heap）" class="headerlink" title="九、堆（Heap）"></a>九、堆（Heap）</h1><p><code>堆是一种基于完全二叉树的数据结构，其中每个节点的值都大于等于（最大堆）或小于等于（最小堆）其子节点的值。</code>它的特点是在任何时刻，堆的根节点所存储的值都是堆中所有元素中最大或最小的。</p>
+<p>在Go语言中，可以使用标准库中的 <code>container/heap</code> 包实现堆。具体实现需要实现 Heap 接口的以下方法：</p>
+<ol>
+<li>Len：获取堆中元素的数量；</li>
+<li>Less：比较堆中两个元素的大小；</li>
+<li>Swap：交换堆中两个元素的位置；</li>
+<li>Push：向堆中插入一个元素；</li>
+<li>Pop：从堆中弹出一个元素。<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 定义一个最大堆</span><br><span class="hljs-keyword">type</span> MaxHeap []<span class="hljs-type">int</span><br><br><span class="hljs-comment">// 获取堆的长度</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h MaxHeap)</span></span> Len() <span class="hljs-type">int</span> &#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(h) &#125;<br><br><span class="hljs-comment">// 比较两个元素的大小</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h MaxHeap)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span> &#123; <span class="hljs-keyword">return</span> h[i] &gt; h[j] &#125;<br><br><span class="hljs-comment">// 交换两个元素的位置</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h MaxHeap)</span></span> Swap(i, j <span class="hljs-type">int</span>) &#123; h[i], h[j] = h[j], h[i] &#125;<br><br><span class="hljs-comment">// 把一个元素添加到堆中</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *MaxHeap)</span></span> Push(x <span class="hljs-keyword">interface</span>&#123;&#125;) &#123;<br>    *h = <span class="hljs-built_in">append</span>(*h, x.(<span class="hljs-type">int</span>))<br>&#125;<br><br><span class="hljs-comment">// 从堆中删除一个元素</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h *MaxHeap)</span></span> Pop() <span class="hljs-keyword">interface</span>&#123;&#125; &#123;<br>    n := <span class="hljs-built_in">len</span>(*h)<br>    x := (*h)[n<span class="hljs-number">-1</span>]<br>    *h = (*h)[:n<span class="hljs-number">-1</span>]<br>    <span class="hljs-keyword">return</span> x<br>&#125;<br><br></code></pre></td></tr></table></figure>
+在使用时，可以通过以下方式创建一个最大堆并添加元素：</li>
+</ol>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">h := &amp;MaxHeap&#123;&#125;<br>heap.Push(h, <span class="hljs-number">2</span>)<br>heap.Push(h, <span class="hljs-number">1</span>)<br>heap.Push(h, <span class="hljs-number">3</span>)<br><br><span class="hljs-comment">// 获取最大值并弹出</span><br>fmt.Println(heap.Pop(h).(<span class="hljs-type">int</span>)) <span class="hljs-comment">// 3</span><br></code></pre></td></tr></table></figure>
+
+<p>也可以使用以下方法进行堆排序：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">arr := []<span class="hljs-type">int</span>&#123;<span class="hljs-number">2</span>, <span class="hljs-number">1</span>, <span class="hljs-number">3</span>&#125;<br>h := MaxHeap(arr)<br>heap.Init(&amp;h)<br>heap.Sort(&amp;h)<br>fmt.Println(h) <span class="hljs-comment">// [1 2 3]</span><br></code></pre></td></tr></table></figure>
+<h2 id="1、优缺点-8"><a href="#1、优缺点-8" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>插入和删除的时间复杂度都是 O(log n)，效率高</li>
+<li>堆只需要占用很小的连续内存空间，空间利用率高</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>不能快速查找指定值，只能查找堆顶元素</li>
+<li>对于堆中相同的值，无法保证其排序前后顺序</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-8"><a href="#2、适用场景和不适用场景-8" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>大&#x2F;小顶堆常用于优先级队列，如任务调度等场景</li>
+<li>堆排序算法</li>
+<li>最大&#x2F;最小值查询场景</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>需要查找具体值的场景</li>
+<li>堆中有相同元素，需要保证顺序的场景</li>
+</ul>
+</li>
+</ul>
+<h1 id="十、图（Graph）"><a href="#十、图（Graph）" class="headerlink" title="十、图（Graph）"></a>十、图（Graph）</h1><p><code>图（Graph）是由节点（Vertex）和边（Edge）构成的一种数据结构，用于表示多对多的关系。</code>节点表示实体，边表示实体之间的关系。图可以用于模拟现实生活中各种复杂的关系网络，例如社交网络、交通网络、物流网络等。</p>
+<p>在Go语言中，可以使用邻接矩阵或邻接表来表示图。其中邻接矩阵使用二维数组表示图，邻接表使用链表或数组来表示图。具体实现方法如下：</p>
+<p>邻接矩阵：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Graph <span class="hljs-keyword">struct</span> &#123;<br>    vertexNum <span class="hljs-type">int</span>        <span class="hljs-comment">// 节点数</span><br>    matrix    [][]<span class="hljs-type">int</span>    <span class="hljs-comment">// 邻接矩阵</span><br>    visited   []<span class="hljs-type">bool</span>     <span class="hljs-comment">// 记录节点是否被访问过</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewGraph</span><span class="hljs-params">(vertexNum <span class="hljs-type">int</span>)</span></span> *Graph &#123;<br>    matrix := <span class="hljs-built_in">make</span>([][]<span class="hljs-type">int</span>, vertexNum)<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-keyword">range</span> matrix &#123;<br>        matrix[i] = <span class="hljs-built_in">make</span>([]<span class="hljs-type">int</span>, vertexNum)<br>    &#125;<br>    visited := <span class="hljs-built_in">make</span>([]<span class="hljs-type">bool</span>, vertexNum)<br>    <span class="hljs-keyword">return</span> &amp;Graph&#123;vertexNum, matrix, visited&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> AddEdge(from, to, weight <span class="hljs-type">int</span>) &#123;<br>    g.matrix[from][to] = weight<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> DFS(start <span class="hljs-type">int</span>) &#123;<br>    g.visited[start] = <span class="hljs-literal">true</span><br>    fmt.Println(start)<br>    <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; g.vertexNum; i++ &#123;<br>        <span class="hljs-keyword">if</span> !g.visited[i] &amp;&amp; g.matrix[start][i] != <span class="hljs-number">0</span> &#123;<br>            g.DFS(i)<br>        &#125;<br>    &#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> BFS(start <span class="hljs-type">int</span>) &#123;<br>    queue := []<span class="hljs-type">int</span>&#123;start&#125;<br>    g.visited[start] = <span class="hljs-literal">true</span><br>    <span class="hljs-keyword">for</span> <span class="hljs-built_in">len</span>(queue) &gt; <span class="hljs-number">0</span> &#123;<br>        node := queue[<span class="hljs-number">0</span>]<br>        queue = queue[<span class="hljs-number">1</span>:]<br>        fmt.Println(node)<br>        <span class="hljs-keyword">for</span> i := <span class="hljs-number">0</span>; i &lt; g.vertexNum; i++ &#123;<br>            <span class="hljs-keyword">if</span> !g.visited[i] &amp;&amp; g.matrix[node][i] != <span class="hljs-number">0</span> &#123;<br>                g.visited[i] = <span class="hljs-literal">true</span><br>                queue = <span class="hljs-built_in">append</span>(queue, i)<br>            &#125;<br>        &#125;<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<p>邻接表：</p>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Graph <span class="hljs-keyword">struct</span> &#123;<br>    nodes []*Node<br>&#125;<br><br><span class="hljs-keyword">type</span> Node <span class="hljs-keyword">struct</span> &#123;<br>    val  <span class="hljs-type">int</span><br>    next *Node<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewNode</span><span class="hljs-params">(val <span class="hljs-type">int</span>)</span></span> *Node &#123;<br>    <span class="hljs-keyword">return</span> &amp;Node&#123;val: val, next: <span class="hljs-literal">nil</span>&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(n *Node)</span></span> AddNode(val <span class="hljs-type">int</span>) &#123;<br>    temp := n<br>    <span class="hljs-keyword">for</span> temp.next != <span class="hljs-literal">nil</span> &#123;<br>        temp = temp.next<br>    &#125;<br>    temp.next = NewNode(val)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewGraph</span><span class="hljs-params">()</span></span> *Graph &#123;<br>    <span class="hljs-keyword">return</span> &amp;Graph&#123;nodes: []*Node&#123;&#125;&#125;<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> AddNode(val <span class="hljs-type">int</span>) &#123;<br>    g.nodes = <span class="hljs-built_in">append</span>(g.nodes, NewNode(val))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> AddEdge(src, dst <span class="hljs-type">int</span>) &#123;<br>    g.nodes[src].AddNode(dst)<br>    g.nodes[dst].AddNode(src)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(g *Graph)</span></span> Print() &#123;<br>    <span class="hljs-keyword">for</span> i, node := <span class="hljs-keyword">range</span> g.nodes &#123;<br>        fmt.Printf(<span class="hljs-string">&quot;Node %d: &quot;</span>, i)<br>        temp := node<br>        <span class="hljs-keyword">for</span> temp != <span class="hljs-literal">nil</span> &#123;<br>            fmt.Printf(<span class="hljs-string">&quot;%d &quot;</span>, temp.val)<br>            temp = temp.next<br>        &#125;<br>        fmt.Printf(<span class="hljs-string">&quot;\n&quot;</span>)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+
+<h2 id="1、优缺点-9"><a href="#1、优缺点-9" class="headerlink" title="1、优缺点"></a>1、优缺点</h2><ul>
+<li>优点：<ul>
+<li>图可以直观地表示复杂的关系网络</li>
+<li>可以用图算法解决许多实际问题，例如最短路径问题、最小生成树问题等</li>
+</ul>
+</li>
+<li>缺点：<ul>
+<li>图的表示和操作比较复杂，需要消耗大量的时间和空间</li>
+<li>图的算法比较复杂，需要较高的算法水平</li>
+</ul>
+</li>
+</ul>
+<h2 id="2、适用场景和不适用场景-9"><a href="#2、适用场景和不适用场景-9" class="headerlink" title="2、适用场景和不适用场景"></a>2、适用场景和不适用场景</h2><ul>
+<li>适用场景：<ul>
+<li>社交网络、交通网络、物流网络等复杂的关系网络</li>
+<li>用于最短路径问题、最小生成树问题等实际问题</li>
+</ul>
+</li>
+<li>不适用场景：<ul>
+<li>数据之间不存在明确的关系</li>
+</ul>
+</li>
+</ul>
+
+                
+              </div>
+            
+            <hr/>
+            <div>
+              <div class="post-metas my-3">
+  
+    <div class="post-meta mr-3 d-flex align-items-center">
+      <i class="iconfont icon-category"></i>
+      
+
+<span class="category-chains">
+  
+  
+    
+      <span class="category-chain">
+        
+  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
+  
+  
+
+      </span>
+    
+  
+</span>
+
+    </div>
+  
+  
+    <div class="post-meta">
+      <i class="iconfont icon-tags"></i>
+      
+        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
+      
+        <a href="/tags/golang/">#golang</a>
+      
+        <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
+      
+        <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
+      
+    </div>
+  
+</div>
+
+
+              
+  
+
+  <div class="license-box my-3">
+    <div class="license-title">
+      <div>Go基础：数据结构（定义和go语言实现）</div>
+      <div>https://gopherlinzy.github.io/2023/04/24/go-dataStructure/</div>
+    </div>
+    <div class="license-meta">
+      
+        <div class="license-meta-item">
+          <div>作者</div>
+          <div>孙禄毅</div>
+        </div>
+      
+      
+        <div class="license-meta-item license-meta-date">
+          <div>发布于</div>
+          <div>2023年4月24日</div>
+        </div>
+      
+      
+      
+        <div class="license-meta-item">
+          <div>许可协议</div>
+          <div>
+            
+              
+              
+                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
+                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
+                    <i class="iconfont icon-by"></i>
+                  </span>
+                </a>
+              
+            
+          </div>
+        </div>
+      
+    </div>
+    <div class="license-icon iconfont"></div>
+  </div>
+
+
+
+              
+                <div class="post-prevnext my-3">
+                  <article class="post-prev col-6">
+                    
+                    
+                  </article>
+                  <article class="post-next col-6">
+                    
+                    
+                      <a href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">
+                        <span class="hidden-mobile">Go底层原理：一起来唠唠GMP调度（一）</span>
+                        <span class="visible-mobile">下一篇</span>
+                        <i class="iconfont icon-arrowright"></i>
+                      </a>
+                    
+                  </article>
+                </div>
+              
+            </div>
+
+            
+  <article id="comments" lazyload>
+    
+  <div class="disqus" style="width:100%">
+    <div id="disqus_thread"></div>
+    
+      <script>
+        Fluid.utils.loadComments('#disqus_thread', function() {
+          Fluid.utils.createCssLink('https://lib.baomitu.com/disqusjs/1.3.0/disqusjs.css');
+          Fluid.utils.createScript('https://lib.baomitu.com/disqusjs/1.3.0/disqus.js', function() {
+            new DisqusJS({
+              shortname: 'fluid',
+              apikey: 'lKZkXbgTsaxCdz8YOZgTixOGwesisQm4K65yWmNk8Nxdc61b6Tjj1xFEWayjMC7a'
+            });
+          });
+        });
+      </script>
+    
+    <noscript>Please enable JavaScript to view the comments</noscript>
+  </div>
+
+
+  </article>
+
+
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div class="side-col d-none d-lg-block col-lg-2">
+      
+  <aside class="sidebar" style="margin-left: -1rem">
+    <div id="toc">
+  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
+  <div class="toc-body" id="toc-body"></div>
+</div>
+
+
+
+  </aside>
+
+
+    </div>
+  </div>
+</div>
+
+
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+  
+
+
+
+
+
+
+
+    
+
+    
+      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
+        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
+      </a>
+    
+
+    
+      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
+     aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header text-center">
+        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
+        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body mx-3">
+        <div class="md-form mb-5">
+          <input type="text" id="local-search-input" class="form-control validate">
+          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
+        </div>
+        <div class="list-group" id="local-search-result"></div>
+      </div>
+    </div>
+  </div>
+</div>
+
+    
+
+    
+  </main>
+
+  <footer>
+    <div class="footer-inner">
+  
+    <div class="footer-content">
+       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
+    </div>
+  
+  
+  
+  
+</div>
+
+  </footer>
+
+  <!-- Scripts -->
+  
+  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
+  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
+
+  <script>
+    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
+    NProgress.start()
+    window.addEventListener('load', function() {
+      NProgress.done();
+    })
+  </script>
+
+
+<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
+<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
+<script  src="/js/events.js" ></script>
+<script  src="/js/plugins.js" ></script>
+
+
+  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
+  <script>
+    (function (window, document) {
+      var typing = Fluid.plugins.typing;
+      var subtitle = document.getElementById('subtitle');
+      if (!subtitle || !typing) {
+        return;
+      }
+      var text = subtitle.getAttribute('data-typed-text');
+      
+        typing(text);
+      
+    })(window, document);
+  </script>
+
+
+
+
+  
+    <script  src="/js/img-lazyload.js" ></script>
+  
+
+
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
+    var toc = jQuery('#toc');
+    if (toc.length === 0 || !window.tocbot) { return; }
+    var boardCtn = jQuery('#board-ctn');
+    var boardTop = boardCtn.offset().top;
+
+    window.tocbot.init(Object.assign({
+      tocSelector     : '#toc-body',
+      contentSelector : '.markdown-body',
+      linkClass       : 'tocbot-link',
+      activeLinkClass : 'tocbot-active-link',
+      listClass       : 'tocbot-list',
+      isCollapsedClass: 'tocbot-is-collapsed',
+      collapsibleClass: 'tocbot-is-collapsible',
+      scrollSmooth    : true,
+      includeTitleTags: true,
+      headingsOffset  : -boardTop,
+    }, CONFIG.toc));
+    if (toc.find('.toc-list-item').length > 0) {
+      toc.css('visibility', 'visible');
+    }
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('tocbot' in window) {
+        tocbot.refresh();
+        var toc = jQuery('#toc');
+        if (toc.length === 0 || !tocbot) {
+          return;
+        }
+        if (toc.find('.toc-list-item').length > 0) {
+          toc.css('visibility', 'visible');
+        }
+      }
+    });
+  });
+</script>
+
+
+  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
+
+  <script>Fluid.plugins.codeWidget();</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
+    window.anchors.options = {
+      placement: CONFIG.anchorjs.placement,
+      visible  : CONFIG.anchorjs.visible
+    };
+    if (CONFIG.anchorjs.icon) {
+      window.anchors.options.icon = CONFIG.anchorjs.icon;
+    }
+    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+    var res = [];
+    for (var item of el) {
+      res.push('.markdown-body > ' + item.trim());
+    }
+    if (CONFIG.anchorjs.placement === 'left') {
+      window.anchors.options.class = 'anchorjs-link-left';
+    }
+    window.anchors.add(res.join(', '));
+
+    Fluid.events.registerRefreshCallback(function() {
+      if ('anchors' in window) {
+        anchors.removeAll();
+        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
+        var res = [];
+        for (var item of el) {
+          res.push('.markdown-body > ' + item.trim());
+        }
+        if (CONFIG.anchorjs.placement === 'left') {
+          anchors.options.class = 'anchorjs-link-left';
+        }
+        anchors.add(res.join(', '));
+      }
+    });
+  });
+</script>
+
+
+  
+<script>
+  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
+    Fluid.plugins.fancyBox();
+  });
+</script>
+
+
+  <script>Fluid.plugins.imageCaption();</script>
+
+  <script  src="/js/local-search.js" ></script>
+
+  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
+
+
+
+
+
+<!-- 主题的启动项，将它保持在最底部 -->
+<!-- the boot of the theme, keep it at the bottom -->
+<script  src="/js/boot.js" ></script>
+
+
+  
+
+  <noscript>
+    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
+  </noscript>
+</body>
+</html>
