@@ -25,7 +25,7 @@
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
 <meta property="article:published_time" content="2023-04-24T08:16:43.000Z">
-<meta property="article:modified_time" content="2023-04-24T08:31:52.337Z">
+<meta property="article:modified_time" content="2023-04-28T15:33:02.311Z">
 <meta property="article:author" content="孙禄毅">
 <meta property="article:tag" content="学习">
 <meta property="article:tag" content="golang">
@@ -288,7 +288,7 @@
               <p class="note note-info">
                 
                   
-                    本文最后更新于：3 分钟前
+                    本文最后更新于：几秒前
                   
                 
               </p>
@@ -330,7 +330,7 @@
 </tbody></table>
 <p><code>进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存。</code>资源分配给进程，同一进程的所有线程共享该进程的所有资源。同一进程中的多个线程共享代码段（代码和常量），数据段（全局变量和静态变量），扩展段（堆存储）。但是每个线程拥有自己的栈段，栈段又叫运行时段，用来存放所有局部变量和临时变量。</p>
 <p><code>在同一进程中，线程的切换不会引起进程切换。在不同进程中进行线程切换,如从一个进程内的线程切换到另一个进程中的线程时，会引起进程切换。</code></p>
-<p><img src="/img/go-GMP-1/efb77fb2af084d9fb8c278ce2703af88-20230424162942012.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/efb77fb2af084d9fb8c278ce2703af88-20230424162942012.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
 <p>摘抄某知乎大佬的比喻：进程&#x3D;火车，线程&#x3D;车厢</p>
 <ul>
@@ -400,7 +400,7 @@
 </tbody></table>
 <h3 id="1-1-内核级线程模型"><a href="#1-1-内核级线程模型" class="headerlink" title="1.1 内核级线程模型"></a>1.1 内核级线程模型</h3><p>内核级线程模型中用户线程与内核线程是一对一关系（1 : 1）。<code>线程的创建、销毁、切换工作都是有内核完成的。</code>应用程序不参与线程的管理工作，只能调用内核级线程编程接口(应用程序创建一个新线程或撤销一个已有线程时，都会进行一个系统调用）。</p>
 <p>操作系统调度器管理、调度并分派这些线程。运行时调度器为每个用户级线程静态关联一个内核级线程，用户线程在其生命期内都会绑定到该内核线程。一旦用户线程终止，两个线程都将离开系统。</p>
-<p><img src="/img/go-GMP-1/b62a0aacbbaa4328b3181c7012e0e975-20230424162942042.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>大部分编程语言的线程库(如linux的pthread，Java的java.lang.Thread，C++11的std::thread等等)都是对操作系统的线程（内核级线程)的一层封装，创建出来的每个线程与一个不同的内核级线程静态关联，因此其调度完全由OS调度器来做。</p>
+<p><img src="/img/go-GMP-1/b62a0aacbbaa4328b3181c7012e0e975-20230424162942042.png" srcset="/img/loading.gif" lazyload><br>大部分编程语言的线程库(如linux的pthread，Java的java.lang.Thread，C++11的std::thread等等)都是对操作系统的线程（内核级线程)的一层封装，创建出来的每个线程与一个不同的内核级线程静态关联，因此其调度完全由OS调度器来做。</p>
 <blockquote>
 <p>内核级线程模型有如下优点：</p>
 <ul>
@@ -416,7 +416,7 @@
 </blockquote>
 <h3 id="1-2-用户级线程模型"><a href="#1-2-用户级线程模型" class="headerlink" title="1.2 用户级线程模型"></a>1.2 用户级线程模型</h3><p>用户线程模型中的用户线程与内核线程是多对一关系（N : 1）。<code>线程的创建、销毁以及线程之间的协调、同步等工作都是在用户态完成，具体来说就是由应用程序的线程库来完成。</code>线程的并发处理从宏观来看，任意时刻每个进程只能够有一个线程在运行，且只有一个处理器内核会被分配给该进程。</p>
 <p>从图中可以看出来：一个进程中所有创建的线程都与同一个内核线程在运行时动态关联。内核线程将被操作系统调度器指派到处理器内核。用户级线程是一种”多对一”的线程映射</p>
-<p><img src="/img/go-GMP-1/2324da609bf74e1190cd082b7a2fc9f9-20230424162942066.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/2324da609bf74e1190cd082b7a2fc9f9-20230424162942066.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
 <p>用户级线程有如下优点：</p>
 <ul>
@@ -432,14 +432,14 @@
 <h3 id="1-3-混合型线程模型"><a href="#1-3-混合型线程模型" class="headerlink" title="1.3 混合型线程模型"></a>1.3 混合型线程模型</h3><p>混合型线程模型中用户线程与内核线程是多对多关系（N : M）。<code>混合型线程模型充分吸收上面两种模型的优点，为一个进程中创建多个内核线程，并且线程可以与不同的内核线程在运行时进行动态关联，当某个内核线程由于其上工作的线程的阻塞操作被内核调度出CPU时，当前与其关联的其余用户线程可以重新与其他内核线程建立关联关系。</code></p>
 <p>其线程创建在用户空间中完成，线程的调度和同步也在应用程序中进行。一个应用程序中的多个用户级线程被绑定到一些（小于或等于用户级线程的数目）内核级线程上。</p>
 <p>此模型有时也被称为 两级线程模型，即用户调度器实现用户线程到内核线程的“调度”，内核调度器实现内核线程到CPU上的调度。</p>
-<p><img src="/img/go-GMP-1/ef949e34bb92430986e59ae4c9157a24-20230424162942039.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/ef949e34bb92430986e59ae4c9157a24-20230424162942039.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
 <p>缺点:</p>
 <ul>
 <li>这种动态关联机制的实现很复杂，也需要用户自己去实现。Go语言中的并发就是使用的这种实现方式，Go为了实现该模型自己实现了一个运行时调度器来负责Go中的”线程”与内核的动态关联。</li>
 </ul>
 </blockquote>
-<p>这里我们只需要知道 Go 的线程模型，下面我们讲一下GMP调度的升级之路<br><img src="/img/go-GMP-1/1e31580c350c4ae8909e06f4e9e7961b-20230424162942031.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p>这里我们只需要知道 Go 的线程模型，下面我们讲一下GMP调度的升级之路<br><img src="/img/go-GMP-1/1e31580c350c4ae8909e06f4e9e7961b-20230424162942031.png" srcset="/img/loading.gif" lazyload></p>
 <h2 id="2、-被废弃的-G-M-调度器"><a href="#2、-被废弃的-G-M-调度器" class="headerlink" title="2、 被废弃的 G-M 调度器"></a>2、 被废弃的 G-M 调度器</h2><p><code>Golang在底层实现了混合型线程模型。</code>Go 语言将线程分为了两种类型：内核级线程 M （Machine），轻量级的用户态的协程 Goroutine。</p>
 <p>这里我们提到了 Go 语言调度器的三个核心概念中的两个：</p>
 <ul>
@@ -448,8 +448,8 @@
 <li><p>G： Goroutine的缩写，用户态、轻量级的协程，一个 G 代表了对一段需要被执行的 Go 语言程序的封装；每个 Goroutine 都有自己独立的栈存放自己程序的运行状态；分配的栈大小 2KB，可以按需扩缩容</p>
 </li>
 </ul>
-<p><img src="/img/go-GMP-1/1b7a2036f80e4a84b872bdb3d9af4dc8-20230424162941941.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
-<h3 id="2-1-了解-G-M-调度如何工作"><a href="#2-1-了解-G-M-调度如何工作" class="headerlink" title="2.1 了解 G-M 调度如何工作"></a>2.1 了解 G-M 调度如何工作</h3><p>老调度器存在一个全局 G 队列，M在执行和放回队首的 G 都需要访问全局 G 队列，因为存在多个 M 同时竞争，在访问<code>临界资源</code>全局 G 队列时需要加锁进行保证互斥 &#x2F; 同步，所以全局 G 队列是有互斥锁进行保护的。<br><img src="/img/go-GMP-1/13b53e10037d486da30b5595d993eca3-20230424162942041.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"><br>我们知道在多线程下，老调度器存在几个缺点：</p>
+<p><img src="/img/go-GMP-1/1b7a2036f80e4a84b872bdb3d9af4dc8-20230424162941941.png" srcset="/img/loading.gif" lazyload></p>
+<h3 id="2-1-了解-G-M-调度如何工作"><a href="#2-1-了解-G-M-调度如何工作" class="headerlink" title="2.1 了解 G-M 调度如何工作"></a>2.1 了解 G-M 调度如何工作</h3><p>老调度器存在一个全局 G 队列，M在执行和放回队首的 G 都需要访问全局 G 队列，因为存在多个 M 同时竞争，在访问<code>临界资源</code>全局 G 队列时需要加锁进行保证互斥 &#x2F; 同步，所以全局 G 队列是有互斥锁进行保护的。<br><img src="/img/go-GMP-1/13b53e10037d486da30b5595d993eca3-20230424162942041.png" srcset="/img/loading.gif" lazyload><br>我们知道在多线程下，老调度器存在几个缺点：</p>
 <ul>
 <li>创建、销毁、调度 G 都需要每个 M 获取锁，在多线程下这就形成了激烈的<code>锁竞争</code>。</li>
 <li>M 转移 G 会造成延迟和额外的系统负载。比如当 G 中包含创建新协程的时候，M 创建了 G’，为了继续执行 G，需要把 G’交给 M’执行，也造成了很差的局部性，因为 G’和 G 是相关的，最好放在 M 上执行，而不是其他 M’。</li>
@@ -459,13 +459,13 @@
 <ul>
 <li>P：Processor的缩写，<code>代表一个虚拟的处理器，是线程 M 和 G 的中间层</code>，它能提供线程需要的上下文环境，也会负责调度线程上的等待队列，它维护一个本地的可运行的 G 队列，通过处理器 P 的调度，每一个内核线程都能够执行多个 Goroutine，它能在 Goroutine 进行一些 I&#x2F;O 操作时及时让出计算资源，提高线程的利用率。</li>
 </ul>
-<p><img src="/img/go-GMP-1/9af053c8b7bb4df78c2935a7fa8ad096-20230424162942183.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/9af053c8b7bb4df78c2935a7fa8ad096-20230424162942183.png" srcset="/img/loading.gif" lazyload></p>
 <h3 id="3-1-GMP模型调度流程"><a href="#3-1-GMP模型调度流程" class="headerlink" title="3.1 GMP模型调度流程"></a>3.1 GMP模型调度流程</h3><p>了解一下图中出现的几个概念：</p>
 <ol>
 <li>全局队列（Global Queue）：存放等待运行的 G。</li>
 <li>P 的本地队列：同全局队列类似，存放的也是等待运行的 G，本地队列中 G 的数量有限，不超过 256 个。新建 G’时，G’优先加入到 P 的本地队列，如果队列满了，则会把本地队列中一半的 G 移动到全局队列（本地队列的前一半 + G’，通常为 G’）。</li>
 </ol>
-<p><img src="/img/go-GMP-1/81eb40586a884f21be73955d6a31a613-20230424162942176.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/81eb40586a884f21be73955d6a31a613-20230424162942176.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
 <p>GMP调度流程大致如下：</p>
 <ol>
@@ -500,19 +500,19 @@
 </li>
 </ul>
 <h3 id="3-3-GMP调度场景"><a href="#3-3-GMP调度场景" class="headerlink" title="3.3 GMP调度场景"></a>3.3 GMP调度场景</h3><p>可能到这里对于调度流程和设计策略还是一知半解，先用几张图形象的描述下 GMP 调度机制的一些场景，帮助理解 GMP 调度器为了保证公平性、可扩展性、及提高并发效率，所设计的一些机制和策略。</p>
-<h4 id="3-3-1-G1-运行中创建-G2"><a href="#3-3-1-G1-运行中创建-G2" class="headerlink" title="3.3.1 G1 运行中创建 G2"></a>3.3.1 G1 运行中创建 G2</h4><p>正在 M1 上运行的 G1，通过go func() 创建 G2 后，由于局部性，G2优先放入 P 的本地队列。<br><img src="/img/go-GMP-1/7ab32a60302a4a14a4a94ccb7230e7c0-20230424162942086.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<h4 id="3-3-1-G1-运行中创建-G2"><a href="#3-3-1-G1-运行中创建-G2" class="headerlink" title="3.3.1 G1 运行中创建 G2"></a>3.3.1 G1 运行中创建 G2</h4><p>正在 M1 上运行的 G1，通过go func() 创建 G2 后，由于局部性，G2优先放入 P 的本地队列。<br><img src="/img/go-GMP-1/7ab32a60302a4a14a4a94ccb7230e7c0-20230424162942086.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="3-3-2-G-运行结束后"><a href="#3-3-2-G-运行结束后" class="headerlink" title="3.3.2 G 运行结束后"></a>3.3.2 G 运行结束后</h4><p>M1 上的 G1 运行完成后（调用goexit()函数），M1 上运行的 Goroutine 会切换为 G0，<code>G0 负责调度协程的切换（运行schedule() 函数）</code>，从 M1 上 P 的本地运行队列获取 G2 去执行（函数execute()）。</p>
 <blockquote>
 <p>注意：这里 G0 是程序启动时的线程 M（也叫M0）的系统栈表示的 G 结构体，负责 M 上 G 的调度；</p>
 </blockquote>
-<p><img src="/img/go-GMP-1/91984c3fbf2a422fb07809164327e7df-20230424162942181.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/91984c3fbf2a422fb07809164327e7df-20230424162942181.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="3-3-3-M-上创建的-G-个数大于本地队列长度时"><a href="#3-3-3-M-上创建的-G-个数大于本地队列长度时" class="headerlink" title="3.3.3 M 上创建的 G 个数大于本地队列长度时"></a>3.3.3 M 上创建的 G 个数大于本地队列长度时</h4><p>如果 P 本地队列最多能存 4 个 G（实际上是256个），正在 M1 上运行的 G2 要通过 go func()创建 6 个 G，那么，前 4 个 G 放在 P 本地队列中，G2 创建了第 5 个 G（G7）时，<code>P 本地队列中前一半和 G7 一起打乱顺序放入全局队列，P 本地队列剩下的 G 往前移动</code>，G2 创建的第 6 个 G（G8）时，放入 P 本地队列中，因为还有空间</p>
-<p><img src="/img/go-GMP-1/926d8e228f2b448f81aa7550466897a2-20230424162942224.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/926d8e228f2b448f81aa7550466897a2-20230424162942224.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="3-3-5-M-的自旋状态"><a href="#3-3-5-M-的自旋状态" class="headerlink" title="3.3.5 M 的自旋状态"></a>3.3.5 M 的自旋状态</h4><p>创建新的 G 时，运行的 G 会尝试唤醒其他空闲的 M 绑定 P 去执行，如果 G2 唤醒了M2，M2 绑定了一个 P2，会先运行 M2 的 G0，这时 M2 没有从 P2 的本地队列中找到 G，会进入<code>自旋状态（spinning）</code>，自旋状态的 M2 会尝试从全局空闲线程队列里面获取 G，放到 P2 本地队列去执行，获取的数量满足公式：n &#x3D; min(len(globrunqsize)&#x2F;GOMAXPROCS + 1, len(localrunsize&#x2F;2))，含义是每个P应该从全局队列承担的 G 数量，为了公平性和提高效率，不能太多，要给其他 P 留点；</p>
-<p><img src="/img/go-GMP-1/94259f6f080441beabfb1def4150e284-20230424162942181.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/94259f6f080441beabfb1def4150e284-20230424162942181.png" srcset="/img/loading.gif" lazyload></p>
 <h4 id="3-3-5-任务窃取机制"><a href="#3-3-5-任务窃取机制" class="headerlink" title="3.3.5 任务窃取机制"></a>3.3.5 任务窃取机制</h4><p>自旋状态的 M 会寻找可运行的 G，如果全局队列为空，则会从其他 P 偷取 G 来执行，个数是其他 P 运行队列的一半；</p>
-<p><img src="/img/go-GMP-1/21f0b2438cfc45049889a9f219542285-20230424162942281.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
-<h4 id="3-3-6-G-发生系统调用进入阻塞时"><a href="#3-3-6-G-发生系统调用进入阻塞时" class="headerlink" title="3.3.6 G 发生系统调用进入阻塞时"></a>3.3.6 G 发生系统调用进入阻塞时</h4><p>如果 G 发生系统调度进入阻塞，其所在的 M 也会阻塞，因为会进入内核状态等待系统资源，和 M 绑定的 P 会解除绑定寻找空闲的 M 执行，这是为了提高效率，不能让 P 本地队列的 G 因所在 M 进入阻塞状态而无法执行。<br><img src="/img/go-GMP-1/dda8bb034684472fbebcf4e8376856d0-20230424162942200.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<p><img src="/img/go-GMP-1/21f0b2438cfc45049889a9f219542285-20230424162942281.png" srcset="/img/loading.gif" lazyload></p>
+<h4 id="3-3-6-G-发生系统调用进入阻塞时"><a href="#3-3-6-G-发生系统调用进入阻塞时" class="headerlink" title="3.3.6 G 发生系统调用进入阻塞时"></a>3.3.6 G 发生系统调用进入阻塞时</h4><p>如果 G 发生系统调度进入阻塞，其所在的 M 也会阻塞，因为会进入内核状态等待系统资源，和 M 绑定的 P 会解除绑定寻找空闲的 M 执行，这是为了提高效率，不能让 P 本地队列的 G 因所在 M 进入阻塞状态而无法执行。<br><img src="/img/go-GMP-1/dda8bb034684472fbebcf4e8376856d0-20230424162942200.png" srcset="/img/loading.gif" lazyload></p>
 <blockquote>
 <p>GMP模型的阻塞可能发生在下面几种情况：</p>
 <ul>
@@ -531,7 +531,7 @@
 <li>当G被阻塞在某个系统调用上时，此时G会阻塞在_Gsyscall状态，M也处于 block on syscall 状态，此时的M执行可被抢占调度：执行该G的M会与P解绑，而P则尝试与其它idle的M绑定，继续执行其它G。如果没有其它idle的M，但P的Local队列中仍然有G需要执行，则创建一个新的M；</li>
 <li>当系统调用完成后，G会重新尝试获取一个idle的P进入它的Local队列恢复执行，如果没有idle的P，G会被标记为runnable加入到Global队列。</li>
 </ul>
-<h4 id="3-3-7-G-退出系统调用时"><a href="#3-3-7-G-退出系统调用时" class="headerlink" title="3.3.7 G 退出系统调用时"></a>3.3.7 G 退出系统调用时</h4><p>如果刚才进入系统调用的 G2 解除了阻塞，其所在的 M1 会寻找 P 去执行，优先找原来的 P，发现没有找到或者 P 已经与其他 M 绑定，则其上的 G2 会进入全局队列，等其他 M 获取执行，M1 进入休眠线程队列，等待 P 将他重新唤醒。<br><img src="/img/go-GMP-1/bd9fad3e4608453a80cc240bea45fe33-20230424162942235.png" srcset="/img/loading.gif" lazyload alt="在这里插入图片描述"></p>
+<h4 id="3-3-7-G-退出系统调用时"><a href="#3-3-7-G-退出系统调用时" class="headerlink" title="3.3.7 G 退出系统调用时"></a>3.3.7 G 退出系统调用时</h4><p>如果刚才进入系统调用的 G2 解除了阻塞，其所在的 M1 会寻找 P 去执行，优先找原来的 P，发现没有找到或者 P 已经与其他 M 绑定，则其上的 G2 会进入全局队列，等其他 M 获取执行，M1 进入休眠线程队列，等待 P 将他重新唤醒。<br><img src="/img/go-GMP-1/bd9fad3e4608453a80cc240bea45fe33-20230424162942235.png" srcset="/img/loading.gif" lazyload></p>
 
                 
               </div>
