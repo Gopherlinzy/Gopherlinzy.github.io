@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -303,14 +303,14 @@
 </blockquote>
 <h1 id="一、Docker概述"><a href="#一、Docker概述" class="headerlink" title="一、Docker概述"></a>一、Docker概述</h1><h2 id="1、Docker简介"><a href="#1、Docker简介" class="headerlink" title="1、Docker简介"></a>1、Docker简介</h2><p><code>Docker 镜像是通过读取Dockerfile来构建镜像文件的</code>。Dockerfile是一个文本文档，它包含用户可以在命令行上调用的所有命令来组装镜像，<code>每条指令都是独立运行的，并会创建一个新的镜像层 </code>。使用docker build 命令用户用户可以创建一个自动构建，该构建可以连续执行几个命令行指令。</p>
 <h2 id="2、为什么要用Dockerfile？"><a href="#2、为什么要用Dockerfile？" class="headerlink" title="2、为什么要用Dockerfile？"></a>2、为什么要用Dockerfile？</h2><p>为什么要用Dockerfile？这个问题的本身其实是说为什么我们要自定义镜像，明明Docker Hub上有这么多镜像可以用，我们还要自己费心思做镜像。</p>
-<p><img src="/img/docker_Dockerfile/docker1.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/docker_Dockerfile/docker2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_Dockerfile/docker1.png"></p>
+<p><img src="/img/docker_Dockerfile/docker2.png"></p>
 <blockquote>
 <p>主要原因：Docker Hub上许多官方镜像只是基础包，很多功能都没有，需要我们自己对官方镜像做扩展，以打包成我们生产应用的镜像。<br>参考我的第一篇文章Docker入门篇：《<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/08/15/docker-begin/">Docker的入门与安装</a>》</p>
 </blockquote>
 <h1 id="二、docker-build工作原理"><a href="#二、docker-build工作原理" class="headerlink" title="二、docker build工作原理"></a>二、docker build工作原理</h1><h2 id="1、镜像构建过程"><a href="#1、镜像构建过程" class="headerlink" title="1、镜像构建过程"></a>1、镜像构建过程</h2><p>docker build命令从 Dockerfile 和 context 构建一个镜像。构建的 context 是位于指定位置PATH或URL的一组文件。PATH是本地文件系统上的一个目录。URL是Git存储库位置。</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs shell">docker build [OPTIONS] PATH | URL | -<br></code></pre></td></tr></table></figure>
-<p>完整的镜像架构图：<br><img src="/img/docker_Dockerfile/docker3.png" srcset="/img/loading.gif" lazyload><br><code>构建context是递归处理的。每条指令都是独立运行的，并会创建一个新的镜像层。 </code></p>
+<p>完整的镜像架构图：<br><img src="/img/docker_Dockerfile/docker3.png"><br><code>构建context是递归处理的。每条指令都是独立运行的，并会创建一个新的镜像层。 </code></p>
 <p>例子中docker build后面使用(.)表示当前目录，作为指定context的路径:</p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_">$ </span><span class="language-bash">docker build .</span><br><br>Send build context to Docker daemon 6.51MB<br>...<br></code></pre></td></tr></table></figure>
 <p><code>构建由 Docker 守护程序运行，而不是由 CLI 运行</code>。构建过程所做的第一件事是将整个 context（递归）发送到守护进程。</p>
@@ -321,7 +321,7 @@
 <p>那么在这种客户端&#x2F;服务端的架构中，如何才能让服务端获得本地文件呢？</p>
 <p>这就引入了<code>context(上下文)</code>的概念。当构建的时候，用户会指定构建镜像<code>context(上下文)</code>的路径，<code>docker build</code> 命令得知这个路径后，会将路径下的所有内容打包，然后上传给 Docker守护进程。这样Docker守护进程收到这个<code>context(上下文)</code>包后，展开就会获得构建镜像所需的一切文件。</p>
 </blockquote>
-<p><img src="/img/docker_Dockerfile/docker4.png" srcset="/img/loading.gif" lazyload><br>如果要在构建上下文中使用文件，Dockerfile引用指令中指定的文件，例如COPY指令。<code>要提高构建的性能，可以通过在context目录中添加.dockerignore文件来排除文件和目录。</code></p>
+<p><img src="/img/docker_Dockerfile/docker4.png"><br>如果要在构建上下文中使用文件，Dockerfile引用指令中指定的文件，例如COPY指令。<code>要提高构建的性能，可以通过在context目录中添加.dockerignore文件来排除文件和目录。</code></p>
 <p>传统上，Dockerfile位于上下文的根目录中。实际上，Dockerfile 的文件名并不要求必须为 Dockerfile，而且并不要求必须位于上下文目录中，在docker build中使用-f标志来指向文件系统中的任何位置的Dockerfile。</p>
 <p><code>一般大家习惯性的会使用默认的文件名 Dockerfile，以及会将其置于镜像构建上下文目录中。</code></p>
 <blockquote>
@@ -561,7 +561,7 @@
 <blockquote>
 <p>注意：<br><code>ONBUILD</code>指令可能不会触发<code>FROM</code>或<code>MAINTAINER</code>指令。</p>
 </blockquote>
-<h2 id="18、Dockerfile常用指令"><a href="#18、Dockerfile常用指令" class="headerlink" title="18、Dockerfile常用指令"></a>18、Dockerfile常用指令</h2><p><img src="/img/docker_Dockerfile/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="18、Dockerfile常用指令"><a href="#18、Dockerfile常用指令" class="headerlink" title="18、Dockerfile常用指令"></a>18、Dockerfile常用指令</h2><p><img src="/img/docker_Dockerfile/docker5.png"></p>
 <table>
 <thead>
 <tr>
@@ -657,7 +657,7 @@
 <h2 id="3、执行build命令构建镜像"><a href="#3、执行build命令构建镜像" class="headerlink" title="3、执行build命令构建镜像"></a>3、执行build命令构建镜像</h2><p>执行build命令生成image文件。</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker build <span class="hljs-literal">-t</span> mycentos:<span class="hljs-number">1.0</span> .<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/docker_Dockerfile/docker6.png" srcset="/img/loading.gif" lazyload><br>如果出现<code>Error: Failed to download metadata for repo &#39;appstream&#39;: Cannot prepare internal mirrorlist: No URLs in mirrorlist</code> 错误，不要惊慌！</p>
+<p><img src="/img/docker_Dockerfile/docker6.png"><br>如果出现<code>Error: Failed to download metadata for repo &#39;appstream&#39;: Cannot prepare internal mirrorlist: No URLs in mirrorlist</code> 错误，不要惊慌！</p>
 <p>报错信息的意思是：<code>从仓库 ‘appstream’ 下载元数据失败：由于镜像列表中没有 URL，不能准备内部镜像列表。</code></p>
 <blockquote>
 <p>错误原因：</p>
@@ -673,7 +673,7 @@
 <li>运行centos镜像，并进入交互界面</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker run <span class="hljs-literal">-it</span> <span class="hljs-literal">-P</span> centos<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_Dockerfile/docker7.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_Dockerfile/docker7.png"></p>
 <ol start="2">
 <li>进入到 yum 的 repos 目录</li>
 </ol>
@@ -686,18 +686,18 @@
 <li>生成缓存更新（第一次更新，速度稍微有点慢，耐心等待两分钟左右）</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">yum makecache<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_Dockerfile/docker8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_Dockerfile/docker8.png"></p>
 <ol start="5">
 <li>运行 yum update (更新的东西很多，大约五分钟)</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">yum update <span class="hljs-literal">-y</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_Dockerfile/docker9.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_Dockerfile/docker10.png" srcset="/img/loading.gif" lazyload><br>出现Complete的就是成功了</p>
+<p><img src="/img/docker_Dockerfile/docker9.png"><br><img src="/img/docker_Dockerfile/docker10.png"><br>出现Complete的就是成功了</p>
 <ol start="6">
 <li>使用<code>docker commit</code> 将容器保存为新的镜像</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker commit c638ed426e64  mycentos:<span class="hljs-number">0.1</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/docker_Dockerfile/docker12.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_Dockerfile/docker12.png"></p>
 <ol start="7">
 <li>修改一下我们的Dockerfile里的FROM基础镜像这块</li>
 </ol>
@@ -707,7 +707,7 @@
 <li>重新执行<code>build</code>命令</li>
 </ol>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker build <span class="hljs-literal">-t</span> mycentos:<span class="hljs-number">1.0</span> .<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_Dockerfile/docker13.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_Dockerfile/docker14.png" srcset="/img/loading.gif" lazyload><br>构建centos镜像成功！</p>
+<p><img src="/img/docker_Dockerfile/docker13.png"><br><img src="/img/docker_Dockerfile/docker14.png"><br>构建centos镜像成功！</p>
 <h2 id="4、测试运行"><a href="#4、测试运行" class="headerlink" title="4、测试运行"></a>4、测试运行</h2><h3 id="1）使用-docker-history-镜像id-查看镜像构建过程"><a href="#1）使用-docker-history-镜像id-查看镜像构建过程" class="headerlink" title="1）使用 docker history 镜像id 查看镜像构建过程"></a>1）使用 <code>docker history</code> 镜像id 查看镜像构建过程</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs bash">E:\dockerfile&gt;docker <span class="hljs-built_in">history</span>  2b92daa4f916<br>IMAGE          CREATED          CREATED BY                                      SIZE      COMMENT<br>2b92daa4f916   29 minutes ago   CMD [<span class="hljs-string">&quot;/bin/sh&quot;</span> <span class="hljs-string">&quot;-c&quot;</span> <span class="hljs-string">&quot;/bin/bash&quot;</span>]                0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   CMD [<span class="hljs-string">&quot;/bin/sh&quot;</span> <span class="hljs-string">&quot;-c&quot;</span> <span class="hljs-string">&quot;echo \&quot;-----end----\&quot;&quot;</span>]    0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   CMD [<span class="hljs-string">&quot;/bin/sh&quot;</span> <span class="hljs-string">&quot;-c&quot;</span> <span class="hljs-string">&quot;echo <span class="hljs-variable">$MYPATH</span>&quot;</span>]             0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   EXPOSE map[80/tcp:&#123;&#125;]                           0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   RUN /bin/sh -c yum -y install net-tools <span class="hljs-comment"># bu…   28.7MB    buildkit.dockerfile.v0</span><br>&lt;missing&gt;      29 minutes ago   RUN /bin/sh -c yum -y install vim <span class="hljs-comment"># buildkit    67.2MB    buildkit.dockerfile.v0</span><br>&lt;missing&gt;      29 minutes ago   WORKDIR /usr/local                              0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   ENV MYPATH=/usr/local                           0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      29 minutes ago   MAINTAINER linzy&lt;2350621012@qq.com&gt;             0B        buildkit.dockerfile.v0<br>&lt;missing&gt;      32 minutes ago   /bin/bash                                       302MB<br>&lt;missing&gt;      11 months ago    /bin/sh -c <span class="hljs-comment">#(nop)  CMD [&quot;/bin/bash&quot;]            0B</span><br>&lt;missing&gt;      11 months ago    /bin/sh -c <span class="hljs-comment">#(nop)  LABEL org.label-schema.sc…   0B</span><br>&lt;missing&gt;      11 months ago    /bin/sh -c <span class="hljs-comment">#(nop) ADD file:805cb5e15fb6e0bb0…   231MB</span><br></code></pre></td></tr></table></figure>
 
 <h3 id="2）运行容器，看看是否能够执行ifconfig-及vim命令"><a href="#2）运行容器，看看是否能够执行ifconfig-及vim命令" class="headerlink" title="2）运行容器，看看是否能够执行ifconfig 及vim命令"></a>2）运行容器，看看是否能够执行<code>ifconfig</code> 及<code>vim</code>命令</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><code class="hljs bash">E:\dockerfile&gt;docker run -it mycentos:1.0<br>[root@392bed5a0bcd <span class="hljs-built_in">local</span>]<span class="hljs-comment"># pwd</span><br>/usr/local<br>[root@392bed5a0bcd <span class="hljs-built_in">local</span>]<span class="hljs-comment"># ifconfig</span><br>eth0: flags=4163&lt;UP,BROADCAST,RUNNING,MULTICAST&gt;  mtu 1500<br>        inet 172.17.0.2  netmask 255.255.0.0  broadcast 172.17.255.255<br>        ether 02:42:ac:11:00:02  txqueuelen 0  (Ethernet)<br>        RX packets 11  bytes 906 (906.0 B)<br>        RX errors 0  dropped 0  overruns 0  frame 0<br>        TX packets 0  bytes 0 (0.0 B)<br>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0<br><br>lo: flags=73&lt;UP,LOOPBACK,RUNNING&gt;  mtu 65536<br>        inet 127.0.0.1  netmask 255.0.0.0<br>        loop  txqueuelen 1000  (Local Loopback)<br>        RX packets 0  bytes 0 (0.0 B)<br>        RX errors 0  dropped 0  overruns 0  frame 0<br>        TX packets 0  bytes 0 (0.0 B)<br>        TX errors 0  dropped 0 overruns 0  carrier 0  collisions 0<br><br>[root@392bed5a0bcd <span class="hljs-built_in">local</span>]<span class="hljs-comment"># vim</span><br></code></pre></td></tr></table></figure>
@@ -833,7 +833,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -1001,10 +1001,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

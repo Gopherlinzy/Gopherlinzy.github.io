@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -321,7 +321,7 @@
 </ul>
 </blockquote>
 <h2 id="3、简单Redis指令操作"><a href="#3、简单Redis指令操作" class="headerlink" title="3、简单Redis指令操作"></a>3、简单Redis指令操作</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//Do 方法将命令参数转换为批量字符串以传输到Redis服务器,交给Redis处理</span><br><span class="hljs-comment">//redis.String将Do操作后的返回值转换为String格式输出</span><br>s1, err := redis.String(c.Do(<span class="hljs-string">&quot;SET&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>, <span class="hljs-string">&quot;18&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s1)<br><br>s2, err := redis.String(c.Do(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s2)<br><br>s3, err := redis.String(c.Do(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;linzydashuaige&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s3)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/redis_redigo/redis.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/redis_redigo/redis.png"></p>
 <blockquote>
 <p>可以参考我上一篇文章<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/09/19/redis-five-basicdata-types/">《Redis五大基础数据类型》</a>，自己动手测试吧。</p>
 </blockquote>
@@ -443,7 +443,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -611,10 +611,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

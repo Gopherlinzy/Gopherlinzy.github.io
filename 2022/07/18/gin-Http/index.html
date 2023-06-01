@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -357,31 +357,31 @@
 <li><strong>DefaultQuery</strong>：如果存在，DefaultQuery返回键控url查询值，否则返回指定的defaultValue字符串。</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">user := c.DefaultQuery(<span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>) <span class="hljs-comment">// 此方法可以设置默认值</span><br></code></pre></td></tr></table></figure>
-<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/123?pwd=123456">http://localhost:8080/path/123?pwd=123456</a><br><img src="/img/gin_HTTP/getpm1.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/gin_HTTP/getvc.png" srcset="/img/loading.gif" lazyload></p>
+<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/123?pwd=123456">http://localhost:8080/path/123?pwd=123456</a><br><img src="/img/gin_HTTP/getpm1.png"></p>
+<p><img src="/img/gin_HTTP/getvc.png"></p>
 <ul>
 <li>这个时候就有个问题了，如果我们的请求里面恰好没有给user或pwd，会怎么样?</li>
 </ul>
-<p><img src="/img/gin_HTTP/getpm2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_HTTP/getpm2.png"></p>
 <p>我们发现缺少的这一项直接为空。</p>
 <p>这个时候我们可以用DefaultQuery方法。</p>
 <ul>
 <li><strong>DefaultQuery</strong>：如果存在，DefaultQuery返回键控url查询值，否则返回指定的defaultValue字符串。</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">user := c.DefaultQuery(<span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>) <span class="hljs-comment">// 此方法可以设置默认值</span><br></code></pre></td></tr></table></figure>
-<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/123?pwd=123456">http://localhost:8080/path/123?pwd=123456</a><br><img src="/img/gin_HTTP/getpmDefault.png" srcset="/img/loading.gif" lazyload></p>
+<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/123?pwd=123456">http://localhost:8080/path/123?pwd=123456</a><br><img src="/img/gin_HTTP/getpmDefault.png"></p>
 <h1 id="三、POST请求"><a href="#三、POST请求" class="headerlink" title="三、POST请求"></a>三、POST请求</h1><p>POST 请求的参数一般通过 body 传递给服务器. body 中的数据格式有很多种。</p>
 <ul>
 <li>表单参数可以通过PostForm()方法获取，该方法默认解析的是x-www-form-urlencoded或from-data格式的参数</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go">r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>r.POST(<span class="hljs-string">&quot;/path&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		user := c.DefaultPostForm(<span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>)<br>		<span class="hljs-comment">//PostForm从POST url编码表单或多部分表单返回指定的键值</span><br>		pwd := c.PostForm(<span class="hljs-string">&quot;pwd&quot;</span>)<br>		c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>			<span class="hljs-string">&quot;success&quot;</span>: <span class="hljs-literal">true</span>,<br>			<span class="hljs-string">&quot;user&quot;</span>:    user,<br>			<span class="hljs-string">&quot;pwd&quot;</span>:     pwd,<br>		&#125;)<br>	&#125;)<br>r.Run(<span class="hljs-string">&quot;:8080&quot;</span>) <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br></code></pre></td></tr></table></figure>
-<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path">http://localhost:8080/path</a><br><img src="/img/gin_HTTP/post.png" srcset="/img/loading.gif" lazyload></p>
+<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path">http://localhost:8080/path</a><br><img src="/img/gin_HTTP/post.png"></p>
 <h1 id="四、DELETE请求"><a href="#四、DELETE请求" class="headerlink" title="四、DELETE请求"></a>四、DELETE请求</h1><p>DELETE请求参数挂载在URI,用法与GET请求一样。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>r.DELETE(<span class="hljs-string">&quot;/path/:id&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		id := c.Param(<span class="hljs-string">&quot;id&quot;</span>)<br>		c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>			<span class="hljs-string">&quot;id&quot;</span>: id,<br>		&#125;)<br>	&#125;)<br>r.Run(<span class="hljs-string">&quot;:8080&quot;</span>) <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br></code></pre></td></tr></table></figure>
-<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/linzy">http://localhost:8080/path/linzy</a><br><img src="/img/gin_HTTP/delete.png" srcset="/img/loading.gif" lazyload></p>
+<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/linzy">http://localhost:8080/path/linzy</a><br><img src="/img/gin_HTTP/delete.png"></p>
 <h1 id="五、PUT请求"><a href="#五、PUT请求" class="headerlink" title="五、PUT请求"></a>五、PUT请求</h1><p>PUT请求与POST请求用法一样，参数一般通过 body 传递给服务器. body 中的数据格式有很多种。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go">r := gin.Default() <span class="hljs-comment">//携带基础中间件启动</span><br>r.PUT(<span class="hljs-string">&quot;/path&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		user := c.DefaultPostForm(<span class="hljs-string">&quot;user&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>)<br>		pwd := c.PostForm(<span class="hljs-string">&quot;pwd&quot;</span>)<br>		c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>			<span class="hljs-string">&quot;success&quot;</span>: <span class="hljs-literal">true</span>,<br>			<span class="hljs-string">&quot;user&quot;</span>:    user,<br>			<span class="hljs-string">&quot;pwd&quot;</span>:     pwd,<br>		&#125;)<br>	&#125;)<br>r.Run(<span class="hljs-string">&quot;:8080&quot;</span>) <span class="hljs-comment">// listen and serve on 0.0.0.0:8080</span><br></code></pre></td></tr></table></figure>
-<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/linzy">http://localhost:8080/path/linzy</a><br><img src="/img/gin_HTTP/put.png" srcset="/img/loading.gif" lazyload></p>
+<p>postman访问:<a target="_blank" rel="noopener" href="http://localhost:8080/path/linzy">http://localhost:8080/path/linzy</a><br><img src="/img/gin_HTTP/put.png"></p>
 
                 
               </div>
@@ -502,7 +502,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -670,10 +670,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

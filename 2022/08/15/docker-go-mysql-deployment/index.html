@@ -80,7 +80,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -303,7 +303,7 @@
                 <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p><strong>友情提示</strong><br> 本文学习需要了解一些Linux简单命令和Docker的一些命令<br> 使用的项目我已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/gin-gorm-example">https://github.com/Gopherlinzy/gin-gorm-example</a></p>
 </blockquote>
-<h1 id="一、获取一个可执行的项目"><a href="#一、获取一个可执行的项目" class="headerlink" title="一、获取一个可执行的项目"></a>一、获取一个可执行的项目</h1><p>我自己写了一个简单的gin-gorm项目，github下载地址：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/gin-gorm-example">https://github.com/Gopherlinzy/gin-gorm-example</a><br><img src="/img/docker_go_mysql_deployment/docker1.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="一、获取一个可执行的项目"><a href="#一、获取一个可执行的项目" class="headerlink" title="一、获取一个可执行的项目"></a>一、获取一个可执行的项目</h1><p>我自己写了一个简单的gin-gorm项目，github下载地址：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/gin-gorm-example">https://github.com/Gopherlinzy/gin-gorm-example</a><br><img src="/img/docker_go_mysql_deployment/docker1.png"></p>
 <h2 id="1、拉取项目"><a href="#1、拉取项目" class="headerlink" title="1、拉取项目"></a>1、拉取项目</h2><p>打开Windows终端，输入命令：</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">go get github.com/Gopherlinzy/<span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-example</span><br></code></pre></td></tr></table></figure>
 <h2 id="2、配置"><a href="#2、配置" class="headerlink" title="2、配置"></a>2、配置</h2><p>只需要拉取下来，修改 conf&#x2F;app.ini 配置文件</p>
@@ -343,14 +343,14 @@
 </ul>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">ENTRYPOINT [ <span class="hljs-string">&quot;curl&quot;</span>, <span class="hljs-string">&quot;-s&quot;</span>, <span class="hljs-string">&quot;http://ip.cn&quot;</span> ]<br></code></pre></td></tr></table></figure>
 
-<h1 id="三、构建Docker镜像"><a href="#三、构建Docker镜像" class="headerlink" title="三、构建Docker镜像"></a>三、构建Docker镜像</h1><p>gin-gorm-example 的项目根目录下执行 <strong>docker build -t gin-gorm-docker .</strong><br>该命令作用是创建&#x2F;构建镜像，-t 指定名称为 gin-gorm-docker，**.** 构建内容为当前上下文目录<br><img src="/img/docker_go_mysql_deployment/docker2.png" srcset="/img/loading.gif" lazyload></p>
-<h1 id="四、验证镜像"><a href="#四、验证镜像" class="headerlink" title="四、验证镜像"></a>四、验证镜像</h1><p>查看所有的镜像，确定刚刚构建的 <strong>gin-gorm-docker</strong>  镜像是否存在<br><img src="/img/docker_go_mysql_deployment/docker3.png" srcset="/img/loading.gif" lazyload></p>
-<h1 id="五、创建并运行一个新容器"><a href="#五、创建并运行一个新容器" class="headerlink" title="五、创建并运行一个新容器"></a>五、创建并运行一个新容器</h1><p>执行命令 docker run -p 8080:8080 gin-gorm-docker<br><img src="/img/docker_go_mysql_deployment/docker4.png" srcset="/img/loading.gif" lazyload></p>
+<h1 id="三、构建Docker镜像"><a href="#三、构建Docker镜像" class="headerlink" title="三、构建Docker镜像"></a>三、构建Docker镜像</h1><p>gin-gorm-example 的项目根目录下执行 <strong>docker build -t gin-gorm-docker .</strong><br>该命令作用是创建&#x2F;构建镜像，-t 指定名称为 gin-gorm-docker，**.** 构建内容为当前上下文目录<br><img src="/img/docker_go_mysql_deployment/docker2.png"></p>
+<h1 id="四、验证镜像"><a href="#四、验证镜像" class="headerlink" title="四、验证镜像"></a>四、验证镜像</h1><p>查看所有的镜像，确定刚刚构建的 <strong>gin-gorm-docker</strong>  镜像是否存在<br><img src="/img/docker_go_mysql_deployment/docker3.png"></p>
+<h1 id="五、创建并运行一个新容器"><a href="#五、创建并运行一个新容器" class="headerlink" title="五、创建并运行一个新容器"></a>五、创建并运行一个新容器</h1><p>执行命令 docker run -p 8080:8080 gin-gorm-docker<br><img src="/img/docker_go_mysql_deployment/docker4.png"></p>
 <p>测试我们项目的API文档网址：<a target="_blank" rel="noopener" href="http://localhost:8080/swagger/index.html">http://localhost:8080/swagger/index.html</a></p>
-<p><img src="/img/docker_go_mysql_deployment/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker5.png"></p>
 <p>运行成功了么？</p>
-<p>我们再测试一下用户登录这块，我在用户表自动创建这块自动插入了一条用户信息用户：admin和密码:123456，用我们的postman测试一下，测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a>。<br><img src="/img/docker_go_mysql_deployment/docker6.png" srcset="/img/loading.gif" lazyload></p>
-<p>我们仔细看看控制台的输出了一条错误<br><img src="/img/docker_go_mysql_deployment/docker7.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们再测试一下用户登录这块，我在用户表自动创建这块自动插入了一条用户信息用户：admin和密码:123456，用我们的postman测试一下，测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a>。<br><img src="/img/docker_go_mysql_deployment/docker6.png"></p>
+<p>我们仔细看看控制台的输出了一条错误<br><img src="/img/docker_go_mysql_deployment/docker7.png"></p>
 <p>我们可以发现问题是在访问MySQL数据库的时候，连接数据库超时了！</p>
 <p>这就是我们接下来要解决的问题</p>
 <h1 id="六、MySQL"><a href="#六、MySQL" class="headerlink" title="六、MySQL"></a>六、MySQL</h1><h2 id="1、拉取镜像"><a href="#1、拉取镜像" class="headerlink" title="1、拉取镜像"></a>1、拉取镜像</h2><p>从 Docker 的公共仓库 Dockerhub 下载 MySQL 镜像（国内建议配个镜像），用pull指令拉取镜像，格式指令 docker pull 镜像名:版本号，不写版本号默认拉取最新版。</p>
@@ -362,8 +362,8 @@
 <blockquote>
 <p>说明：<br>–name mysql：指定容器名称为mysql，方便查找和使用<br>-p xxxx:yyyy：宿主机上xxxx端口对应容器中yyyy端口，在外部访问时用的是宿主机上的端口<br>-e MYSQL_ROOT_PASSWORD&#x3D;123456：给root用户设置默认密码为123456<br>-d：容器后台运行<br>mysql：镜像名称</p>
 </blockquote>
-<h2 id="3、连接数据库"><a href="#3、连接数据库" class="headerlink" title="3、连接数据库"></a>3、连接数据库</h2><p>我用的是Navicat连接MySQL。<br><img src="/img/docker_go_mysql_deployment/docker8.png" srcset="/img/loading.gif" lazyload></p>
-<p>初始化的 Mysql 应该如图<br><img src="/img/docker_go_mysql_deployment/docker9.png" srcset="/img/loading.gif" lazyload><br>创建我们的blog数据库，后续测试需要<br><img src="/img/docker_go_mysql_deployment/docker10.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="3、连接数据库"><a href="#3、连接数据库" class="headerlink" title="3、连接数据库"></a>3、连接数据库</h2><p>我用的是Navicat连接MySQL。<br><img src="/img/docker_go_mysql_deployment/docker8.png"></p>
+<p>初始化的 Mysql 应该如图<br><img src="/img/docker_go_mysql_deployment/docker9.png"><br>创建我们的blog数据库，后续测试需要<br><img src="/img/docker_go_mysql_deployment/docker10.png"></p>
 <h1 id="七、关联Golang项目和MySQL"><a href="#七、关联Golang项目和MySQL" class="headerlink" title="七、关联Golang项目和MySQL"></a>七、关联Golang项目和MySQL</h1><h2 id="1、删除原来的项目镜像"><a href="#1、删除原来的项目镜像" class="headerlink" title="1、删除原来的项目镜像"></a>1、删除原来的项目镜像</h2><p>由于原本的镜像存在问题，我们需要修改Dockerfile文件里的数据库的地址，我们需要删除它，此处有几种做法</p>
 <ul>
 <li>删除原本有问题的镜像，重新构建一个新镜像</li>
@@ -382,8 +382,8 @@
 <p>在run指令内增加命令 <strong>–link mysql:mysql</strong> 让 <strong>Golang</strong> 容器与 <strong>Mysql</strong> 容器互联；通过 <strong>–link</strong>，可以在容器内直接使用其关联的容器别名进行访问，而不通过 IP，但是–link只能解决单机容器间的关联，在分布式多机的情况下，需要通过别的方式进行连接。</p>
 <p>执行命令 </p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker run <span class="hljs-literal">--link</span> mysql:mysql <span class="hljs-literal">-p</span> <span class="hljs-number">8080</span>:<span class="hljs-number">8080</span> <span class="hljs-built_in">gin</span><span class="hljs-literal">-gorm-docker</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_go_mysql_deployment/docker11.png" srcset="/img/loading.gif" lazyload><br>MySQL容器的数据库也成功自动创建了三个数据表。<br><img src="/img/docker_go_mysql_deployment/docker12.png" srcset="/img/loading.gif" lazyload></p>
-<p>我们测试一下数据库是否已经关联，用户登录测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a><br><img src="/img/docker_go_mysql_deployment/docker13.png" srcset="/img/loading.gif" lazyload><br>大功告成！</p>
+<p><img src="/img/docker_go_mysql_deployment/docker11.png"><br>MySQL容器的数据库也成功自动创建了三个数据表。<br><img src="/img/docker_go_mysql_deployment/docker12.png"></p>
+<p>我们测试一下数据库是否已经关联，用户登录测试网址：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a><br><img src="/img/docker_go_mysql_deployment/docker13.png"><br>大功告成！</p>
 <h1 id="八、持久化数据库"><a href="#八、持久化数据库" class="headerlink" title="八、持久化数据库"></a>八、持久化数据库</h1><p>我们在每次启动一个 Mysql 容器时，数据库都是空的。另外容器删除之后，数据就丢失了。<br>我们学习了Docker Volume卷技术，了解了如何将数据生命周期独立于容器的生命周期之外，来更新一下我们的Mysql容器吧！</p>
 <blockquote>
 <p>Docker Volume文章：<a target="_blank" rel="noopener" href="https://blog.csdn.net/weixin_46618592/article/details/126591142?spm=1001.2014.3001.5501">https://blog.csdn.net/weixin_46618592&#x2F;article&#x2F;details&#x2F;126591142?spm&#x3D;1001.2014.3001.5501</a></p>
@@ -403,26 +403,26 @@
 <li>首先创建一个目录用于存放数据卷；示例目录 E:&#x2F;home&#x2F;docker-mysql。</li>
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">docker run --name mysql -d -p <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="hljs-number">123456</span> -v E:/home/docker-mysql:/<span class="hljs-keyword">var</span>/lib/mysql mysql:<span class="hljs-number">5.7</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_go_mysql_deployment/docker14.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker14.png"></p>
 <ol start="2">
 <li>检查目录 E:&#x2F;home&#x2F;docker-mysql，多了很多数据库文件。</li>
 </ol>
-<p><img src="/img/docker_go_mysql_deployment/docker15.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker15.png"></p>
 <h2 id="3、验证"><a href="#3、验证" class="headerlink" title="3、验证"></a>3、验证</h2><ol>
 <li>新建一个blog数据库，并启动我们的gin-gorm-docker容器</li>
 </ol>
-<p><img src="/img/docker_go_mysql_deployment/docker16.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker17.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker18.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker16.png"><br><img src="/img/docker_go_mysql_deployment/docker17.png"><br><img src="/img/docker_go_mysql_deployment/docker18.png"></p>
 <ol start="2">
 <li>登录验证一下：<a target="_blank" rel="noopener" href="http://localhost:8080/auth?username=admin&password=123456">http://localhost:8080/auth?username=admin&password=123456</a></li>
 </ol>
-<p><img src="/img/docker_go_mysql_deployment/docker19.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker19.png"></p>
 <ol start="3">
 <li>用我们的token，去新增tags数据表的记录<br><a target="_blank" rel="noopener" href="http://localhost:8080/api/v1/tags?token=(%E7%99%BB%E5%BD%95%E5%90%8E%E6%8B%BF%E5%88%B0%E7%9A%84token)&amp;name=linzy&amp;state=1&amp;created_by=linzy">http://localhost:8080/api/v1/tags?token=(登录后拿到的token)&amp;name=linzy&amp;state=1&amp;created_by=linzy</a></li>
 </ol>
-<p><img src="/img/docker_go_mysql_deployment/docker20.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_go_mysql_deployment/docker21.png" srcset="/img/loading.gif" lazyload><br>4. 删除MySQL容器，在重新用镜像启动</p>
+<p><img src="/img/docker_go_mysql_deployment/docker20.png"><br><img src="/img/docker_go_mysql_deployment/docker21.png"><br>4. 删除MySQL容器，在重新用镜像启动</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><code class="hljs go"># 查看容器列表<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker ps<br>CONTAINER ID   IMAGE             COMMAND                  CREATED          STATUS          PORTS                               NAMES<br>e57733001baa   gin-gorm-docker   <span class="hljs-string">&quot;./go-gin-example&quot;</span>       <span class="hljs-number">7</span> minutes ago    Up <span class="hljs-number">7</span> minutes    <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>:<span class="hljs-number">8080</span>-&gt;<span class="hljs-number">8080</span>/tcp              beautiful_curran<br>c44788bd68d4   mysql:<span class="hljs-number">5.7</span>         <span class="hljs-string">&quot;docker-entrypoint.s…&quot;</span>   <span class="hljs-number">35</span> minutes ago   Up <span class="hljs-number">21</span> minutes   <span class="hljs-number">0.0</span><span class="hljs-number">.0</span><span class="hljs-number">.0</span>:<span class="hljs-number">3306</span>-&gt;<span class="hljs-number">3306</span>/tcp, <span class="hljs-number">33060</span>/tcp   mysql<br><br># 停止正在运行的MySQL容器<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker stop c44788bd68d4<br>c44788bd68d4<br><br># 删除MySQL容器<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker rm c44788bd68d4<br>c44788bd68d4<br><br># 重新将容器挂载到原来的目录<br>E:\goWorkspace\github.com\Gopherlinzy\gin-gorm-example&gt;docker run --name mysql -d -p <span class="hljs-number">3306</span>:<span class="hljs-number">3306</span> -e MYSQL_ROOT_PASSWORD=<span class="hljs-number">123456</span> -v E:/home/docker-mysql:/<span class="hljs-keyword">var</span>/lib/mysql mysql:<span class="hljs-number">5.7</span><br><span class="hljs-number">2</span>de27acad62b21693c79cc0687453ae2c7cb3d0f8f1f478c8715303afcdf497a<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_go_mysql_deployment/docker22.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/docker_go_mysql_deployment/docker23.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_go_mysql_deployment/docker22.png"></p>
+<p><img src="/img/docker_go_mysql_deployment/docker23.png"></p>
 <blockquote>
 <p>验证完毕，你也可以操作一下：创建一些测试表和数据，然后删除当前容器，重新创建的容器，数据库数据也依然存在（当然了数据卷指向要一致）</p>
 </blockquote>
@@ -552,7 +552,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -720,10 +720,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

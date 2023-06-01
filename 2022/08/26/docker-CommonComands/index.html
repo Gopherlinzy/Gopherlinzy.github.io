@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -309,13 +309,13 @@
 <blockquote>
 <p>容器的实质是进程，与宿主机上的其他进程是共用一个内核，但与直接在宿主机执行的进程不同，容器进程运行在属于自己的独立的命名空间。命名空间隔离了进程间的资源，使得 a,b 进程可以看到 S 资源，而 c 进程看不到。</p>
 </blockquote>
-<p><img src="/img/docker_CommonComands/docker1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker1.png"></p>
 <h2 id="2、Docker为什么比VM快？"><a href="#2、Docker为什么比VM快？" class="headerlink" title="2、Docker为什么比VM快？"></a>2、Docker为什么比VM快？</h2><ol>
 <li><p>Docker有着比虚拟机更少的抽象层。<br> 1）虚拟机是<strong>硬件层抽象</strong>，虚拟硬件和操作系统。<br> 2）Docker是<strong>应用层抽象</strong>，只虚拟化操作系统 。</p>
 </li>
 <li><p>Docker是基于宿主机的内核，VM是基于虚拟机虚拟化后的内核。<br> 1）当新建一个<strong>容器</strong>时，docker不需要像虚拟机需要加载一个<strong>操作系统内核</strong>。然而避免引寻、加载操作系统内核是比较费时费资源的过程。<br> 2）当新建一个<strong>虚拟机</strong>时，虚拟机软件需要加载Guest OS，返回一个新建过程至少是分钟级别的。<br> 3）docker由于<strong>直接利用宿主机的操作系统</strong>，则省略了返回过程，因此新建一个docker容器只需要几秒钟。</p>
 </li>
-<li><p>Docker相比虚拟机更加轻量级和便携。<br><img src="/img/docker_CommonComands/docker2.png" srcset="/img/loading.gif" lazyload></p>
+<li><p>Docker相比虚拟机更加轻量级和便携。<br><img src="/img/docker_CommonComands/docker2.png"></p>
 </li>
 </ol>
 <table>
@@ -364,7 +364,7 @@
 <li>格式：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker 命令 <span class="hljs-literal">--help</span><br></code></pre></td></tr></table></figure></li>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker3.png"></p>
 <h3 id="2）docker-version"><a href="#2）docker-version" class="headerlink" title="2）docker version"></a>2）docker version</h3><ul>
 <li>作用：显示Docker的版本信息。</li>
 <li>格式：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker version [<span class="hljs-type">OPTIONS</span>]<br></code></pre></td></tr></table></figure></li>
@@ -387,7 +387,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker4.png"></p>
 <h3 id="3）docker-info"><a href="#3）docker-info" class="headerlink" title="3）docker info"></a>3）docker info</h3><ul>
 <li>作用：显示docker的系统信息，显示的信息包括内核版本、容器数量和映像。</li>
 <li>格式：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker info [<span class="hljs-type">OPTIONS</span>]<br></code></pre></td></tr></table></figure></li>
@@ -410,7 +410,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker5.png"></p>
 <h2 id="2、镜像命令"><a href="#2、镜像命令" class="headerlink" title="2、镜像命令"></a>2、镜像命令</h2><h3 id="1）docker-images"><a href="#1）docker-images" class="headerlink" title="1）docker images"></a>1）docker images</h3><ul>
 <li>作用：显示所有镜像、它们的存储库和标签以及它们的大小。</li>
 <li>格式：<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker images [<span class="hljs-type">OPTIONS</span>] [<span class="hljs-type">REPOSITORY</span>[:<span class="hljs-type">TAG</span>]]<br></code></pre></td></tr></table></figure></li>
@@ -451,11 +451,11 @@
 </blockquote>
 </li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker6.png"></p>
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker7.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker7.png"></p>
 <table>
 <thead>
 <tr>
@@ -519,11 +519,11 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker8.png"></p>
 <blockquote>
 <p>–filter filter   通过搜索来过滤，例如–filter&#x3D;STARS&#x3D;300表示搜索出来的镜像STARS大于300的</p>
 </blockquote>
-<p><img src="/img/docker_CommonComands/docker9.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker9.png"></p>
 <h3 id="3）docker-pull"><a href="#3）docker-pull" class="headerlink" title="3）docker pull"></a>3）docker pull</h3><ul>
 <li>作用：从Docker Hub上拉取镜像， 如果没有提供标签，Docker 引擎将使用该:latest标签作为默认值。此命令提取debian:latest镜像。</li>
 <li>格式：</li>
@@ -564,11 +564,11 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker10.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_CommonComands/docker11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker10.png"><br><img src="/img/docker_CommonComands/docker11.png"></p>
 <blockquote>
 <p>注意：Docker 镜像可以由多个层组成。图层可以被镜像重用，例如，debian:jessie图像与debian:latest.拉取debian:jessie镜像只会拉取其元数据，而不是其层，因为所有层都已在本地存在。</p>
 </blockquote>
-<p><img src="/img/docker_CommonComands/docker12.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker12.png"></p>
 <blockquote>
 <p>Docker 使用内容可寻址的镜像存储，镜像 ID 是涵盖镜像配置和层的 SHA256 摘要。在上面的示例中， debian:jessie并且debian:latest具有相同的图像 ID，因为它们实际上是用不同名称标记的相同图像。因为它们是同一个镜像，所以它们的层只存储一次，不会消耗额外的磁盘空间。</p>
 </blockquote>
@@ -597,7 +597,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker13.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_CommonComands/docker14.png" srcset="/img/loading.gif" lazyload><br><strong>删除所有镜像:</strong> </p>
+<p><img src="/img/docker_CommonComands/docker13.png"><br><img src="/img/docker_CommonComands/docker14.png"><br><strong>删除所有镜像:</strong> </p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker rmi <span class="hljs-operator">-f</span> <span class="hljs-variable">$</span>(docker images <span class="hljs-literal">-aq</span>)<br></code></pre></td></tr></table></figure>
 
 <h2 id="3、容器命令"><a href="#3、容器命令" class="headerlink" title="3、容器命令"></a>3、容器命令</h2><blockquote>
@@ -608,7 +608,7 @@
 <h3 id="1）docker-run"><a href="#1）docker-run" class="headerlink" title="1）docker run"></a>1）docker run</h3><ul>
 <li><p>作用：创建一个新的容器并运行一个镜像</p>
 </li>
-<li><p>Docker的流程图：<br><img src="/img/docker_CommonComands/docker15.png" srcset="/img/loading.gif" lazyload></p>
+<li><p>Docker的流程图：<br><img src="/img/docker_CommonComands/docker15.png"></p>
 </li>
 <li><p>格式：</p>
 </li>
@@ -656,9 +656,9 @@
 </ul>
 <p>启动并进入容器</p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker run <span class="hljs-literal">-it</span> centos bin/bash<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_CommonComands/docker16.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker16.png"></p>
 <blockquote>
-<p>注意：<br>如果出现这个错误，请用管理员权限执行即可。<br><img src="/img/docker_CommonComands/docker17.png" srcset="/img/loading.gif" lazyload></p>
+<p>注意：<br>如果出现这个错误，请用管理员权限执行即可。<br><img src="/img/docker_CommonComands/docker17.png"></p>
 </blockquote>
 <h3 id="2）docker-ps"><a href="#2）docker-ps" class="headerlink" title="2）docker ps"></a>2）docker ps</h3><ul>
 <li>作用：查看所有的容器</li>
@@ -695,14 +695,14 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker18.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker18.png"></p>
 <h3 id="3）exit-Ctrl-P-Q"><a href="#3）exit-Ctrl-P-Q" class="headerlink" title="3）exit | Ctrl + P + Q"></a>3）exit | Ctrl + P + Q</h3><ul>
 <li>作用：退出容器</li>
 <li>格式：</li>
 </ul>
 <ol>
-<li>exit 直接停止容器并退出<br><img src="/img/docker_CommonComands/docker19.png" srcset="/img/loading.gif" lazyload></li>
-<li>Ctrl + P + Q 容器不停止退出<br><img src="/img/docker_CommonComands/docker20.png" srcset="/img/loading.gif" lazyload></li>
+<li>exit 直接停止容器并退出<br><img src="/img/docker_CommonComands/docker19.png"></li>
+<li>Ctrl + P + Q 容器不停止退出<br><img src="/img/docker_CommonComands/docker20.png"></li>
 </ol>
 <h3 id="4）docker-rm"><a href="#4）docker-rm" class="headerlink" title="4）docker rm"></a>4）docker rm</h3><ul>
 <li>作用：删除一个或多个容器，不能删除正在运行的容器，除非用-f强制删除</li>
@@ -739,13 +739,13 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker21.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker21.png"></p>
 <p><strong>删除所有容器：</strong></p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker <span class="hljs-built_in">rm</span> <span class="hljs-operator">-f</span> <span class="hljs-variable">$</span>(docker <span class="hljs-built_in">ps</span> <span class="hljs-literal">-aq</span>)<br>docker <span class="hljs-built_in">ps</span> <span class="hljs-literal">-a</span> <span class="hljs-literal">-q</span>|xargs docker <span class="hljs-built_in">rm</span><br></code></pre></td></tr></table></figure>
 
 <p><strong>强制删除容器：</strong></p>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">docker <span class="hljs-built_in">rm</span> <span class="hljs-operator">-f</span> 容器id<br></code></pre></td></tr></table></figure>
-<p><img src="/img/docker_CommonComands/docker22.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker22.png"></p>
 <h3 id="5）docker-start-restart-stop-kill"><a href="#5）docker-start-restart-stop-kill" class="headerlink" title="5）docker start | restart | stop | kill"></a>5）docker start | restart | stop | kill</h3><ul>
 <li>作用：启动 | 重启 | 停止 | 杀死 容器的操作</li>
 <li>格式：</li>
@@ -764,7 +764,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker23.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker23.png"></p>
 <blockquote>
 <p>注意：docker 容器后台运行的时候，必须要有一个前台进程运行，如果docker发现没有应用，就会自动停止容器。</p>
 </blockquote>
@@ -823,7 +823,7 @@
 <blockquote>
 <p>shell脚本：一直循环，每秒输出一条日志信息linzy</p>
 </blockquote>
-<p><img src="/img/docker_CommonComands/docker24.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker24.png"></p>
 <h3 id="3）docker-top"><a href="#3）docker-top" class="headerlink" title="3）docker top"></a>3）docker top</h3><ul>
 <li>作用：显示容器的运行进程，查看容器中的进程信息。</li>
 <li>格式：</li>
@@ -833,7 +833,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker25.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker25.png"></p>
 <h3 id="4）docker-inspect"><a href="#4）docker-inspect" class="headerlink" title="4）docker inspect"></a>4）docker inspect</h3><ul>
 <li>作用：查看镜像或容器的元数据</li>
 <li>格式：</li>
@@ -869,7 +869,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker26.png" srcset="/img/loading.gif" lazyload><br><img src="/img/docker_CommonComands/docker27.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker26.png"><br><img src="/img/docker_CommonComands/docker27.png"></p>
 <h3 id="5）docker-exec-it"><a href="#5）docker-exec-it" class="headerlink" title="5）docker exec -it"></a>5）docker exec -it</h3><ul>
 <li>作用：进入正在运行的容器中，打开新的终端并运行新的命令</li>
 <li>格式：</li>
@@ -879,7 +879,7 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker28.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker28.png"></p>
 <h3 id="6）docker-attach"><a href="#6）docker-attach" class="headerlink" title="6）docker attach"></a>6）docker attach</h3><ul>
 <li>作用： 进入正在运行的容器中</li>
 <li>格式：</li>
@@ -889,8 +889,8 @@
 <ul>
 <li>例子：</li>
 </ul>
-<p><img src="/img/docker_CommonComands/docker29.png" srcset="/img/loading.gif" lazyload></p>
-<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p><img src="/img/docker_CommonComands/docker30.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_CommonComands/docker29.png"></p>
+<h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p><img src="/img/docker_CommonComands/docker30.png"></p>
 <table>
 <thead>
 <tr>
@@ -1169,7 +1169,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -1337,10 +1337,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -343,7 +343,7 @@
 <p>在某些情况下，这可以是一种无状态授权机制。服务器的受保护路由将检查<strong>Authorization</strong>标头中是否存在有效的 JWT，如果存在，则允许用户访问受保护的资源。如果 JWT 包含必要的数据，则可能会减少查询数据库以进行某些操作的需要，尽管情况并非总是如此。</p>
 <p>请注意，如果您通过 HTTP 标头发送 JWT 令牌，则应尽量防止它们变得太大。某些服务器不接受超过 8 KB 的标头。如果您试图在 JWT 令牌中嵌入太多信息，例如通过包含所有用户的权限，您可能需要替代解决方案，例如<a target="_blank" rel="noopener" href="https://auth0.com/developers/lab/fine-grained-authorization">Auth0 Fine-Grained Authorization</a>。</p>
 <p>如果令牌在<strong>Authorization</strong>标头中发送，则跨域资源共享 (CORS) 不会成为问题，因为它不使用 cookie。</p>
-<p>下图显示了如何获取 JWT 并将其用于访问 API 或资源：<br><img src="/img/gin_JWT/jwt1.png" srcset="/img/loading.gif" lazyload></p>
+<p>下图显示了如何获取 JWT 并将其用于访问 API 或资源：<br><img src="/img/gin_JWT/jwt1.png"></p>
 <ol>
 <li>应用程序或客户端向授权服务器请求授权。这是通过不同的授权流程之一执行的。例如，一个典型的符合<a target="_blank" rel="noopener" href="https://openid.net/connect/">OpenID Connect</a>的Web 应用程序将使用<a target="_blank" rel="noopener" href="https://openid.net/specs/openid-connect-core-1_0.html#CodeFlowAuth">授权代码流</a> <strong>&#x2F;oauth&#x2F;authorize</strong> 通过端点。</li>
 <li>当授权被授予时，授权服务器向应用程序返回一个访问令牌。</li>
@@ -362,13 +362,13 @@
 <p>使用自定义声明类型创建令牌的示例。StandardClaim 嵌入在自定义类型中，以便于对标准声明进行编码、解析和验证。</p>
 <p><strong>代码示例</strong></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyClaims <span class="hljs-keyword">struct</span> &#123;<br>	UserName <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;user_name&quot;`</span><br>	jwt.StandardClaims<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//签名密钥</span><br>	mySignedKeys := []<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;woshilinzy&quot;</span>)<br>	c := MyClaims&#123;<br>		UserName: <span class="hljs-string">&quot;linzy&quot;</span>,<br>		StandardClaims: jwt.StandardClaims&#123;<br>			<span class="hljs-comment">//什么时间生效</span><br>			NotBefore: time.Now().Unix() - <span class="hljs-number">60</span>,<br>			<span class="hljs-comment">//什么时间失效</span><br>			ExpiresAt: time.Now().Unix() + <span class="hljs-number">5</span>,<br>			<span class="hljs-comment">//签发者</span><br>			Issuer:    <span class="hljs-string">&quot;linzy&quot;</span>,<br>		&#125;,<br>	&#125;<br>	<span class="hljs-comment">//NewWithClaims使用指定的签名方法和声明创建一个新的令牌。</span><br>	t := jwt.NewWithClaims(jwt.SigningMethodHS256, c)<br>	fmt.Println(t)<br>	<span class="hljs-comment">// SignedString创建并返回一个完整的有符号的JWT。</span><br>	<span class="hljs-comment">//使用令牌中指定的SigningMethod对令牌进行签名。</span><br>	s, err := t.SignedString(mySignedKeys)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	fmt.Println(s)<br>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gin_JWT/jwt2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_JWT/jwt2.png"></p>
 <h3 id="2）解析JWT"><a href="#2）解析JWT" class="headerlink" title="2）解析JWT"></a>2）解析JWT</h3><p><strong>ParseWithClaims</strong> 使用自定义声明类型创建令牌的示例。StandardClaim 嵌入在自定义类型中，以便于对标准声明进行编码、解析和验证。<br>token, err :&#x3D; jwt.ParseWithClaims(token, claims, func)</p>
 <ol>
 <li>token：我们拿到的<strong>token</strong>字符串</li>
 <li>claims：我们用那个<strong>claims</strong>结构体发送的，就传入那个<strong>claims</strong>结构体</li>
 <li>func：特殊的回调函数，需要固定接收 <em>Token 类型指针，返回 interface{} 和 err，*<em>interface{}</em></em> 就是我们的密钥 <strong>mySignedKeys</strong><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyClaims <span class="hljs-keyword">struct</span> &#123;<br>	UserName <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;user_name&quot;`</span><br>	jwt.StandardClaims<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	mySignedKeys := []<span class="hljs-type">byte</span>(<span class="hljs-string">&quot;woshilinzy&quot;</span>)<br>	<br>	<span class="hljs-comment">//刚刚加密的JWT</span><br>	tokenString := <span class="hljs-string">&quot;eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VyX25hbWUiOiJsaW56eSIsImV4cCI6MTY1NzYzNTY5MSwiaXNzIjoibGluenkiLCJuYmYiOjE2NTc2MzU2MjZ9.SJEAqz3BnJ_52kEQvwbIjWPa9KW6KU2yLINTQMk4FlA&quot;</span><br>	<span class="hljs-comment">//解析JWT</span><br>	token, err := jwt.ParseWithClaims(tokenString, &amp;MyClaims&#123;&#125;, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(token *jwt.Token)</span></span> (<span class="hljs-keyword">interface</span>&#123;&#125;, <span class="hljs-type">error</span>) &#123;<br>		<span class="hljs-keyword">return</span> mySignedKeys, <span class="hljs-literal">nil</span><br>	&#125;)<br>	<span class="hljs-comment">//使用断言获取MyClaims结构体</span><br>	fmt.Println(token.Claims.(*MyClaims))<br>	fmt.Println(err)<br>&#125;<br></code></pre></td></tr></table></figure>
-<img src="/img/gin_JWT/jwt3.png" srcset="/img/loading.gif" lazyload></li>
+<img src="/img/gin_JWT/jwt3.png"></li>
 </ol>
 <h1 id="六、浅谈使用JWT的优点"><a href="#六、浅谈使用JWT的优点" class="headerlink" title="六、浅谈使用JWT的优点"></a>六、浅谈使用JWT的优点</h1><p>让我们谈谈<strong>JSON Web Tokens</strong> (JWT)与<strong>Simple Web Tokens</strong> (SWT)和<strong>Security Assertion Markup Language Tokens</strong> (SAML)相比的优势。</p>
 <p>由于 JSON 不像 XML 那样冗长，因此在对其进行编码时，它的大小也更小，这使得 JWT 比 SAML 更紧凑。这使得 JWT 成为在 HTML 和 HTTP 环境中传递的不错选择。</p>
@@ -493,7 +493,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -661,10 +661,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

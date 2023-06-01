@@ -80,7 +80,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -308,7 +308,7 @@
 <li>GORM框架进阶之CRUD接口(数据库增删改查操作)：<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/07/19/gin-gorm2/">https://linzyblog.netlify.app/2022/07/19/gin-gorm2/</a></li>
 </ol>
 <h1 id="一、设计思路"><a href="#一、设计思路" class="headerlink" title="一、设计思路"></a>一、设计思路</h1><p>这章动手把前面学过的Gin框架内容和Gorm框架结合做一个简单的API 微服务</p>
-<p><img src="/img/gin_gorm_API/gga1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga1.png"></p>
 <p>我们需要通过前端来完成对数据库数据的增删改查即可，需要如下这样的 API ：</p>
 <blockquote>
 <ol>
@@ -338,48 +338,48 @@
 <ul>
 <li>POST请求</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga2.png"></p>
 <ul>
 <li>数据库</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga3.png"></p>
 <h2 id="2、查询所有记录"><a href="#2、查询所有记录" class="headerlink" title="2、查询所有记录"></a>2、查询所有记录</h2><p>使用到了 Gin 框架中的 GET 请求，没有参数，用 Gorm 框架连接数据库使用Find方法查询所有记录，封装在JSON里返回给前端用户</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//获取数据库所有todo</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">selectAllTodo</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> todos []todoModel<br>	<span class="hljs-keyword">var</span> rq_todos []transformedTodo<br>	db.Find(&amp;todos)<br>	<span class="hljs-keyword">if</span> <span class="hljs-built_in">len</span>(todos) &lt;= <span class="hljs-number">0</span> &#123;<br>		c.JSON(http.StatusNotFound, gin.H&#123;<br>			<span class="hljs-string">&quot;status&quot;</span>:  http.StatusNotFound,<br>			<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;No todo found!&quot;</span>,<br>		&#125;)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	<span class="hljs-keyword">for</span> _, item := <span class="hljs-keyword">range</span> todos &#123;<br>		completed := <span class="hljs-literal">false</span><br>		<span class="hljs-keyword">if</span> item.Completed == <span class="hljs-number">1</span> &#123;<br>			completed = <span class="hljs-literal">true</span><br>		&#125;<br>		rq_todos = <span class="hljs-built_in">append</span>(rq_todos, transformedTodo&#123;<br>			ID:        <span class="hljs-type">int</span>(item.ID),<br>			Title:     item.Title,<br>			Completed: completed,<br>		&#125;)<br>	&#125;<br>	c.JSON(http.StatusOK, gin.H&#123;<br>		<span class="hljs-string">&quot;status&quot;</span>: http.StatusOK,<br>		<span class="hljs-string">&quot;data&quot;</span>:   rq_todos,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 <ul>
 <li>GET请求</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga4.png"></p>
 <ul>
 <li>数据库</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga5.png"></p>
 <h2 id="3、查找指定id的记录"><a href="#3、查找指定id的记录" class="headerlink" title="3、查找指定id的记录"></a>3、查找指定id的记录</h2><p>使用到了 Gin 框架中的 Context 上下文来接收 GET 方式存放在URI里传过来的参数，用 Gorm 框架连接数据库使用Find方法或者First方法查询指定记录，封装在JSON里返回给前端用户</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//查找指定todo</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">selectSingleTodo</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> todo todoModel<br>	todoID := c.Param(<span class="hljs-string">&quot;id&quot;</span>)<br>	db.First(&amp;todo, todoID)<br>	<span class="hljs-keyword">if</span> todo.ID == <span class="hljs-number">0</span> &#123;<br>		c.JSON(http.StatusNotFound, gin.H&#123;<br>			<span class="hljs-string">&quot;status&quot;</span>:  http.StatusNotFound,<br>			<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;No todo found!&quot;</span>,<br>		&#125;)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	completed := <span class="hljs-literal">false</span><br>	<span class="hljs-keyword">if</span> todo.Completed == <span class="hljs-number">1</span> &#123;<br>		completed = <span class="hljs-literal">true</span><br>	&#125;<br>	rp_todo := transformedTodo&#123;<br>		ID:        <span class="hljs-type">int</span>(todo.ID),<br>		Title:     todo.Title,<br>		Completed: completed,<br>	&#125;<br>	c.JSON(http.StatusOK, gin.H&#123;<br>		<span class="hljs-string">&quot;status&quot;</span>: http.StatusOK,<br>		<span class="hljs-string">&quot;data&quot;</span>:   rp_todo,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 <ul>
 <li>GET请求</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga6.png"></p>
 <h2 id="4、修改指定id记录"><a href="#4、修改指定id记录" class="headerlink" title="4、修改指定id记录"></a>4、修改指定id记录</h2><p>使用到了 Gin 框架中的 Context 上下文来接收 PUT 方式传过来的参数，用 Gorm 框架连接数据库使用Find方法或者First方法查询指定记录，然后通过Update方法修改记录，返回给前端用户<strong>修改成功</strong>信息。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//修改指定id todo</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">updateTodo</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> todo todoModel<br>	todoID := c.Param(<span class="hljs-string">&quot;id&quot;</span>)<br>	db.First(&amp;todo, todoID)<br>	<span class="hljs-keyword">if</span> todo.ID == <span class="hljs-number">0</span> &#123;<br>		c.JSON(http.StatusNotFound, gin.H&#123;<br>			<span class="hljs-string">&quot;status&quot;</span>:  http.StatusNotFound,<br>			<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;No todo found!&quot;</span>,<br>		&#125;)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	completed, _ := strconv.Atoi(c.PostForm(<span class="hljs-string">&quot;completed&quot;</span>))<br>	db.Model(&amp;todo).Updates(&amp;todoModel&#123;<br>		Title:     c.PostForm(<span class="hljs-string">&quot;title&quot;</span>),<br>		Completed: completed,<br>	&#125;)<br>	c.JSON(http.StatusOK, gin.H&#123;<br>		<span class="hljs-string">&quot;status&quot;</span>:  http.StatusOK,<br>		<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;Todo updated successfully&quot;</span>,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 
 <ul>
 <li>PUT请求</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga7.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga7.png"></p>
 <ul>
 <li>数据库</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga8.png"></p>
 <h2 id="5、删除指定id记录"><a href="#5、删除指定id记录" class="headerlink" title="5、删除指定id记录"></a>5、删除指定id记录</h2><p>使用到了 Gin 框架中的 Context 上下文来接收 DELETE 方式存放在URI里传过来的参数，用 Gorm 框架连接数据库使用First方法或者Find查询指定id记录，用Delete删除指定id记录，返回给前端用户<strong>删除成功</strong>信息。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//删除指定id todo</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">deleteTodo</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> todo todoModel<br>	todoID := c.Param(<span class="hljs-string">&quot;id&quot;</span>)<br>	db.First(&amp;todo, todoID)<br>	<span class="hljs-keyword">if</span> todo.ID == <span class="hljs-number">0</span> &#123;<br>		c.JSON(http.StatusNotFound, gin.H&#123;<br>			<span class="hljs-string">&quot;status&quot;</span>:  http.StatusNotFound,<br>			<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;No todo found!&quot;</span>,<br>		&#125;)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	db.Delete(&amp;todo)<br>	c.JSON(http.StatusOK, gin.H&#123;<br>		<span class="hljs-string">&quot;status&quot;</span>:  http.StatusOK,<br>		<span class="hljs-string">&quot;message&quot;</span>: <span class="hljs-string">&quot;todo Deleted successfully&quot;</span>,<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 <ul>
 <li>DELETE请求</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga9.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga9.png"></p>
 <ul>
 <li>数据库</li>
 </ul>
-<p><img src="/img/gin_gorm_API/gga10.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_gorm_API/gga10.png"></p>
 <h1 id="四、结论"><a href="#四、结论" class="headerlink" title="四、结论"></a>四、结论</h1><p>这章只是把前面的基础的知识Gin框架和Gorm框架结合一起实现，日志、JWT认证和Casbin框架我还没用到，后面我将会学习gva框架把之前所学全部展现并结合出来</p>
 
                 
@@ -507,7 +507,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -675,10 +675,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

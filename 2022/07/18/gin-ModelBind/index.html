@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -321,9 +321,9 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PostParams <span class="hljs-keyword">struct</span> &#123;<br>	Name <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;name&quot;`</span><br>	Age  <span class="hljs-type">int</span>    <span class="hljs-string">`json:&quot;age&quot;`</span><br>	Sex  <span class="hljs-type">bool</span>   <span class="hljs-string">`json:&quot;sex&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
 <p>ShouldBindJSON代码示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	r := gin.Default()<br>	r.POST(<span class="hljs-string">&quot;/testBind/&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		<span class="hljs-comment">//声明一个PostParams结构体</span><br>		<span class="hljs-keyword">var</span> p PostParams<br>		<span class="hljs-comment">//通过ShouldBindJSON方法绑定结构体的对应属性</span><br>		err := c.ShouldBindJSON(&amp;p)<br>		fmt.Printf(<span class="hljs-string">&quot;p: %v\n&quot;</span>, p)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(err)<br>			c.JSON(<span class="hljs-number">404</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;报错了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: gin.H&#123;&#125;,<br>			&#125;)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;成功了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: p,<br>			&#125;)<br>		&#125;<br>	&#125;)<br>	r.Run(<span class="hljs-string">&quot;:8080&quot;</span>)<br>&#125;<br><br></code></pre></td></tr></table></figure>
-<p>打开postman选择POST请求，选择Body里的raw上传JSON格式的数据，访问<a target="_blank" rel="noopener" href="http://localhost:8080/testBind">http://localhost:8080/testBind</a><br><img src="/img/gin_ModelBind/mb1.png" srcset="/img/loading.gif" lazyload></p>
+<p>打开postman选择POST请求，选择Body里的raw上传JSON格式的数据，访问<a target="_blank" rel="noopener" href="http://localhost:8080/testBind">http://localhost:8080/testBind</a><br><img src="/img/gin_ModelBind/mb1.png"></p>
 <ul>
-<li>如果我们发送的JSON里少一项或者跟结构体的属性名不对应会如何？<br><img src="/img/gin_ModelBind/mb2.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gin_ModelBind/mb3.png" srcset="/img/loading.gif" lazyload><br>答案是：没有被成功绑定的属性则为空。</li>
+<li>如果我们发送的JSON里少一项或者跟结构体的属性名不对应会如何？<br><img src="/img/gin_ModelBind/mb2.png"><br><img src="/img/gin_ModelBind/mb3.png"><br>答案是：没有被成功绑定的属性则为空。</li>
 </ul>
 <h3 id="2）ShouldBindUri方法"><a href="#2）ShouldBindUri方法" class="headerlink" title="2）ShouldBindUri方法"></a>2）ShouldBindUri方法</h3><p>ShouldBindUri使用指定的绑定引擎绑定传递的struct指针。</p>
 <p>Uri绑定结构体：</p>
@@ -331,13 +331,13 @@
 <p>ShouldBindUri代码示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	r := gin.Default()<br>	<span class="hljs-comment">//路由路径变为uri形式获取参数</span><br>	r.POST(<span class="hljs-string">&quot;/testBind/:name/:age/:sex&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		<span class="hljs-comment">//声明一个PostParams结构体</span><br>		<span class="hljs-keyword">var</span> p PostParams<br>		<span class="hljs-comment">//通过ShouldBindUri方法绑定结构体的对应属性</span><br>		err := c.ShouldBindUri(&amp;p)<br>		fmt.Printf(<span class="hljs-string">&quot;p: %v\n&quot;</span>, p)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(err)<br>			c.JSON(<span class="hljs-number">404</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;报错了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: gin.H&#123;&#125;,<br>			&#125;)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;成功了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: p,<br>			&#125;)<br>		&#125;<br>	&#125;)<br>	r.Run(<span class="hljs-string">&quot;:8080&quot;</span>)<br>&#125;<br><br></code></pre></td></tr></table></figure>
 <p>打开postman选择POST请求，选择uri里面输入对应的数据，访问<a target="_blank" rel="noopener" href="http://localhost:8080/testBind/linzy/23/true">http://localhost:8080/testBind/linzy/23/true</a></p>
-<p><img src="/img/gin_ModelBind/mb4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_ModelBind/mb4.png"></p>
 <h3 id="3）ShouldBindQuery方法"><a href="#3）ShouldBindQuery方法" class="headerlink" title="3）ShouldBindQuery方法"></a>3）ShouldBindQuery方法</h3><p>ShouldBindQuery是c.ShouldBindWith(obj, binding.Query)的快捷方式</p>
 <p>Query绑定结构体：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PostParams <span class="hljs-keyword">struct</span> &#123;<br>	Name <span class="hljs-type">string</span> <span class="hljs-string">`form:&quot;name&quot;`</span><br>	Age  <span class="hljs-type">int</span>    <span class="hljs-string">`form:&quot;age&quot;`</span><br>	Sex  <span class="hljs-type">bool</span>   <span class="hljs-string">`form:&quot;sex&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
 <p>ShouldBindQuery代码示例：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	r := gin.Default()<br>	r.POST(<span class="hljs-string">&quot;/testBind&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c *gin.Context)</span></span> &#123;<br>		<span class="hljs-comment">//声明一个PostParams结构体</span><br>		<span class="hljs-keyword">var</span> p PostParams<br>		<span class="hljs-comment">//通过ShouldBindQuery方法绑定结构体的对应属性</span><br>		err := c.ShouldBindQuery(&amp;p)<br>		fmt.Printf(<span class="hljs-string">&quot;p: %v\n&quot;</span>, p)<br>		<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>			fmt.Println(err)<br>			c.JSON(<span class="hljs-number">404</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;报错了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: gin.H&#123;&#125;,<br>			&#125;)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			c.JSON(<span class="hljs-number">200</span>, gin.H&#123;<br>				<span class="hljs-string">&quot;msg&quot;</span>:  <span class="hljs-string">&quot;成功了&quot;</span>,<br>				<span class="hljs-string">&quot;data&quot;</span>: p,<br>			&#125;)<br>		&#125;<br>	&#125;)<br>	r.Run(<span class="hljs-string">&quot;:8080&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
-<p>打开postman选择POST请求，选择Params输入数据，访问<a target="_blank" rel="noopener" href="http://localhost:8080/testBind?name=linzy&age=23&sex=true">http://localhost:8080/testBind?name=linzy&age=23&sex=true</a><br><img src="/img/gin_ModelBind/mb5.png" srcset="/img/loading.gif" lazyload></p>
+<p>打开postman选择POST请求，选择Params输入数据，访问<a target="_blank" rel="noopener" href="http://localhost:8080/testBind?name=linzy&age=23&sex=true">http://localhost:8080/testBind?name=linzy&age=23&sex=true</a><br><img src="/img/gin_ModelBind/mb5.png"></p>
 <ul>
 <li>当我们使用绑定方法时，Gin会根据Content-Type推断出使用哪种绑定器，如果你确定你绑定的是什么，你可以使用MustBindWith或者BindingWith。</li>
 <li></li>
@@ -352,11 +352,11 @@
 <ul>
 <li>先输入正确的数据</li>
 </ul>
-<p><img src="/img/gin_ModelBind/mb6.png" srcset="/img/loading.gif" lazyload><br> 我们成功通过数据验证，拿到了数据。</p>
+<p><img src="/img/gin_ModelBind/mb6.png"><br> 我们成功通过数据验证，拿到了数据。</p>
 <ul>
 <li>再输入age小于10的数据</li>
 </ul>
-<p><img src="/img/gin_ModelBind/mb7.png" srcset="/img/loading.gif" lazyload><br>出现错误，数据不正确。</p>
+<p><img src="/img/gin_ModelBind/mb7.png"><br>出现错误，数据不正确。</p>
 <h2 id="2、自定义数据验证"><a href="#2、自定义数据验证" class="headerlink" title="2、自定义数据验证"></a>2、自定义数据验证</h2><p>对绑定解析到结构体上的参数，自定义验证功能。比如我们想name不为空的同时，不能为admin的时候，就无法 binding 现成的方法。</p>
 <p>JSON结构体：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> PostParams <span class="hljs-keyword">struct</span> &#123;<br>	<span class="hljs-comment">//在参数binding上使用自定义的校验方法函数注册时候的名称</span><br>	<span class="hljs-comment">//name不为空且不能为admin</span><br>	Name <span class="hljs-type">string</span> <span class="hljs-string">`json:&quot;name&quot; binding:&quot;required,notAdmin&quot;`</span><br>	Age  <span class="hljs-type">int</span>    <span class="hljs-string">`json:&quot;age&quot;`</span><br>	Sex  <span class="hljs-type">bool</span>   <span class="hljs-string">`json:&quot;sex&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
@@ -368,11 +368,11 @@
 <ul>
 <li>输入name为admin的数据</li>
 </ul>
-<p><img src="/img/gin_ModelBind/mb8.png" srcset="/img/loading.gif" lazyload><br>自定义数据验证检验出数据错误，并返回请求一个错误。</p>
+<p><img src="/img/gin_ModelBind/mb8.png"><br>自定义数据验证检验出数据错误，并返回请求一个错误。</p>
 <ul>
 <li>输入正确的数据</li>
 </ul>
-<p><img src="/img/gin_ModelBind/mb9.png" srcset="/img/loading.gif" lazyload><br>大功告成！通过了自定义数据验证，并成功返回了。</p>
+<p><img src="/img/gin_ModelBind/mb9.png"><br>大功告成！通过了自定义数据验证，并成功返回了。</p>
 
                 
               </div>
@@ -495,7 +495,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -663,10 +663,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

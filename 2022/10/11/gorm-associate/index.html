@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -315,21 +315,21 @@
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><br><span class="hljs-comment">// `User` 属于 `Company`，`CompanyID` 是外键</span><br><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Name      <span class="hljs-type">string</span><br>	CompanyID <span class="hljs-type">int</span> <span class="hljs-comment">// 默认情况下， CompanyID 被隐含地用来在 User 和 Company 之间创建一个外键关系</span><br>	Company   Company<br>&#125;<br><br><span class="hljs-keyword">type</span> Company <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">int</span><br>	Name <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//user 里面有 company表的结构 所以只需要自动迁移user表即可</span><br>	db.AutoMigrate(&amp;User&#123;&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm1.png"></p>
 <h3 id="1）创建记录"><a href="#1）创建记录" class="headerlink" title="1）创建记录"></a>1）创建记录</h3><p>创建在<code>dachang</code>里的用户<code>linzy</code>的记录</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go">c := Company&#123;<br>	ID:   <span class="hljs-number">1</span>,<br>	Name: <span class="hljs-string">&quot;dachang&quot;</span>,<br>&#125;<br><br>u := User&#123;<br>	Name:    <span class="hljs-string">&quot;linzy&quot;</span>,<br>	Company: c,<br>&#125;<br>db.Create(&amp;u)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm2.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm2.png"><br><img src="/img/gorm_associate/gorm3.png"></p>
 <blockquote>
 <p>不仅 users 表新增记录，companies 表也新增了。这是因为在创建、更新记录时，GORM 会通过 <code>Upsert</code> 自动保存关联及其引用记录。</p>
 </blockquote>
 <h3 id="2）查询记录"><a href="#2）查询记录" class="headerlink" title="2）查询记录"></a>2）查询记录</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> u User<br>db.Model(&amp;User&#123;&#125;).First(&amp;u)<br>fmt.Println(u)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm4.png"></p>
 <blockquote>
 <p>注意：我们发现并没有查出我们关联的 companies 表里面的记录，因为我们在使用CRUD的时候需要所关联的结构时，必须要使用预加载 <code>Preload </code>.</p>
 </blockquote>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> u User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;Company&quot;</span>).First(&amp;u)<br>fmt.Println(u)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm5.png"></p>
 <h3 id="3）重写外键"><a href="#3）重写外键" class="headerlink" title="3）重写外键"></a>3）重写外键</h3><p>要定义一个 belongs to 关系，数据库的表中必须存在外键。默认gorm使用（关联属性类型 + 主键）组成外键名，如上面的例子User + ID 组成UserID，UserID就作为Profile的外键。</p>
 <p>例如我们想自定义外键，就需要用标签<code>foreignKe</code>来指定外键：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>  gorm.Model<br>  Name         <span class="hljs-type">string</span><br>  CompanyRefer <span class="hljs-type">int</span><br>  Company      Company <span class="hljs-string">`gorm:&quot;foreignKey:CompanyRefer&quot;`</span><br>  <span class="hljs-comment">// 使用 CompanyRefer 作为外键</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Company <span class="hljs-keyword">struct</span> &#123;<br>  ID   <span class="hljs-type">int</span><br>  Name <span class="hljs-type">string</span><br>&#125;<br></code></pre></td></tr></table></figure>
@@ -339,18 +339,18 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>  gorm.Model<br>  Name      <span class="hljs-type">string</span><br>  CompanyID <span class="hljs-type">string</span><br>  Company   Company <span class="hljs-string">`gorm:&quot;references:Code&quot;`</span> <span class="hljs-comment">// 使用 Code 作为引用</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Company <span class="hljs-keyword">struct</span> &#123;<br>  ID   <span class="hljs-type">int</span><br>  Code <span class="hljs-type">string</span><br>  Name <span class="hljs-type">string</span><br>&#125;<br></code></pre></td></tr></table></figure>
 <h3 id="5）关联模式"><a href="#5）关联模式" class="headerlink" title="5）关联模式"></a>5）关联模式</h3><h4 id="a、查找关联"><a href="#a、查找关联" class="headerlink" title="a、查找关联"></a>a、查找关联</h4><p>如果我们想查找指定的 user 匹配的关联记录，可以用<code>Association</code>找users表关联的记录:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).Take(&amp;user)<br>fmt.Println(user)<br><br><span class="hljs-keyword">var</span> c Company<br><span class="hljs-comment">// `user` 是源模型，它的主键不能为空</span><br><span class="hljs-comment">// 关系的字段名是 `Company`</span><br><span class="hljs-comment">// 如果匹配了上面两个要求，会开始关联模式，否则会返回错误</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;Company&quot;</span>).Find(&amp;c)<br>fmt.Println(c)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm6.png"></p>
 <h4 id="b、删除关联"><a href="#b、删除关联" class="headerlink" title="b、删除关联"></a>b、删除关联</h4><p>user 可以关联 company，同样也可以不关联，但是去库里删很麻烦，用Delete方法删除源模型与参数之间的关系，<code>只会删除引用，不会从数据库中删除这些对象。</code></p>
-<p>删除前：<br><img src="/img/gorm_associate/gorm7.png" srcset="/img/loading.gif" lazyload></p>
+<p>删除前：<br><img src="/img/gorm_associate/gorm7.png"></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).First(&amp;user)<br><br><span class="hljs-comment">//一定要指定关联的主键</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;Company&quot;</span>).Delete(&amp;Company&#123;ID: <span class="hljs-number">1</span>&#125;)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm8.png"></p>
 <h4 id="c、添加关联"><a href="#c、添加关联" class="headerlink" title="c、添加关联"></a>c、添加关联</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).First(&amp;user)<br><br><span class="hljs-comment">//一定要指定关联的主键</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;Company&quot;</span>).Append(&amp;Company&#123;ID: <span class="hljs-number">1</span>&#125;)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm9.png" srcset="/img/loading.gif" lazyload></p>
-<h4 id="d、修改-替换-关联"><a href="#d、修改-替换-关联" class="headerlink" title="d、修改(替换)关联"></a>d、修改(替换)关联</h4><p>修改关联就是删除关联后，再添加新的关联。<br><img src="/img/gorm_associate/gorm10.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm9.png"></p>
+<h4 id="d、修改-替换-关联"><a href="#d、修改-替换-关联" class="headerlink" title="d、修改(替换)关联"></a>d、修改(替换)关联</h4><p>修改关联就是删除关联后，再添加新的关联。<br><img src="/img/gorm_associate/gorm10.png"></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).First(&amp;user)<br><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;Company&quot;</span>).Replace(&amp;Company&#123;ID: <span class="hljs-number">2</span>&#125;)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm11.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/gorm_associate/gorm12.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm11.png"></p>
+<p><img src="/img/gorm_associate/gorm12.png"></p>
 <h2 id="2、Has-One-拥有"><a href="#2、Has-One-拥有" class="headerlink" title="2、Has One 拥有"></a>2、Has One 拥有</h2><p>has one 与另一个模型建立一对一的关联，但它和一对一关系有些许不同。 这种关联表明一个模型的每个实例都包含或拥有另一个模型的一个实例。</p>
 <blockquote>
 <p>提示：Has one很像属于（belongs to）关系，都是一对一关系，区别是<code>Has One关系和Belongs To关系，持有关联Model属性的关系是相反的</code>，例如：A 关联 B，Has One关系通常是A 结构体持有B属性， belongs to关系则是B结构体持有A。</p>
@@ -365,9 +365,9 @@
 
 <h3 id="1）创建记录-1"><a href="#1）创建记录-1" class="headerlink" title="1）创建记录"></a>1）创建记录</h3><p>创建用户拥有信用卡号为<code>123456</code>的记录</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">c := CreditCard&#123;<br>	Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>&#125;<br><br>u := User&#123;<br>	CreditCard: c,<br>&#125;<br>db.Create(&amp;u)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm13.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm14.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm13.png"><br><img src="/img/gorm_associate/gorm14.png"></p>
 <h3 id="2）查询记录-1"><a href="#2）查询记录-1" class="headerlink" title="2）查询记录"></a>2）查询记录</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> u User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCard&quot;</span>).First(&amp;u)<br>fmt.Println(u)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm15.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm15.png"></p>
 <h3 id="3）重写外键-1"><a href="#3）重写外键-1" class="headerlink" title="3）重写外键"></a>3）重写外键</h3><p>对于 has one 关系，同样必须存在外键字段。拥有者将把属于它的模型的主键保存到这个字段。</p>
 <p>默认情况下Has One关系的外键由持有关联属性的类型名 + 主键 组成外键名，如上例，User关联CreditCard的外键就是User + ID &#x3D; UserID。</p>
 <p>如果你想要使用另一个字段来保存该关系，你同样可以使用标签 <code>foreignKey</code> 来更改它，例如：</p>
@@ -378,18 +378,18 @@
 
 <h3 id="5）关联模式-1"><a href="#5）关联模式-1" class="headerlink" title="5）关联模式"></a>5）关联模式</h3><h4 id="a、查找关联-1"><a href="#a、查找关联-1" class="headerlink" title="a、查找关联"></a>a、查找关联</h4><p>如果我们想查找指定的 user 匹配的关联记录，可以用<code>Association</code>找users表关联的记录:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).Take(&amp;user)<br>fmt.Println(user)<br><br><span class="hljs-keyword">var</span> c CreditCard<br><span class="hljs-comment">// `user` 是源模型，它的主键不能为空</span><br><span class="hljs-comment">// 关系的字段名是 `CreditCard`</span><br><span class="hljs-comment">// 如果匹配了上面两个要求，会开始关联模式，否则会返回错误</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCard&quot;</span>).Find(&amp;c)<br>fmt.Println(c)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm16.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm16.png"></p>
 <h4 id="b、删除关联-1"><a href="#b、删除关联-1" class="headerlink" title="b、删除关联"></a>b、删除关联</h4><p>user 可以关联 CreditCard，同样也可以不关联，但是去库里删很麻烦，用Delete方法删除源模型与参数之间的关系，<code>只会删除引用，不会从数据库中删除这些对象。</code></p>
-<p>删除前：<br><img src="/img/gorm_associate/gorm17.png" srcset="/img/loading.gif" lazyload></p>
+<p>删除前：<br><img src="/img/gorm_associate/gorm17.png"></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go">user := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-string">&quot;1&quot;</span>).First(&amp;user)<br>	<br><span class="hljs-comment">//一定要指定关联的主键</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCard&quot;</span>).Delete(&amp;CreditCard&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">1</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm18.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm18.png"></p>
 <h4 id="c、添加关联-1"><a href="#c、添加关联-1" class="headerlink" title="c、添加关联"></a>c、添加关联</h4><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).First(&amp;user)<br><br><span class="hljs-comment">//一定要指定关联的主键</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCard&quot;</span>).Append(&amp;CreditCard&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">1</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm19.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm19.png"></p>
 <h4 id="d、修改-替换-关联-1"><a href="#d、修改-替换-关联-1" class="headerlink" title="d、修改(替换)关联"></a>d、修改(替换)关联</h4><p>修改关联就是删除关联后，再添加新的关联。</p>
-<p><img src="/img/gorm_associate/gorm20.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm20.png"></p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go">user := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-string">&quot;2&quot;</span>).First(&amp;user)<br><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCard&quot;</span>).Replace(&amp;CreditCard&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">1</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm21.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm21.png"></p>
 <h1 id="二、Has-Many-一对多"><a href="#二、Has-Many-一对多" class="headerlink" title="二、Has Many 一对多"></a>二、Has Many 一对多</h1><p><code>has many</code> 与另一个模型建立了一对多的连接。 不同于 has one，拥有者可以有零或多个关联模型。</p>
 <p>例如：你有两张表 users 表和 credit_cards 表</p>
 <ul>
@@ -402,18 +402,18 @@
 <h2 id="1、创建记录"><a href="#1、创建记录" class="headerlink" title="1、创建记录"></a>1、创建记录</h2><p>创建用户拥有两种信用卡的记录</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go">c1 := CreditCard&#123;<br>	Number: <span class="hljs-string">&quot;123456&quot;</span>,<br>&#125;<br>c2 := CreditCard&#123;<br>	Number: <span class="hljs-string">&quot;8791265&quot;</span>,<br>&#125;<br>u := User&#123;<br>	CreditCards: []CreditCard&#123;c1, c2&#125;,<br>&#125;<br>db.Create(&amp;u)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm22.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm23.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm22.png"><br><img src="/img/gorm_associate/gorm23.png"></p>
 <h2 id="2、查询记录"><a href="#2、查询记录" class="headerlink" title="2、查询记录"></a>2、查询记录</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm24.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm24.png"></p>
 <h2 id="3、预加载"><a href="#3、预加载" class="headerlink" title="3、预加载"></a>3、预加载</h2><p>GORM 允许在 Preload 的其它 SQL 中直接加载关系</p>
 <h3 id="1）预加载全部"><a href="#1）预加载全部" class="headerlink" title="1）预加载全部"></a>1）预加载全部</h3><p>与创建、更新时使用 Select 类似，<code>clause.Associations</code> 也可以和 <code>Preload</code>一起使用，它可以用来 <code>预加载全部关联</code>，例如：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>  gorm.Model<br>  Name       <span class="hljs-type">string</span><br>  CompanyID  <span class="hljs-type">uint</span><br>  Company    Company<br>  Role       Role<br>  Orders     []Order<br>&#125;<br><br>db.Preload(clause.Associations).Find(&amp;users)<br><br></code></pre></td></tr></table></figure>
 <h3 id="2）嵌套预加载"><a href="#2）嵌套预加载" class="headerlink" title="2）嵌套预加载"></a>2）嵌套预加载</h3><p><code>clause.Associations</code> 不会预加载<code>嵌套的关联</code>，如果你在需要用嵌套的关联，你可以使用嵌套预加载 例如：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// User 有多张 CreditCard，UserID 是外键</span><br><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	CreditCards []CreditCard<br>&#125;<br><br><span class="hljs-keyword">type</span> CreditCard <span class="hljs-keyword">struct</span> &#123;<br>	gorm.Model<br>	Number <span class="hljs-type">string</span><br>	UserID <span class="hljs-type">uint</span><br>	Info   Info<br>&#125;<br><br><span class="hljs-keyword">type</span> Info <span class="hljs-keyword">struct</span> &#123;<br>	ID           <span class="hljs-type">uint</span><br>	Name         <span class="hljs-type">string</span><br>	Age          <span class="hljs-type">int</span><br>	CreditCardID <span class="hljs-type">int</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm25.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm26.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm27.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm25.png"><br><img src="/img/gorm_associate/gorm26.png"><br><img src="/img/gorm_associate/gorm27.png"></p>
 <p>使用之前预加载查询记录查询：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm28.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm28.png"></p>
 <blockquote>
 <p>我们只能查到主表对应关联的表结构记录，所以我们这里需要用到<code>嵌套预加载</code>的方式拿到我们需要的数据。</p>
 </blockquote>
@@ -421,30 +421,30 @@
 <p>或者 使用 <code>自定义预加载 SQL</code>：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(db *gorm.DB)</span></span> *gorm.DB &#123;<br>	<span class="hljs-keyword">return</span> db.Preload(<span class="hljs-string">&quot;Info&quot;</span>)<br>&#125;).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm29.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm29.png"></p>
 <h3 id="3）带条件的预加载"><a href="#3）带条件的预加载" class="headerlink" title="3）带条件的预加载"></a>3）带条件的预加载</h3><p>有时候我们需要查询特定的关联结构记录时，可以使用<code>带条件的 Preload 关联</code>，类似于内联条件。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br><span class="hljs-comment">//找到信用卡号不等于`123456`的记录</span><br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards.Info&quot;</span>).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>, <span class="hljs-string">&quot;Number &lt;&gt; ?&quot;</span>, <span class="hljs-string">&quot;123456&quot;</span>).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm30.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm30.png"></p>
 <h4 id="a、Joins-预加载"><a href="#a、Joins-预加载" class="headerlink" title="a、Joins  预加载"></a>a、Joins  预加载</h4><p>可以直接查询关联的下层关联结构，但是这时候不能直接使用带条件的 Preload 关联了，例如我要找信用卡用户不是”linzy“的时候：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards.Info&quot;</span>, <span class="hljs-string">&quot;name &lt;&gt; ?&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm31.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm31.png"></p>
 <p>他虽然满足了条件，但不是我们想要的结果，这个时候需要用到<code>自定义加载SQL以及 Joins  预加载</code>：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;CreditCards&quot;</span>, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(db *gorm.DB)</span></span> *gorm.DB &#123;<br>	<span class="hljs-keyword">return</span> db.Joins(<span class="hljs-string">&quot;Info&quot;</span>).Where(<span class="hljs-string">&quot;name &lt;&gt; ?&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>)<br>&#125;).Find(&amp;user)<br>fmt.Println(user)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm32.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm32.png"></p>
 <blockquote>
 <p>注意：<code>Preload</code> 在一个单独查询中加载关联数据。而 <code>Join Preload</code> 会使用 left join 加载关联数据。<br><code>Join Preload 适用于一对一的关系</code>，例如： has one, belongs to。</p>
 </blockquote>
 <h2 id="4、多态关联"><a href="#4、多态关联" class="headerlink" title="4、多态关联"></a>4、多态关联</h2><p>GORM 为 <code>has one</code> 和 <code>has many</code> 提供了多态关联支持，它会将拥有者实体的表名、主键都保存到多态类型的字段中。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Dog <span class="hljs-keyword">struct</span> &#123;<br>	ID   <span class="hljs-type">int</span><br>	Name <span class="hljs-type">string</span><br>	Toys []Toy <span class="hljs-string">`gorm:&quot;polymorphic:Owner;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Toy <span class="hljs-keyword">struct</span> &#123;<br>	ID        <span class="hljs-type">int</span><br>	Name      <span class="hljs-type">string</span><br>	OwnerID   <span class="hljs-type">int</span><br>	OwnerType <span class="hljs-type">string</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;Dog&#123;&#125;, &amp;Toy&#123;&#125;)<br>	db.Create(&amp;Dog&#123;Name: <span class="hljs-string">&quot;dog1&quot;</span>, Toys: []Toy&#123;&#123;Name: <span class="hljs-string">&quot;toy1&quot;</span>&#125;, &#123;Name: <span class="hljs-string">&quot;toy2&quot;</span>&#125;&#125;&#125;)<br>	<span class="hljs-comment">// INSERT INTO `dogs` (`name`) VALUES (&quot;dog1&quot;)</span><br>	<span class="hljs-comment">// INSERT INTO `toys` (`name`,`owner_id`,`owner_type`) VALUES (&quot;toy1&quot;,&quot;1&quot;,&quot;dogs&quot;), (&quot;toy2&quot;,&quot;1&quot;,&quot;dogs&quot;)</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm33.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm34.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm33.png"><br><img src="/img/gorm_associate/gorm34.png"></p>
 <h2 id="5、关联模式"><a href="#5、关联模式" class="headerlink" title="5、关联模式"></a>5、关联模式</h2><p>关联模式下不同关系的CRUD关联都是类似的写法，就不多阐述了。</p>
 <h3 id="1）清空关联"><a href="#1）清空关联" class="headerlink" title="1）清空关联"></a>1）清空关联</h3><p>删除源模型与关联之间的所有引用，但不会删除这些关联。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.First(&amp;user)<br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCards&quot;</span>).Clear()<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm35.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm35.png"></p>
 <h3 id="2）关联计数"><a href="#2）关联计数" class="headerlink" title="2）关联计数"></a>2）关联计数</h3><p>返回当前关联的总数。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> user User<br>db.First(&amp;user)<br><span class="hljs-comment">//添加关联</span><br>db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCards&quot;</span>).Append(&amp;CreditCard&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">1</span>,<br>	&#125;,<br>&#125;, &amp;CreditCard&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">2</span>,<br>	&#125;,<br>&#125;)<br><br><span class="hljs-comment">//关联计数</span><br>count := db.Model(&amp;user).Association(<span class="hljs-string">&quot;CreditCards&quot;</span>).Count()<br>fmt.Println(count)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm36.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm36.png"></p>
 <h1 id="三、Many-To-Many-多对多"><a href="#三、Many-To-Many-多对多" class="headerlink" title="三、Many To Many 多对多"></a>三、Many To Many 多对多</h1><p>Many to Many 会在两个 model 中添加一张<code>连接表</code>。<br>例如，你有两张表 users 表和 languages 表</p>
 <ul>
 <li>users –用户表</li>
@@ -457,44 +457,44 @@
 </blockquote>
 <h2 id="1、反向引用"><a href="#1、反向引用" class="headerlink" title="1、反向引用"></a>1、反向引用</h2><p>我既可以用 User 创建多条关联，也可以通过 Language 多条关联。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// User 拥有并属于多种 language，`user_languages` 是连接表</span><br><span class="hljs-keyword">type</span> User <span class="hljs-keyword">struct</span> &#123;<br>  gorm.Model<br>  Languages []Language <span class="hljs-string">`gorm:&quot;many2many:user_languages;&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> Language <span class="hljs-keyword">struct</span> &#123;<br>  gorm.Model<br>  Name <span class="hljs-type">string</span><br>  Users []User <span class="hljs-string">`gorm:&quot;many2many:user_languages;&quot;`</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	db.AutoMigrate(&amp;User&#123;&#125;, &amp;Language&#123;&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm37.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm37.png"></p>
 <h2 id="2、创建记录"><a href="#2、创建记录" class="headerlink" title="2、创建记录"></a>2、创建记录</h2><ul>
 <li>创建用户拥有两种语言的记录</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go">l1 := Language&#123;<br>	Name: <span class="hljs-string">&quot;中文&quot;</span>,<br>&#125;<br>l2 := Language&#123;<br>	Name: <span class="hljs-string">&quot;英文&quot;</span>,<br>&#125;<br>u1 := User&#123;<br>	Languages: []Language&#123;l1, l2&#125;,<br>&#125;<br>db.Create(&amp;u1)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm38.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/gorm_associate/gorm39.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/gorm_associate/gorm40.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm38.png"></p>
+<p><img src="/img/gorm_associate/gorm39.png"></p>
+<p><img src="/img/gorm_associate/gorm40.png"></p>
 <ul>
 <li>创建外星语被两个用户所使用的记录：</li>
 </ul>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>l := Language&#123;<br>	Name:  <span class="hljs-string">&quot;外星语&quot;</span>,<br>	<span class="hljs-comment">//也可以直接指定创建好的记录的主键</span><br>	Users: []User&#123;u, User&#123;Model: gorm.Model&#123;ID: <span class="hljs-number">1</span>&#125;&#125;&#125;,<br>&#125;<br>db.Create(&amp;l)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm41.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm42.png" srcset="/img/loading.gif" lazyload><br><img src="/img/gorm_associate/gorm43.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm41.png"><br><img src="/img/gorm_associate/gorm42.png"><br><img src="/img/gorm_associate/gorm43.png"></p>
 <h2 id="3、查找记录"><a href="#3、查找记录" class="headerlink" title="3、查找记录"></a>3、查找记录</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">1</span>).Find(&amp;u)<br>db.Model(&amp;User&#123;&#125;).Preload(<span class="hljs-string">&quot;Languages&quot;</span>).Find(&amp;u)<br>fmt.Println(u)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm44.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm44.png"></p>
 <h2 id="4、关联模式"><a href="#4、关联模式" class="headerlink" title="4、关联模式"></a>4、关联模式</h2><h3 id="1）查询关联"><a href="#1）查询关联" class="headerlink" title="1）查询关联"></a>1）查询关联</h3><p>查询user 对应的关联记录</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">2</span>).Find(&amp;u)<br><span class="hljs-keyword">var</span> l []Language<br>db.Model(&amp;u).Association(<span class="hljs-string">&quot;Languages&quot;</span>).Find(&amp;l)<br>fmt.Println(l)<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm45.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm45.png"></p>
 <h3 id="2）添加关联"><a href="#2）添加关联" class="headerlink" title="2）添加关联"></a>2）添加关联</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">2</span>).Find(&amp;u)<br>l1 := Language&#123;<br>	Name: <span class="hljs-string">&quot;俄语&quot;</span>,<br>&#125;<br>l2 := Language&#123;<br>	Name: <span class="hljs-string">&quot;法语&quot;</span>,<br>&#125;<br>db.Model(&amp;u).Association(<span class="hljs-string">&quot;Languages&quot;</span>).Append(&amp;l1, &amp;l2)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm46.png" srcset="/img/loading.gif" lazyload></p>
-<p><img src="/img/gorm_associate/gorm47.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm46.png"></p>
+<p><img src="/img/gorm_associate/gorm47.png"></p>
 <blockquote>
 <p>注意：添加关联的同时，不仅连接表会添加新关联记录，关联的结构表也会添加新的记录，除非指定的是表里已存在数据则不会添加。</p>
 </blockquote>
 <h3 id="3）删除关联"><a href="#3）删除关联" class="headerlink" title="3）删除关联"></a>3）删除关联</h3><p>删除关联并不会删除关联的结构表里面的数据。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">2</span>).Find(&amp;u)<br>db.Model(&amp;u).Association(<span class="hljs-string">&quot;Languages&quot;</span>).Delete(&amp;Language&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">3</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/gorm_associate/gorm48.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm48.png"></p>
 <h3 id="4）修改-替换-关联"><a href="#4）修改-替换-关联" class="headerlink" title="4）修改(替换)关联"></a>4）修改(替换)关联</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">2</span>).Find(&amp;u)<br>db.Model(&amp;u).Association(<span class="hljs-string">&quot;Languages&quot;</span>).Replace(&amp;Language&#123;<br>	Model: gorm.Model&#123;<br>		ID: <span class="hljs-number">3</span>,<br>	&#125;,<br>&#125;)<br></code></pre></td></tr></table></figure>
 
-<p>修改前：<br><img src="/img/gorm_associate/gorm49.png" srcset="/img/loading.gif" lazyload><br>修改后：<br><img src="/img/gorm_associate/gorm50.png" srcset="/img/loading.gif" lazyload></p>
+<p>修改前：<br><img src="/img/gorm_associate/gorm49.png"><br>修改后：<br><img src="/img/gorm_associate/gorm50.png"></p>
 <blockquote>
 <p>注意：在多对多使用修改关联会把连接表里面所有关于<code>主表主键与外键关联的记录</code>全部替换掉，慎用此操作。</p>
 </blockquote>
 <h3 id="5）清空关联"><a href="#5）清空关联" class="headerlink" title="5）清空关联"></a>5）清空关联</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">u := User&#123;&#125;<br>db.Where(<span class="hljs-string">&quot;id = ?&quot;</span>, <span class="hljs-number">2</span>).Find(&amp;u)<br>db.Model(&amp;u).Association(<span class="hljs-string">&quot;Languages&quot;</span>).Clear()<br></code></pre></td></tr></table></figure>
-<p><img src="/img/gorm_associate/gorm51.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm51.png"></p>
 <h1 id="四、小结"><a href="#四、小结" class="headerlink" title="四、小结"></a>四、小结</h1><p>一对一、一对多和多对多关系下的CRUD关联操作，在应对复杂的数据表关系时也能更好的应对，本着以实战操作为学习方法，最好结合官方文档上手是最好最正确的。</p>
 <table>
 <thead>
@@ -516,7 +516,7 @@
 <td align="left">两个表中的每个记录都可以与另一个表中的零个或任意数目个记录相关。 由于关系系统不能直接适应关联，因此这些关联需要第三个表，其称为关联或链接表。</td>
 </tr>
 </tbody></table>
-<p><img src="/img/gorm_associate/gorm52.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gorm_associate/gorm52.png"></p>
 <blockquote>
 <p>关联标签以及自定义SQL预加载内容将留到事务中。<br>若有写的错误的或者需要改进的地方，希望能直接指出，再次感谢GVA淼哥的教程！</p>
 </blockquote>
@@ -640,7 +640,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -808,10 +808,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

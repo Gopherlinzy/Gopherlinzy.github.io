@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -306,7 +306,7 @@
 <p><code>gRPC 不同，它允许在服务器和客户端都使用拦截器。</code></p>
 <ul>
 <li>服务器端拦截器是 gRPC 服务器在到达实际 RPC 方法之前调用的函数。它可以用于多种用途，例如日志记录、跟踪、速率限制、身份验证和授权。</li>
-<li>同样，客户端拦截器是 gRPC 客户端在调用实际 RPC 之前调用的函数。<br><img src="/img/grpc_interceptor/grpc1.png" srcset="/img/loading.gif" lazyload></li>
+<li>同样，客户端拦截器是 gRPC 客户端在调用实际 RPC 之前调用的函数。<br><img src="/img/grpc_interceptor/grpc1.png"></li>
 </ul>
 <h2 id="2、gRPC-拦截器核心概念"><a href="#2、gRPC-拦截器核心概念" class="headerlink" title="2、gRPC 拦截器核心概念"></a>2、gRPC 拦截器核心概念</h2><ul>
 <li>一元是我们大多数人使用的。就是发送一个请求并获得一个响应。</li>
@@ -329,7 +329,7 @@
 <li>StreamClientInterceptor — 拦截器在创建客户端流时触发。</li>
 <li>StreamServerInterceptor — 拦截器在服务器上执行 Stream 之前触发。</li>
 </ul>
-<p><img src="/img/grpc_interceptor/grpc2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc_interceptor/grpc2.png"></p>
 <p>关于gRPC拦截器类型的定义：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> UnaryClientInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, method <span class="hljs-type">string</span>, req, reply <span class="hljs-keyword">interface</span>&#123;&#125;, cc *ClientConn, invoker UnaryInvoker, opts ...CallOption)</span></span> <span class="hljs-type">error</span><br><br><span class="hljs-keyword">type</span> UnaryServerInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, req <span class="hljs-keyword">interface</span>&#123;&#125;, info *UnaryServerInfo, handler UnaryHandler)</span></span> (resp <span class="hljs-keyword">interface</span>&#123;&#125;, err <span class="hljs-type">error</span>)<br><br><span class="hljs-keyword">type</span> StreamClientInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(ctx context.Context, desc *StreamDesc, cc *ClientConn, method <span class="hljs-type">string</span>, streamer Streamer, opts ...CallOption)</span></span> (ClientStream, <span class="hljs-type">error</span>)<br><br><span class="hljs-keyword">type</span> StreamServerInterceptor <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(srv <span class="hljs-keyword">interface</span>&#123;&#125;, ss ServerStream, info *StreamServerInfo, handler StreamHandler)</span></span> <span class="hljs-type">error</span><br></code></pre></td></tr></table></figure>
 
@@ -568,7 +568,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -736,10 +736,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

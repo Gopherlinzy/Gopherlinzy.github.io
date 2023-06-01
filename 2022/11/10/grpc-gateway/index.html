@@ -77,7 +77,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -314,7 +314,7 @@
 <li>Go gRPC 客户端将其解析为 Protobuf 消息，并将其返回到 gRPC-Gateway，后者将 Protobuf 消息编码为 JSON 并将其返回给原始客户端。</li>
 </ul>
 <p>架构如下</p>
-<p><img src="/img/grpc-gateway/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc-gateway/grpc1.png"></p>
 <h1 id="二、准备工作"><a href="#二、准备工作" class="headerlink" title="二、准备工作"></a>二、准备工作</h1><p>由于本实践偏向 Grpc+Grpc Gateway的方面，我们的需求是同一个服务端支持Rpc和Restful Api，那么就意味着<code>http2、TLS</code>等等的应用，功能方面就是一个服务端能够接受来自grpc和Restful Api的请求并响应。</p>
 <p>本文示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/grpc-gateway-example">点击跳转</a></p>
 <h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><p>新建grpc-gateway-example文件夹，我们项目的初始目录目录如下：</p>
@@ -358,7 +358,7 @@
 </ul>
 <p>使用 <code>make protoc</code> 编译proto：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">➜ <span class="hljs-built_in">make</span> protoc<br>protoc  --go_out=.  --<span class="hljs-keyword">go</span>-grpc_out=. --grpc-gateway_out=. ./proto<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/grpc-gateway/grpc2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc-gateway/grpc2.png"></p>
 <h2 id="4、制作证书"><a href="#4、制作证书" class="headerlink" title="4、制作证书"></a>4、制作证书</h2><p>详细的请移步到<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/03/grpc-tls/">《gRPC（五）进阶：通过TLS建立安全连接》</a></p>
 <p>在服务端支持Rpc和Restful Api，需要用到TLS，因此我们要先制作证书</p>
 <p>进入certs目录，生成TLS所需的公钥密钥文件</p>
@@ -378,7 +378,7 @@
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -in ca.csr -signkey ca.key -out ca.crt<br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/grpc-gateway/grpc3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc-gateway/grpc3.png"></p>
 <h3 id="2）生成终端用户证书"><a href="#2）生成终端用户证书" class="headerlink" title="2）生成终端用户证书"></a>2）生成终端用户证书</h3><p>在 <code>server.conf</code> 写入以下内容：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">2048</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = Country Name (<span class="hljs-number">2</span> letter code)<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = CommonName (e.g. server FQDN or YOUR name)<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br><br>[ req_ext ]<br>subjectAltName = @alt_names<br><br>[alt_names]<br>DNS<span class="hljs-number">.1</span>   = grpc-gateway-example<br>IP      = <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><br></code></pre></td></tr></table></figure>
 <ol>
@@ -394,7 +394,7 @@
 <li>用CA证书生成终端用户证书，得到server.crt</li>
 </ol>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.pem -extensions req_ext -extfile server.conf<br></code></pre></td></tr></table></figure>
-<p><img src="/img/grpc-gateway/grpc4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc-gateway/grpc4.png"></p>
 <blockquote>
 <p>这样我们需要的证书凭证就足够了</p>
 </blockquote>
@@ -520,7 +520,7 @@
 
 <h2 id="2、启动-amp-请求"><a href="#2、启动-amp-请求" class="headerlink" title="2、启动 &amp; 请求"></a>2、启动 &amp; 请求</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run main.<span class="hljs-keyword">go</span> server<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">16</span>:<span class="hljs-number">34</span>:<span class="hljs-number">06</span> gRPC and https listen on: <span class="hljs-number">50052</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client/main.<span class="hljs-keyword">go</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">16</span>:<span class="hljs-number">34</span>:<span class="hljs-number">43</span> message:<span class="hljs-string">&quot;hello grpc-gateway&quot;</span><br></code></pre></td></tr></table></figure>
 
-<p>执行测试Restful Api，用POST方式访问<a target="_blank" rel="noopener" href="https://localhost:50052/hello_world">https://localhost:50052/hello_world</a><br><img src="/img/grpc-gateway/grpc5.png" srcset="/img/loading.gif" lazyload></p>
+<p>执行测试Restful Api，用POST方式访问<a target="_blank" rel="noopener" href="https://localhost:50052/hello_world">https://localhost:50052/hello_world</a><br><img src="/img/grpc-gateway/grpc5.png"></p>
 <h1 id="六、最终目录结构"><a href="#六、最终目录结构" class="headerlink" title="六、最终目录结构"></a>六、最终目录结构</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go">grpc-gateway-example/<br>├── certs					<span class="hljs-comment">//证书凭证</span><br>│   ├── ca.conf<br>│   ├── ca.crt<br>│   ├── ca.csr<br>│   ├── ca.key<br>│   ├── server.conf<br>│   ├── server.csr<br>│   ├── server.key<br>│   └── server.pem<br>├── client					<span class="hljs-comment">// 客户端</span><br>│   └── main.<span class="hljs-keyword">go</span><br>├── cmd						<span class="hljs-comment">// 命令行模块</span><br>│   ├── root.<span class="hljs-keyword">go</span><br>│   └── server.<span class="hljs-keyword">go</span><br>├── pkg						<span class="hljs-comment">// 第三方公共模块</span><br>│   └── util<br>│   │   │   ├── grpc.<span class="hljs-keyword">go</span><br>│   │   │   └── tls.<span class="hljs-keyword">go</span><br>├── proto<br>│   ├── google<br>│   │   └── api<br>│   │   │   ├── annotations.proto<br>│   │   │   └── http.proto<br>│   │   └── protobuf<br>│   │   │   └── descriptor.proto<br>│   ├── helloworld<br>│   │   ├── hello.pb.<span class="hljs-keyword">go</span>		<span class="hljs-comment">// proto编译后文件</span><br>│   │   ├── hello.pb.gw.<span class="hljs-keyword">go</span>	<span class="hljs-comment">// gateway编译后文件</span><br>│   │   └── hello_grpc.pb.<span class="hljs-keyword">go</span><span class="hljs-comment">// proto编译后接口文件</span><br>│   ├── hello.proto<br>├── server					<span class="hljs-comment">// GRPC服务端</span><br>│   └── server.<span class="hljs-keyword">go</span><br>├── main.<span class="hljs-keyword">go</span><br>└── Makefile<br></code></pre></td></tr></table></figure>
 
 <p>参考：<br><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/879486">https://developer.aliyun.com/article/879486</a><br><a target="_blank" rel="noopener" href="https://eddycjy.com/posts/go/grpc-gateway/2018-02-27-hello-world/">https://eddycjy.com/posts/go/grpc-gateway/2018-02-27-hello-world/</a></p>
@@ -644,7 +644,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -812,10 +812,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

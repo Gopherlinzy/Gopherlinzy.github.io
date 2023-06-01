@@ -78,7 +78,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -327,7 +327,7 @@
 <h2 id="2、Docker镜像加载原理"><a href="#2、Docker镜像加载原理" class="headerlink" title="2、Docker镜像加载原理"></a>2、Docker镜像加载原理</h2><h3 id="1）base镜像"><a href="#1）base镜像" class="headerlink" title="1）base镜像"></a>1）base镜像</h3><p>base 镜像简单来说就是<strong>不依赖其他任何镜像</strong>，完全从0开始建起，其他镜像都是建立在他的之上，可以比喻为大楼的地基，docker镜像的鼻祖。</p>
 <p>base 镜像的特性：<br>（1）不依赖其他镜像，从 scratch 构建。<br>（2）其他镜像可以之为基础进行扩展。</p>
 <p>所以，能称作 base 镜像的通常都是各种 Linux 发行版的 Docker 镜像，比如 Ubuntu, Debian, CentOS 等。</p>
-<p>我们以 CentOS 为例查看 base 镜像包含哪些内容。<br><img src="/img/docker_images/docker1.png" srcset="/img/loading.gif" lazyload></p>
+<p>我们以 CentOS 为例查看 base 镜像包含哪些内容。<br><img src="/img/docker_images/docker1.png"></p>
 <blockquote>
 <p>提问：docker cnetos的镜像大小200多M，和平时的所用的发行版的大小（几G）相差很大，为什么？</p>
 </blockquote>
@@ -336,7 +336,7 @@
 <li>内核空间是 kernel，Linux 刚启动时会加载 bootfs 文件系统，之后 bootfs 会被卸载掉。</li>
 <li>用户空间的文件系统是 rootfs，包含我们熟悉的 &#x2F;dev, &#x2F;proc, &#x2F;bin 等目录。</li>
 </ol>
-<p><img src="/img/docker_images/docker2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker2.png"></p>
 <p><strong>对于 base 镜像来说，底层直接用 Host 的 kernel，自己只需要提供 rootfs 就行了</strong>。<br>而对于一个精简的 OS，rootfs 可以很小，只需要包括最基本的命令、工具和程序库就可以了。相比其他 Linux 发行版，CentOS 的 rootfs 已经算臃肿的了，alpine 还不到 10MB。</p>
 <p>由此可见对于不同的Linux发行版，bootfs基本是一致的，rootfs会有差别，因此不同的发行版可以公用bootfs。</p>
 <p>我们平时安装的 CentOS 除了 rootfs 还会选装很多软件、服务、图形桌面等，需要好几个 GB 就不足为奇了。</p>
@@ -354,7 +354,7 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs shell"><span class="hljs-meta prompt_"># </span><span class="language-bash">Version: 0.0.1</span><br>FROM debian               1.新镜像不再是从 scratch 开始，而是直接在 Debian base 镜像上构建。<br>MAINTAINER wzlinux<br>RUN apt-get update &amp;&amp; apt-get install -y emacs        2.安装 emacs 编辑器。<br>RUN apt-get install -y apache2             3.安装 apache2。<br>CMD [&quot;/bin/bash&quot;]              4.容器启动时运行 bash。<br></code></pre></td></tr></table></figure>
 
 <p>构建过程：</p>
-<p><img src="/img/docker_images/docker3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker3.png"></p>
 <blockquote>
 <p>可以看到，Docker镜像都起始于一个基础镜像层，新镜像是从 Base 镜像一层一层叠加生成的。<br>当进行修改或增加新的内容时，就会在当前镜像层上，创建新的镜像层。</p>
 </blockquote>
@@ -373,7 +373,7 @@
 </blockquote>
 <h2 id="2、Copy-on-Write-COW"><a href="#2、Copy-on-Write-COW" class="headerlink" title="2、Copy-on-Write(COW)"></a>2、Copy-on-Write(COW)</h2><p>Copy-on-write 是一种共享和复制文件以实现最大效率的策略。当我们试图读取一个文件时，Docker 会从上到下一层层去找这个文件，找到的第一个就是我们的文件,所以下面层相同的文件就被“覆盖”了。<br>而修改就是当我们找到这个文件时，将它“复制”到读写层并修改，这样读写层的文件就是我们修改后的文件，并且“覆盖”了镜像中的文件了。这最大限度地减少了 I&#x2F;O 和每个后续层的大小。而删除就是创建了一个特殊的 whiteout 文件，这个 whiteout 文件覆盖的文件即表示删除了。</p>
 <h2 id="3、理解"><a href="#3、理解" class="headerlink" title="3、理解"></a>3、理解</h2><p>这是一个三层的镜像分层结构图，在外部看整个镜像只有6个文件，app2.0 是 app1.0的更新版。</p>
-<p><img src="/img/docker_images/docker4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker4.png"></p>
 <p> 在这种情况下，上层镜像层中的文件会覆盖底层镜像层的文件。这样就使得文件的更新版本作为新镜像层添加到镜像中。</p>
 <blockquote>
 <p>Docker 通过存储引擎(新版本采用快照机制)的方式来实现镜像层堆栈，并保证多镜像层对外展示为统一的文件系统。</p>
@@ -383,10 +383,10 @@
 </blockquote>
 <p> Linux 上可用存储引擎有 AUFS、Overlay2、Device Mapper、Btrfs 以及 ZFS。顾名思义，每种存储引擎都基于 Linux 中对应的文件系统或者块设备技术，并且每种存储引擎都有其独有的性能特点。</p>
 <p>Docker 在 Windows 上仅支持 Windowsfilter 一种存储引擎，该引擎基于 NTFS 文件系统之上实现了分层和COW。</p>
-<p><img src="/img/docker_images/docker5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker5.png"></p>
 <h2 id="4、特点"><a href="#4、特点" class="headerlink" title="4、特点"></a>4、特点</h2><p>Docker 镜像都是<strong>只读</strong>的，当你创建一个新的容器时，你会在基础层之上添加一个新的可写层，该层通常都称为 <strong>容器层</strong>。</p>
 <p>对正在运行的容器所做的所有更改，例如写入新文件、修改现有文件和删除文件，都被写入这个可写的容器层。</p>
-<p>下图显示了基于ubuntu:15.04图像的容器。<br><img src="/img/docker_images/docker6.png" srcset="/img/loading.gif" lazyload><br>存储引擎处理有关这些层相互交互方式的详细信息。有不同的存储引擎可用，它们在不同的情况下各有优缺点。</p>
+<p>下图显示了基于ubuntu:15.04图像的容器。<br><img src="/img/docker_images/docker6.png"><br>存储引擎处理有关这些层相互交互方式的详细信息。有不同的存储引擎可用，它们在不同的情况下各有优缺点。</p>
 <h1 id="四、Commit镜像"><a href="#四、Commit镜像" class="headerlink" title="四、Commit镜像"></a>四、Commit镜像</h1><h2 id="1、作用"><a href="#1、作用" class="headerlink" title="1、作用"></a>1、作用</h2><p>将容器提交后，创建为一个新的镜像，命令与git原理类似。</p>
 <h2 id="2、格式："><a href="#2、格式：" class="headerlink" title="2、格式："></a>2、格式：</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">docker commit [OPTIONS] 容器id [目标镜像名[:TAG]]<br></code></pre></td></tr></table></figure>
 <h2 id="3、可选项："><a href="#3、可选项：" class="headerlink" title="3、可选项："></a>3、可选项：</h2><table>
@@ -422,26 +422,26 @@
 <p>提交操作将不包括容器内挂载的卷中包含的任何数据。</p>
 <p>默认情况下，正在提交的容器及其进程将在映像提交时暂停。这减少了在创建提交过程中遇到数据损坏的可能性。如果不希望出现这种行为，请将 –pause 选项设置为false。</p>
 <p>–change选项将对所创建的映像应用Dockerfile指令。<br>支持的Dockerfile指令:CMD | ENTRYPOINT | ENV | EXPOSE | LABEL | ONBUILD | USER | VOLUME | WORKDIR</p>
-<h2 id="5、测试"><a href="#5、测试" class="headerlink" title="5、测试"></a>5、测试</h2><h3 id="1）提交一个容器"><a href="#1）提交一个容器" class="headerlink" title="1）提交一个容器"></a>1）提交一个容器</h3><p>docker ps 找到一个新的容器，用commit命令提交一个容器，新增了一个命名为commit&#x2F;test的镜像 tag为test1.0，用docker images查看本地镜像是否成功提交了。<br><img src="/img/docker_images/docker7.png" srcset="/img/loading.gif" lazyload></p>
-<h3 id="2）提交一个新配置的容器"><a href="#2）提交一个新配置的容器" class="headerlink" title="2）提交一个新配置的容器"></a>2）提交一个新配置的容器</h3><p>用docker inspect命令查看容器的环境变量<br><img src="/img/docker_images/docker8.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="5、测试"><a href="#5、测试" class="headerlink" title="5、测试"></a>5、测试</h2><h3 id="1）提交一个容器"><a href="#1）提交一个容器" class="headerlink" title="1）提交一个容器"></a>1）提交一个容器</h3><p>docker ps 找到一个新的容器，用commit命令提交一个容器，新增了一个命名为commit&#x2F;test的镜像 tag为test1.0，用docker images查看本地镜像是否成功提交了。<br><img src="/img/docker_images/docker7.png"></p>
+<h3 id="2）提交一个新配置的容器"><a href="#2）提交一个新配置的容器" class="headerlink" title="2）提交一个新配置的容器"></a>2）提交一个新配置的容器</h3><p>用docker inspect命令查看容器的环境变量<br><img src="/img/docker_images/docker8.png"></p>
 <p>提交一个新配置的容器，新增了一个命名为commit&#x2F;test的镜像 tag为test2.0，跟上一个例子区分</p>
-<p><img src="/img/docker_images/docker9.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker9.png"></p>
 <h3 id="3）实战测试"><a href="#3）实战测试" class="headerlink" title="3）实战测试"></a>3）实战测试</h3><ol>
 <li>拉取并启动一个tomcat:9.0的镜像。</li>
 </ol>
-<p><img src="/img/docker_images/docker10.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker10.png"></p>
 <ol start="2">
 <li>我们用docker exec命令进入tomcat 容器中，官方默认的tomcat镜像时没有 webapps 应用，需要将webapps.dist目录下的基本文件拷贝到webapps目录下。</li>
 </ol>
-<p><img src="/img/docker_images/docker11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker11.png"></p>
 <ol start="3">
 <li>验证tomcat，访问<a target="_blank" rel="noopener" href="http://localhost:8088/">http://localhost:8088/</a></li>
 </ol>
-<p><img src="/img/docker_images/docker12.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker12.png"></p>
 <ol start="4">
 <li>将操作过后的tomcat容器提交为一个镜像，下次用的时候直接运行这个修改后的tomcat镜像即可。</li>
 </ol>
-<p><img src="/img/docker_images/docker13.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/docker_images/docker13.png"></p>
 
                 
               </div>
@@ -564,7 +564,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -732,10 +732,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

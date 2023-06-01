@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -333,7 +333,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">token:<br>	protoc --go_out=. --<span class="hljs-keyword">go</span>-grpc_out=. ./proto/token<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
 <p>用<code>make token</code>指令生成Go代码：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">➜ <span class="hljs-built_in">make</span> token<br>protoc --go_out=. --<span class="hljs-keyword">go</span>-grpc_out=. ./proto/token<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/grpc_token/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc_token/grpc1.png"></p>
 <h2 id="3、编写基础模板和空定义"><a href="#3、编写基础模板和空定义" class="headerlink" title="3、编写基础模板和空定义"></a>3、编写基础模板和空定义</h2><p>我们先把基础的模板和空定义写出来在进行完善</p>
 <h3 id="1）server-go"><a href="#1）server-go" class="headerlink" title="1）server.go"></a>1）server.go</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">const</span> Address = <span class="hljs-string">&quot;127.0.0.1:8888&quot;</span><br><br><span class="hljs-keyword">type</span> TokenService <span class="hljs-keyword">struct</span> &#123;<br>	token.UnimplementedTokenServiceServer<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	listen, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, Address)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(<span class="hljs-string">&quot;start error:&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br><br>	<span class="hljs-keyword">var</span> opts []grpc.ServerOption<br>	<br>	server := grpc.NewServer(opts...)<br>	token.RegisterTokenServiceServer(server, &amp;TokenService&#123;&#125;)<br><br>	fmt.Println(<span class="hljs-string">&quot;服务启动成功....&quot;</span>)<br>	server.Serve(listen)<br>&#125;<br><br></code></pre></td></tr></table></figure>
 
@@ -376,7 +376,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">if</span> tokenAuth.IsTLS &#123;<br>	<span class="hljs-comment">//打开tls 走tls认证</span><br>	<span class="hljs-comment">// 根据客户端输入的证书文件和密钥构造 TLS 凭证。</span><br>	<span class="hljs-comment">// 第二个参数 serverNameOverride 为服务名称。</span><br>	c, err := credentials.NewClientTLSFromFile(<span class="hljs-string">&quot;./conf/server_side_TLS/server.pem&quot;</span>, <span class="hljs-string">&quot;go-grpc-example&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatalf(<span class="hljs-string">&quot;credentials.NewClientTLSFromFile err: %v&quot;</span>, err)<br>	&#125;<br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.WithTransportCredentials(c))<br>&#125; <span class="hljs-keyword">else</span> &#123;<br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.WithInsecure())<br>&#125;<br></code></pre></td></tr></table></figure>
 <p>我们只需要修改token.go文件内的<code>IsTLS</code>变量就可以实现是否使用安全链接(TLS)。</p>
 <p>启动 &amp; 请求之后我们抓个包看一下是否已经建立安全链接了了。</p>
-<p><img src="/img/grpc_token/grpc2.png" srcset="/img/loading.gif" lazyload><br><img src="/img/grpc_token/grpc3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc_token/grpc2.png"><br><img src="/img/grpc_token/grpc3.png"></p>
 <h1 id="三、小结"><a href="#三、小结" class="headerlink" title="三、小结"></a>三、小结</h1><p>1）实现<code>credentials.PerRPCCredentials</code>接口就可以把数据当做 gRPC 中的 Credential 在添加到 metadata 中，跟着请求一起传递到服务端；<br>2）服务端从 ctx 中解析 metadata，然后从 metadata 中获取 授权信息并进行验证；<br>3）可以借助 Interceptor 实现全局身份验证。</p>
 
                 
@@ -496,7 +496,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -664,10 +664,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

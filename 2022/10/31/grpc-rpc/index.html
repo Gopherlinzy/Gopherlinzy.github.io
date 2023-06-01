@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -308,7 +308,7 @@
 <p>实际场景：</p>
 <p>有两台服务器，分别是服务器 A、服务器 B。在 服务器 A 上的应用 想要调用服务器 B 上的应用，它们可以直接本地调用吗？</p>
 <p>答案是不能的，但走 RPC 的话，十分方便。因此常有人称使用 RPC，就跟本地调用一个函数一样简单。</p>
-<p><img src="/img/grpc_rpc/grpc1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc_rpc/grpc1.png"></p>
 <h2 id="2、HTTP和RPC的区别"><a href="#2、HTTP和RPC的区别" class="headerlink" title="2、HTTP和RPC的区别"></a>2、HTTP和RPC的区别</h2><h3 id="1）概念区别"><a href="#1）概念区别" class="headerlink" title="1）概念区别"></a>1）概念区别</h3><p>RPC是一种方法，而HTTP是一种协议。两者都常用于实现服务，在这个层面最本质的区别是RPC服务主要工作在TCP协议之上（也可以在HTTP协议），而HTTP服务工作在HTTP协议之上。由于HTTP协议基于TCP协议，所以RPC服务天然比HTTP更轻量，效率更胜一筹。</p>
 <p>两者都是基于网络实现的，从这一点上，都是基于Client&#x2F;Server架构。</p>
 <h3 id="2）从协议上区分"><a href="#2）从协议上区分" class="headerlink" title="2）从协议上区分"></a>2）从协议上区分</h3><p>RPC是远端过程调用，其调用协议通常包含：<code>传输协议</code> 和 <code>序列化协议</code>。</p>
@@ -333,7 +333,7 @@
 <blockquote>
 <p> Client （客户端）：服务调用方。<br>Server（服务端）：服务提供方。<br>Client Stub（客户端存根）：存放服务端的地址消息，负责将客户端的请求参数打包成网络消息，然后通过网络发送给服务提供方。<br>Server Stub（服务端存根）：接收客户端发送的消息，再将客户端请求参数打包成网络消息，然后通过网络远程发送给服务方。</p>
 </blockquote>
-<p><img src="/img/grpc_rpc/grpc2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/grpc_rpc/grpc2.png"></p>
 <h2 id="4、RPC的优缺点"><a href="#4、RPC的优缺点" class="headerlink" title="4、RPC的优缺点"></a>4、RPC的优缺点</h2><p>尽管它拥有广泛的好处，但使用 RPC 的人肯定应该注意一些陷阱。</p>
 <p> RPC 为开发人员和应用程序管理人员提供的一些优势：</p>
 <ul>
@@ -423,13 +423,13 @@
 <blockquote>
 <p>我们先手工调用 net.Dial 函数建立 TCP 连接，然后基于该连接建立针对客户端的 json 编解码器。<br>在确保客户端可以正常调用 RPC 服务的方法之后，我们用一个普通的 TCP 服务代替 Go 语言版本的 RPC 服务，这样可以查看客户端调用时发送的数据格式。</p>
 </blockquote>
-<h3 id="3）分析数据格式"><a href="#3）分析数据格式" class="headerlink" title="3）分析数据格式"></a>3）分析数据格式</h3><p>我们用Wireshark抓个包看看我们直接传递的数据格式：<br><img src="/img/grpc_rpc/grpc3.png" srcset="/img/loading.gif" lazyload><br>这是一个 json 编码的数据，其中 method 部分对应要调用的 rpc 服务和方法组合成的名字，params 部分的第一个元素为参数，id 是由调用端维护的一个唯一的调用编号。</p>
+<h3 id="3）分析数据格式"><a href="#3）分析数据格式" class="headerlink" title="3）分析数据格式"></a>3）分析数据格式</h3><p>我们用Wireshark抓个包看看我们直接传递的数据格式：<br><img src="/img/grpc_rpc/grpc3.png"><br>这是一个 json 编码的数据，其中 method 部分对应要调用的 rpc 服务和方法组合成的名字，params 部分的第一个元素为参数，id 是由调用端维护的一个唯一的调用编号。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;method&quot;</span>:<span class="hljs-string">&quot;server/tcp-server/server.HiLinzy.SayHi&quot;</span>,<span class="hljs-string">&quot;params&quot;</span>:[<span class="hljs-string">&quot;linzy&quot;</span>],<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>&#125;<br></code></pre></td></tr></table></figure>
 
 <p>请求的 json 数据对象在内部对应两个结构体：客户端是 clientRequest，服务端是 serverRequest。clientRequest 和 serverRequest 结构体的内容基本是一致的：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> clientRequest <span class="hljs-keyword">struct</span> &#123;<br>    Method <span class="hljs-type">string</span>         <span class="hljs-string">`json:&quot;method&quot;`</span><br>    Params [<span class="hljs-number">1</span>]<span class="hljs-keyword">interface</span>&#123;&#125; <span class="hljs-string">`json:&quot;params&quot;`</span><br>    Id     <span class="hljs-type">uint64</span>         <span class="hljs-string">`json:&quot;id&quot;`</span><br>&#125;<br><br><span class="hljs-keyword">type</span> serverRequest <span class="hljs-keyword">struct</span> &#123;<br>    Method <span class="hljs-type">string</span>           <span class="hljs-string">`json:&quot;method&quot;`</span><br>    Params *json.RawMessage <span class="hljs-string">`json:&quot;params&quot;`</span><br>    Id     *json.RawMessage <span class="hljs-string">`json:&quot;id&quot;`</span><br>&#125;<br></code></pre></td></tr></table></figure>
 
-<p>我们再来查看服务端响应的结果的数据结构：<br><img src="/img/grpc_rpc/grpc4.png" srcset="/img/loading.gif" lazyload><br>返回的结果也是一个 json 格式的数据：</p>
+<p>我们再来查看服务端响应的结果的数据结构：<br><img src="/img/grpc_rpc/grpc4.png"><br>返回的结果也是一个 json 格式的数据：</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>,<span class="hljs-string">&quot;result&quot;</span>:<span class="hljs-string">&quot;hilinzy---2022-10-30 19:09:52&quot;</span>,<span class="hljs-string">&quot;error&quot;</span>:null&#125;.<br></code></pre></td></tr></table></figure>
 <p>其中 id 对应输入的 id 参数，result 为返回的结果，error 部分在出问题时表示错误信息。对于顺序调用来说，id 不是必须的。但是 Go 语言的 RPC 框架支持<code>异步调用</code>，当返回结果的顺序和调用的顺序不一致时，可以通过 id 来识别对应的调用。</p>
 <p>返回的 json 数据也是对应内部的两个结构体：客户端是 clientResponse，服务端是 serverResponse。两个结构体的内容同样也是类似的：</p>
@@ -445,7 +445,7 @@
 </blockquote>
 <p>用Postman模拟RPC调用过程，向连接<code>localhost:8888/jsonrpc</code>发送一条 json 字符串</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">&#123;<span class="hljs-string">&quot;method&quot;</span>:<span class="hljs-string">&quot;server/tcp-server/server.HiLinzy.SayHi&quot;</span>,<span class="hljs-string">&quot;params&quot;</span>:[<span class="hljs-string">&quot;linzy&quot;</span>],<span class="hljs-string">&quot;id&quot;</span>:<span class="hljs-number">0</span>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/grpc_rpc/grpc5.png" srcset="/img/loading.gif" lazyload><br>这样我们就可用很方便的从不同的语言或者不同的方式来访问RPC服务了。</p>
+<p><img src="/img/grpc_rpc/grpc5.png"><br>这样我们就可用很方便的从不同的语言或者不同的方式来访问RPC服务了。</p>
 <p>参考文章：<br><a target="_blank" rel="noopener" href="https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC">https://www.techtarget.com/searchapparchitecture/definition/Remote-Procedure-Call-RPC</a></p>
 <p><a target="_blank" rel="noopener" href="https://mp.weixin.qq.com/s?__biz=MzI5MDAzNTAxMQ==&mid=2455917150&idx=1&sn=8a8325b09e6e2a0e34bf86609967f28c&scene=19#wechat_redirect">https://mp.weixin.qq.com/s__biz&#x3D;MzI5MDAzNTAxMQ&#x3D;&#x3D;&amp;mid&#x3D;2455917150&amp;idx&#x3D;1&amp;sn&#x3D;8a8325b09e6e2a0e34bf86609967f28c&amp;scene&#x3D;19#wechat_redirect</a></p>
 <p><a target="_blank" rel="noopener" href="https://chai2010.cn/advanced-go-programming-book/ch4-rpc/ch4-01-rpc-intro.html">https://chai2010.cn/advanced-go-programming-book/ch4-rpc/ch4-01-rpc-intro.html</a></p>
@@ -567,7 +567,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -735,10 +735,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

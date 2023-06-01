@@ -75,7 +75,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -303,7 +303,7 @@
 <p>这么设计的目的，是减少 CPU 访问内存的次数，加大 CPU 访问内存的吞吐量。比如同样读取 8 个字节的数据，一次读取 4 个字节那么只需要读取 2 次。<code>CPU 始终以字长访问内存</code>。</p>
 <p>提出设想如果我们不进行内存对齐，而是按照类型字节长度紧密对齐呢？</p>
 <p>变量 a、b 各占据 3 字节的空间，我们使用32位 CPU 访问内存读取变量，例如：</p>
-<p><img src="/img/go_memory_layout/go1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/go_memory_layout/go1.png"></p>
 <ul>
 <li>内存对齐后，a、b 占据 4 字节空间，CPU 读取 b 变量的值只需要进行一次内存访问。</li>
 <li>不进行内存对齐，CPU 读取 b 变量的值需要进行 2 次内存访问。第一次访问得到 b 变量的第 1 个字节，第二次访问得到 b 变量的后两个字节，最后在寄存器中将剩余的数据合并得到我们想要变量 b 的数据。</li>
@@ -389,7 +389,7 @@
 <p><code>unsafe.Sizeof 返回变量x的占用字节数，但不包含它所指向内容的大小</code>，对于一个string类型的变量它的大小是16字节，一个指针类型的变量大小是8字节<br><code>unsafe.Alignof 返回变量x需要的对齐保证</code>，它可以被x地址整除。(一般取结构体数据类型对齐保证的最大值)<br><code>unsafe.Offsetof 返回结构体成员地址相对于结构体首地址相差的字节数，称为偏移量</code></p>
 <p>在 Go 语言中，我们可以使用 unsafe.Sizeof 计算出一个数据类型实例需要占用的字节数。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> T1 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span>  <span class="hljs-comment">//1字节</span><br>	b <span class="hljs-type">int64</span> <span class="hljs-comment">//8字节</span><br>	c <span class="hljs-type">int16</span> <span class="hljs-comment">//2字节</span><br>&#125;<br><br><span class="hljs-keyword">type</span> T2 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span><br>	c <span class="hljs-type">int16</span><br>	b <span class="hljs-type">int64</span><br>&#125;<br><br><span class="hljs-keyword">type</span> T3 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-type">int8</span>  <span class="hljs-comment">//1字节</span><br>	b <span class="hljs-type">int32</span> <span class="hljs-comment">//4字节</span><br>	c <span class="hljs-type">int16</span> <span class="hljs-comment">//2字节</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	fmt.Println(<span class="hljs-string">&quot;T1结构体内存占用：&quot;</span>, unsafe.Sizeof(T1&#123;&#125;))<br>	fmt.Println(<span class="hljs-string">&quot;T2结构体内存占用：&quot;</span>, unsafe.Sizeof(T2&#123;&#125;))<br><br>	<span class="hljs-keyword">var</span> s <span class="hljs-type">string</span><br>	fmt.Printf(<span class="hljs-string">&quot;string类型的内存占用大小%v, 对齐保证%v\n&quot;</span>, unsafe.Sizeof(s), unsafe.Alignof(s))<br>	fmt.Println(<span class="hljs-string">&quot;T1结构体对齐保证：&quot;</span>, unsafe.Alignof(T2&#123;&#125;))<br>	fmt.Println(<span class="hljs-string">&quot;T2结构体对齐保证：&quot;</span>, unsafe.Alignof(T3&#123;&#125;))<br><br>	<span class="hljs-keyword">var</span> t1 T1<br>	<span class="hljs-keyword">var</span> t2 T2<br>	fmt.Println(<span class="hljs-string">&quot;T1成员b地址相对于结构体首地址相差的字节数：&quot;</span>, unsafe.Offsetof(t1.b))<br>	fmt.Println(<span class="hljs-string">&quot;T2成员c地址相对于结构体首地址相差的字节数：&quot;</span>, unsafe.Offsetof(t2.c))<br>&#125;<br><br></code></pre></td></tr></table></figure>
-<p><img src="/img/go_memory_layout/go2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/go_memory_layout/go2.png"></p>
 <h3 id="1）内存对齐规则"><a href="#1）内存对齐规则" class="headerlink" title="1）内存对齐规则"></a>1）内存对齐规则</h3><p><strong>内存对齐的规则，这里只介绍结构体的内存对齐：</strong></p>
 <ul>
 <li>规则一：结构体第一个字段偏移量为0，后面的字段的偏移量等于成员数据类型大小和字段对齐保证两者取最小值的最小整数倍，如果不满足规则，编译器会在前面填充值为0的字节空间</li>
@@ -414,7 +414,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/img/go_memory_layout/go3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/go_memory_layout/go3.png"></p>
 <p>第一条规则算下来结构体T1在64位架构上占用大小为 1+7+8+2&#x3D;18，在32位架构上占用大小为 1+3+8+2&#x3D;14</p>
 <blockquote>
 <p>我们再来根据第二条规则计算：<br>结构体最大字段内存大小为8字节，</p>
@@ -441,7 +441,7 @@
 </ul>
 </li>
 </ul>
-<p><img src="/img/go_memory_layout/go4.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/go_memory_layout/go4.png"></p>
 <p>第一条规则算下来<br>结构体T1在64位架构上占用大小为 1+1+2+4+8&#x3D;16<br>结构体T1在32位架构上占用大小为 1+1+2+8&#x3D;12</p>
 <blockquote>
 <p>我们再来根据第二条规则计算：<br>结构体最大字段内存大小为8字节，</p>
@@ -457,7 +457,7 @@
 <p>因为如果有指针指向该字段, 返回的地址将在结构体之外，如果此指针一直存活不释放对应的内存，就会有内存泄露的问题（该内存不因结构体释放而释放）。</p>
 <p>因此，当 struct{} 作为其他 struct 最后一个字段时，需要填充额外的内存保证安全。我们做个试验，验证下这种情况。</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> demo1 <span class="hljs-keyword">struct</span> &#123;<br>	c <span class="hljs-type">int32</span><br>	a <span class="hljs-keyword">struct</span>&#123;&#125;<br>&#125;<br><br><span class="hljs-keyword">type</span> demo2 <span class="hljs-keyword">struct</span> &#123;<br>	a <span class="hljs-keyword">struct</span>&#123;&#125;<br>	c <span class="hljs-type">int32</span><br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	fmt.Println(unsafe.Sizeof(demo1&#123;&#125;)) <span class="hljs-comment">// 8</span><br>	fmt.Println(unsafe.Sizeof(demo2&#123;&#125;)) <span class="hljs-comment">// 4</span><br>&#125;<br></code></pre></td></tr></table></figure>
-<p><img src="/img/go_memory_layout/go5.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/go_memory_layout/go5.png"></p>
 <blockquote>
 <p>可以看到，demo2{} 的大小为 4 字节，与字段 c 占据空间一致，而 demo1{} 的大小为 8 字节，即额外填充了 4 字节的空间。</p>
 </blockquote>
@@ -601,7 +601,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -769,10 +769,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

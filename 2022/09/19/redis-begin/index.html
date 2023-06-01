@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -297,7 +297,7 @@
               <div class="markdown-body">
                 
                 <h1 id="一、Redis概述"><a href="#一、Redis概述" class="headerlink" title="一、Redis概述"></a>一、Redis概述</h1><h2 id="1、什么是Redis？"><a href="#1、什么是Redis？" class="headerlink" title="1、什么是Redis？"></a>1、什么是Redis？</h2><p>Redis(Remote Dictionary Server)，即远程字典服务。是一个开源的使用ANSI C语言编写、支持网络、可<code>基于内存</code>亦可持久化的日志型、Key-Value数据库，并提供多种语言的API。</p>
-<p><img src="/img/Redis_begin/redis1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis1.png"></p>
 <p><code>Redis通常将全部数据存储在内存中</code>，会周期性的把更新的数据写入磁盘或者把修改操作写入追加的记录文件，但只是用于重启后将数据加载回内存，相当于一个数据备份作用。</p>
 <blockquote>
 <p><strong>为什么Redis会将数据存储在内存中？</strong></p>
@@ -309,19 +309,19 @@
 <li>Redis是一个<code>key-value存储系统</code>：支持存储的value类型多，包括<code>string(字符串)、list(链表)、set(集合)、zset(sorted set --有序集合)和hash（哈希类型）</code>。这些数据类型都支持push&#x2F;pop、add&#x2F;remove及取交集并集和差集及更丰富的操作，而且这些操作都是<code>原子性</code>的。</li>
 <li>Redis 是一个高性能的key-value数据库：在部分场合可以对关系数据库起到很好的补充作用。它提供了Java，C&#x2F;C++，C#，PHP，JavaScript，Perl，Object-C，Python，Ruby，Erlang等客户端，使用很方便。</li>
 </ol>
-<p><img src="/img/Redis_begin/redis2.png" srcset="/img/loading.gif" lazyload><br>3. Redis支持<code>主从同步</code>：数据可以从主服务器向任意数量的从服务器上同步，从服务器可以是关联其他从服务器的主服务器。这使得Redis可执行单层树复制。存盘可以有意无意的对数据进行写操作。由于完全实现了<code>发布/订阅机制</code>，使得从数据库在任何地方同步树时，可订阅一个频道并接收主服务器完整的消息发布记录。<code>同步对读取操作的可扩展性和数据冗余很有帮助</code>。</p>
-<p><img src="/img/Redis_begin/redis3.png" srcset="/img/loading.gif" lazyload></p>
-<h2 id="4、Redis发展简史"><a href="#4、Redis发展简史" class="headerlink" title="4、Redis发展简史"></a>4、Redis发展简史</h2><p><img src="/img/Redis_begin/redis4.png" srcset="/img/loading.gif" lazyload><br>Redis的作者Salvatore Sanfilippo，意大利程序员，他最早使用传统数据库做了一个实时的Web日志分析器，因为对其性能不够满意，开发了Redis。</p>
+<p><img src="/img/Redis_begin/redis2.png"><br>3. Redis支持<code>主从同步</code>：数据可以从主服务器向任意数量的从服务器上同步，从服务器可以是关联其他从服务器的主服务器。这使得Redis可执行单层树复制。存盘可以有意无意的对数据进行写操作。由于完全实现了<code>发布/订阅机制</code>，使得从数据库在任何地方同步树时，可订阅一个频道并接收主服务器完整的消息发布记录。<code>同步对读取操作的可扩展性和数据冗余很有帮助</code>。</p>
+<p><img src="/img/Redis_begin/redis3.png"></p>
+<h2 id="4、Redis发展简史"><a href="#4、Redis发展简史" class="headerlink" title="4、Redis发展简史"></a>4、Redis发展简史</h2><p><img src="/img/Redis_begin/redis4.png"><br>Redis的作者Salvatore Sanfilippo，意大利程序员，他最早使用传统数据库做了一个实时的Web日志分析器，因为对其性能不够满意，开发了Redis。</p>
 <p>2020年6月，Salvatore Sanfilippo辞去了Redis维护者的职位。</p>
 <h1 id="二、Redis安装"><a href="#二、Redis安装" class="headerlink" title="二、Redis安装"></a>二、Redis安装</h1><p>官方安装文档：<a target="_blank" rel="noopener" href="https://redis.io/docs/getting-started/installation/">点击跳转</a></p>
-<h2 id="1、windows下安装Redis"><a href="#1、windows下安装Redis" class="headerlink" title="1、windows下安装Redis"></a>1、windows下安装Redis</h2><p>这边选择windows下载只是方便学习测试，后续可能会转到Linux上。<br>下载地址: <a target="_blank" rel="noopener" href="https://github.com/microsoftarchive/redis/releases">点击跳转.</a><br><img src="/img/Redis_begin/redis5.png" srcset="/img/loading.gif" lazyload></p>
+<h2 id="1、windows下安装Redis"><a href="#1、windows下安装Redis" class="headerlink" title="1、windows下安装Redis"></a>1、windows下安装Redis</h2><p>这边选择windows下载只是方便学习测试，后续可能会转到Linux上。<br>下载地址: <a target="_blank" rel="noopener" href="https://github.com/microsoftarchive/redis/releases">点击跳转.</a><br><img src="/img/Redis_begin/redis5.png"></p>
 <blockquote>
 <p>我的建议是直接下载.msi的安装包，电脑会自动给我们配置好环境变量，这样就不用自己启动redis的服务端<code>redis-server</code>了，直接用redis-cli启动redis客户端了。<br>如果下的是zip压缩包也没事，自己手动配置环境变量就行或者先启动<code>redis-server</code>再启动<code>redis-cli</code>即可。</p>
 </blockquote>
 <p>注意：Redis官方文档不建议我们在Widows环境下搭建Redis服务。因为只有 Redis 3，且上次更新是2016。<strong>不推荐</strong>！</p>
 <h2 id="2、测试操作"><a href="#2、测试操作" class="headerlink" title="2、测试操作"></a>2、测试操作</h2><figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-built_in">PS</span> C:\Users\sly&gt; redis<span class="hljs-literal">-cli</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; ping <span class="hljs-comment">#查看当前连接是否正常，正常连接返回PONG</span><br>PONG<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; <span class="hljs-built_in">set</span> name linzy<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;name&quot;</span><br></code></pre></td></tr></table></figure>
 
-<p><img src="/img/Redis_begin/redis6.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis6.png"></p>
 <h1 id="三、基本操作"><a href="#三、基本操作" class="headerlink" title="三、基本操作"></a>三、基本操作</h1><h2 id="1、数据库操作"><a href="#1、数据库操作" class="headerlink" title="1、数据库操作"></a>1、数据库操作</h2><h3 id="1）数据库基本操作"><a href="#1）数据库基本操作" class="headerlink" title="1）数据库基本操作"></a>1）数据库基本操作</h3><p>Redis默认有16个数据库，编号为0~15，默认访问为0号数据库。</p>
 <table>
 <thead>
@@ -350,7 +350,7 @@
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; <span class="hljs-built_in">select</span> <span class="hljs-number">6</span><br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; dbsize<br>(integer) <span class="hljs-number">0</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">set</span> name linzy<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; dbsize<br>(integer) <span class="hljs-number">1</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; flushdb<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; dbsize<br>(integer) <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
 
 
-<p><img src="/img/Redis_begin/redis7.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis7.png"></p>
 <h3 id="2）数据库保存操作"><a href="#2）数据库保存操作" class="headerlink" title="2）数据库保存操作"></a>2）数据库保存操作</h3><table>
 <thead>
 <tr>
@@ -372,7 +372,7 @@
 </tr>
 </tbody></table>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; save<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; lastsave<br>(integer) <span class="hljs-number">1663070951</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; bgsave<br>Background saving started<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; lastsave<br>(integer) <span class="hljs-number">1663070960</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/Redis_begin/redis8.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis8.png"></p>
 <h2 id="2、-通用数据操作"><a href="#2、-通用数据操作" class="headerlink" title="2、 通用数据操作"></a>2、 通用数据操作</h2><h3 id="1）对当前数据库进行基本操作"><a href="#1）对当前数据库进行基本操作" class="headerlink" title="1）对当前数据库进行基本操作"></a>1）对当前数据库进行基本操作</h3><table>
 <thead>
 <tr>
@@ -406,7 +406,7 @@
 </tr>
 </tbody></table>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">set</span> name linzy<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; mset k1 v1 k2 v2 k3 v3<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k3&quot;</span><br><span class="hljs-number">2</span>) <span class="hljs-string">&quot;name&quot;</span><br><span class="hljs-number">3</span>) <span class="hljs-string">&quot;k2&quot;</span><br><span class="hljs-number">4</span>) <span class="hljs-string">&quot;k1&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys k*<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k3&quot;</span><br><span class="hljs-number">2</span>) <span class="hljs-string">&quot;k2&quot;</span><br><span class="hljs-number">3</span>) <span class="hljs-string">&quot;k1&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys k<br>(empty list or <span class="hljs-built_in">set</span>)<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; exists k1 k5<br>(integer) <span class="hljs-number">1</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">type</span> k1<br>string<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">type</span> name<br>string<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">del</span> name k3<br>(integer) <span class="hljs-number">2</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k2&quot;</span><br><span class="hljs-number">2</span>) <span class="hljs-string">&quot;k1&quot;</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/Redis_begin/redis9.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis9.png"></p>
 <h3 id="2）对当前数据库重命名操作"><a href="#2）对当前数据库重命名操作" class="headerlink" title="2）对当前数据库重命名操作"></a>2）对当前数据库重命名操作</h3><table>
 <thead>
 <tr>
@@ -424,7 +424,7 @@
 </tr>
 </tbody></table>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; rename k1 k2<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k2&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; get k2 <span class="hljs-comment">#获取key对应的值，如果key不存则返回nil，get只处理字符串类型数据</span><br><span class="hljs-string">&quot;v1&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">set</span> k1 v1<br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; renamenx k1 k2<br>(integer) <span class="hljs-number">0</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/Redis_begin/redis10.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis10.png"></p>
 <h3 id="3）对当前数据库移动操作"><a href="#3）对当前数据库移动操作" class="headerlink" title="3）对当前数据库移动操作"></a>3）对当前数据库移动操作</h3><table>
 <thead>
 <tr>
@@ -438,7 +438,7 @@
 </tr>
 </tbody></table>
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs powershell"><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">move</span> k1 <span class="hljs-number">0</span><br>(integer) <span class="hljs-number">1</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k2&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>[<span class="hljs-number">6</span>]&gt; <span class="hljs-built_in">select</span> <span class="hljs-number">0</span><br>OK<br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; keys *<br><span class="hljs-number">1</span>) <span class="hljs-string">&quot;k1&quot;</span><br><span class="hljs-number">127.0</span>.<span class="hljs-number">0.1</span>:<span class="hljs-number">6379</span>&gt; <span class="hljs-built_in">set</span> k2 v2<br>OK<br></code></pre></td></tr></table></figure>
-<p><img src="/img/Redis_begin/redis11.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/Redis_begin/redis11.png"></p>
 
                 
               </div>
@@ -557,7 +557,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -725,10 +725,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 

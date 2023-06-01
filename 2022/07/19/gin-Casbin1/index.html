@@ -76,7 +76,7 @@
   <script id="fluid-configs">
     var Fluid = window.Fluid || {};
     Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":true,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
+    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
 
     if (CONFIG.web_analytics.follow_dnt) {
       var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
@@ -391,7 +391,7 @@
 
 <h2 id="4、Enforcement-Result"><a href="#4、Enforcement-Result" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/gin_Casbin1/csb1.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_Casbin1/csb1.png"></p>
 <h1 id="五、RBAC模型"><a href="#五、RBAC模型" class="headerlink" title="五、RBAC模型"></a>五、RBAC模型</h1><p>将某些具有特定模式的<strong>主题</strong>、<strong>对象</strong>或<strong>域&#x2F;租户</strong>自动授予角色。RBAC 中的模式匹配函数可以帮助您做到这一点。</p>
 <p><strong>[role_definition]</strong> 是RBAC角色继承关系的定义。 Casbin 支持 RBAC 系统的多个实例, 例如, <strong>用户可以具有角色及其继承关系</strong>, <strong>资源也可以具有角色及其继承关系</strong>，****。 </p>
 <h2 id="1、Model-1"><a href="#1、Model-1" class="headerlink" title="1、Model"></a>1、Model</h2><p>Model规定了权限由 <strong>sub、obj、act</strong>三要素组成，只有在策略Policy列表中<strong>请求Request</strong> 或者 <strong>继承的角色</strong>里存在完全相同的策略时，该请求才能通过。匹配器的结构通过 <strong>p.eft</strong> 获取， <strong>some(where (p.eft &#x3D;&#x3D; allow))</strong> 表示有任意一条 policy rule 满足, 则最终结果为 allow</p>
@@ -405,7 +405,7 @@
 
 <h2 id="4、Enforcement-Result-1"><a href="#4、Enforcement-Result-1" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/gin_Casbin1/csb2.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_Casbin1/csb2.png"></p>
 <h1 id="六、域内RBAC模型"><a href="#六、域内RBAC模型" class="headerlink" title="六、域内RBAC模型"></a>六、域内RBAC模型</h1><h2 id="1、域租户的角色定义"><a href="#1、域租户的角色定义" class="headerlink" title="1、域租户的角色定义"></a>1、域租户的角色定义</h2><p>在Casbin中的RBAC角色可以是全局或是基于特定于域的。 特定域的角色意味着当用户处于不同的域&#x2F;租户群体时，用户所表现的角色也不尽相同。 这对于像云服务这样的大型系统非常有用，因为用户通常分属于不同的租户群体。</p>
 <p>域&#x2F;租户的角色定义应该类似于:</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">[role_definition]<br>g = _, _, _<br></code></pre></td></tr></table></figure>
@@ -421,7 +421,7 @@
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">linzy, domain1, data1, read<br>linzy, domain1, data2, read<br>hhh, domain2, data1, read<br>hhh, domain2, data2, read<br>admin, domain1, data1, read<br></code></pre></td></tr></table></figure>
 <h2 id="4、Enforcement-Result-2"><a href="#4、Enforcement-Result-2" class="headerlink" title="4、Enforcement Result"></a>4、Enforcement Result</h2><p>Enforcement Result返回的结果</p>
 <figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-literal">true</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">false</span><br><span class="hljs-literal">true</span><br><span class="hljs-literal">true</span><br></code></pre></td></tr></table></figure>
-<p><img src="/img/gin_Casbin1/csb3.png" srcset="/img/loading.gif" lazyload></p>
+<p><img src="/img/gin_Casbin1/csb3.png"></p>
 
                 
               </div>
@@ -540,7 +540,7 @@
             </div>
 
             
-  <article id="comments" lazyload>
+  <article id="comments">
     
   <script type="text/javascript">
     Fluid.utils.loadComments('#comments', function() {
@@ -708,10 +708,6 @@
 
 
 
-
-  
-    <script  src="/js/img-lazyload.js" ></script>
-  
 
 
 
