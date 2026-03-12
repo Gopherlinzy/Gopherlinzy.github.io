@@ -1,315 +1,181 @@
-
-
-<!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="孙禄毅">
-  <meta name="keywords" content="">
-  
-    <meta name="description" content="前言 学习本文需要一些redis知识，请学习前面文章  一、Redigo1、Redigo概述Redigo是Redis数据库的Go客户端。用于实现Redis数据库的基本操作，支持Redis的所有命令。Redigo 官方地址：点击跳转 2、安装直接在在terminal里输入指令 1go get github.com&#x2F;gomodule&#x2F;redigo&#x2F;redis  二、Redigo使用1、普通连接Conn">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Redis（四）实战：redigo的安装和连接使用 | Linzy 知识库</title><meta name="author" content="Linzy"><meta name="copyright" content="Linzy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 学习本文需要一些redis知识，请学习前面文章  一、Redigo1、Redigo概述Redigo是Redis数据库的Go客户端。用于实现Redis数据库的基本操作，支持Redis的所有命令。Redigo 官方地址：点击跳转 2、安装直接在在terminal里输入指令 1go get github.com&#x2F;gomodule&#x2F;redigo&#x2F;redis  二、Redigo使用1、普通连接Conn">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Redis（四）实战：redigo的安装和连接使用">
 <meta property="og:url" content="https://gopherlinzy.github.io/2022/10/11/redis-redigo/index.html">
-<meta property="og:site_name" content="linzy">
+<meta property="og:site_name" content="Linzy 知识库">
 <meta property="og:description" content="前言 学习本文需要一些redis知识，请学习前面文章  一、Redigo1、Redigo概述Redigo是Redis数据库的Go客户端。用于实现Redis数据库的基本操作，支持Redis的所有命令。Redigo 官方地址：点击跳转 2、安装直接在在terminal里输入指令 1go get github.com&#x2F;gomodule&#x2F;redigo&#x2F;redis  二、Redigo使用1、普通连接Conn">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gopherlinzy.github.io/img/redis.png">
 <meta property="article:published_time" content="2022-10-11T13:18:57.000Z">
-<meta property="article:modified_time" content="2022-10-11T13:21:28.487Z">
-<meta property="article:author" content="孙禄毅">
+<meta property="article:modified_time" content="2026-03-12T05:30:57.154Z">
+<meta property="article:author" content="Linzy">
 <meta property="article:tag" content="学习">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="数据库">
 <meta property="article:tag" content="Redis">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gopherlinzy.github.io/img/redis.png">
-  
-  
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  
-  
-  <title>Redis（四）实战：redigo的安装和连接使用 - linzy</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/redis.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Redis（四）实战：redigo的安装和连接使用",
+  "url": "https://gopherlinzy.github.io/2022/10/11/redis-redigo/",
+  "image": "https://gopherlinzy.github.io/img/redis.png",
+  "datePublished": "2022-10-11T13:18:57.000Z",
+  "dateModified": "2026-03-12T05:30:57.154Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Linzy",
+      "url": "https://gopherlinzy.github.io"
     }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://gopherlinzy.github.io/2022/10/11/redis-redigo/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>LinzyBlog</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/pkg10.jpg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="Redis（四）实战：redigo的安装和连接使用"></span>
-          
-        </div>
-
-        
-          
-  <div class="mt-3">
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-10-11 21:18" pubdate>
-          2022年10月11日 晚上
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          2.1k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          18 分钟
-        
-      </span>
-    
-
-    
-    
-      
-        <span id="busuanzi_container_page_pv" style="display: none">
-          <i class="iconfont icon-eye" aria-hidden="true"></i>
-          <span id="busuanzi_value_page_pv"></span> 次
-        </span>
-        
-      
-    
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">Redis（四）实战：redigo的安装和连接使用</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    本文最后更新于：1 年前
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Redis（四）实战：redigo的安装和连接使用',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/redis.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Linzy 知识库</span></a><a class="nav-page-title" href="/"><span class="site-name">Redis（四）实战：redigo的安装和连接使用</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Redis（四）实战：redigo的安装和连接使用</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-10-11T13:18:57.000Z" title="发表于 2022-10-11 21:18:57">2022-10-11</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-12T05:30:57.154Z" title="更新于 2026-03-12 13:30:57">2026-03-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Redis/">Redis</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>学习本文需要一些redis知识，请学习前面文章</p>
 </blockquote>
 <h1 id="一、Redigo"><a href="#一、Redigo" class="headerlink" title="一、Redigo"></a>一、Redigo</h1><h2 id="1、Redigo概述"><a href="#1、Redigo概述" class="headerlink" title="1、Redigo概述"></a>1、Redigo概述</h2><p>Redigo是Redis数据库的Go客户端。用于实现Redis数据库的基本操作，支持Redis的所有命令。<br>Redigo 官方地址：<a target="_blank" rel="noopener" href="https://github.com/gomodule/redigo">点击跳转</a></p>
 <h2 id="2、安装"><a href="#2、安装" class="headerlink" title="2、安装"></a>2、安装</h2><p>直接在在terminal里输入指令</p>
-<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs powershell">go get github.com/gomodule/redigo/redis<br></code></pre></td></tr></table></figure>
+<figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">go get github.com/gomodule/redigo/redis</span><br></pre></td></tr></table></figure>
 
 <h1 id="二、Redigo使用"><a href="#二、Redigo使用" class="headerlink" title="二、Redigo使用"></a>二、Redigo使用</h1><h2 id="1、普通连接"><a href="#1、普通连接" class="headerlink" title="1、普通连接"></a>1、普通连接</h2><p>Conn接口是使用Redis数据库的主要接口。通过调用redis.Dial()来创建连接。创建连接完成操作后，必须调用连接关闭方法Conn.Close()。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//创建Redis连接</span><br>	c, err := redis.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:6379&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-comment">//使用延迟函数，在函数结束前调用连接关闭</span><br>	<span class="hljs-keyword">defer</span> c.Close()<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//创建Redis连接</span></span><br><span class="line">	c, err := redis.Dial(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;127.0.0.1:6379&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//使用延迟函数，在函数结束前调用连接关闭</span></span><br><span class="line">	<span class="keyword">defer</span> c.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p><strong>若是Redis设置了密码：</strong></p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">//创建Redis连接</span><br>	c, err := redis.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:6379&quot;</span>,<br>		redis.DialUsername(<span class="hljs-string">&quot;username&quot;</span>),<br>		redis.DialPassword(<span class="hljs-string">&quot;password&quot;</span>),<br>	)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Fatal(err)<br>	&#125;<br>	<span class="hljs-comment">//使用延迟函数，在函数结束前调用连接关闭</span><br>	<span class="hljs-keyword">defer</span> c.Close()<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">//创建Redis连接</span></span><br><span class="line">	c, err := redis.Dial(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;127.0.0.1:6379&quot;</span>,</span><br><span class="line">		redis.DialUsername(<span class="string">&quot;username&quot;</span>),</span><br><span class="line">		redis.DialPassword(<span class="string">&quot;password&quot;</span>),</span><br><span class="line">	)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Fatal(err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">//使用延迟函数，在函数结束前调用连接关闭</span></span><br><span class="line">	<span class="keyword">defer</span> c.Close()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="2、创建Redis连接池-推荐"><a href="#2、创建Redis连接池-推荐" class="headerlink" title="2、创建Redis连接池(推荐)"></a>2、创建Redis连接池(推荐)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Setup</span><span class="hljs-params">()</span></span> <span class="hljs-type">error</span> &#123;<br>	RedisConn = &amp;redis.Pool&#123;<br>		<span class="hljs-comment">//最大空闲连接数</span><br>		MaxIdle: <span class="hljs-number">30</span>,<br>		<span class="hljs-comment">//在给定时间内，允许分配的最大连接数（当为零时，没有限制）</span><br>		MaxActive: <span class="hljs-number">30</span>,<br>		<span class="hljs-comment">//在给定时间内，保持空闲状态的时间，若到达时间限制则关闭连接（当为零时，没有限制）</span><br>		IdleTimeout: <span class="hljs-number">200</span>,<br>		<span class="hljs-comment">//提供创建和配置应用程序连接的一个函数</span><br>		Dial: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> (redis.Conn, <span class="hljs-type">error</span>) &#123;<br>			c, err := redis.Dial(<span class="hljs-string">&quot;tcp&quot;</span>, <span class="hljs-string">&quot;127.0.0.1:6379&quot;</span>)<br>			<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>			&#125;<br>			<span class="hljs-comment">//如果redis设置了用户密码，使用auth指令</span><br>			<span class="hljs-keyword">if</span> _, err := c.Do(<span class="hljs-string">&quot;AUTH&quot;</span>, password); err != <span class="hljs-literal">nil</span> &#123;<br>				c.Close()<br>				<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>			&#125;<br>			<span class="hljs-keyword">return</span> c, err<br>		&#125;,<br>		TestOnBorrow: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(c redis.Conn, t time.Time)</span></span> <span class="hljs-type">error</span> &#123;<br>			_, err := c.Do(<span class="hljs-string">&quot;PING&quot;</span>)<br>			<span class="hljs-keyword">return</span> err<br>		&#125;,<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<h2 id="2、创建Redis连接池-推荐"><a href="#2、创建Redis连接池-推荐" class="headerlink" title="2、创建Redis连接池(推荐)"></a>2、创建Redis连接池(推荐)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Setup</span><span class="params">()</span></span> <span class="type">error</span> &#123;</span><br><span class="line">	RedisConn = &amp;redis.Pool&#123;</span><br><span class="line">		<span class="comment">//最大空闲连接数</span></span><br><span class="line">		MaxIdle: <span class="number">30</span>,</span><br><span class="line">		<span class="comment">//在给定时间内，允许分配的最大连接数（当为零时，没有限制）</span></span><br><span class="line">		MaxActive: <span class="number">30</span>,</span><br><span class="line">		<span class="comment">//在给定时间内，保持空闲状态的时间，若到达时间限制则关闭连接（当为零时，没有限制）</span></span><br><span class="line">		IdleTimeout: <span class="number">200</span>,</span><br><span class="line">		<span class="comment">//提供创建和配置应用程序连接的一个函数</span></span><br><span class="line">		Dial: <span class="function"><span class="keyword">func</span><span class="params">()</span></span> (redis.Conn, <span class="type">error</span>) &#123;</span><br><span class="line">			c, err := redis.Dial(<span class="string">&quot;tcp&quot;</span>, <span class="string">&quot;127.0.0.1:6379&quot;</span>)</span><br><span class="line">			<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="comment">//如果redis设置了用户密码，使用auth指令</span></span><br><span class="line">			<span class="keyword">if</span> _, err := c.Do(<span class="string">&quot;AUTH&quot;</span>, password); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				c.Close()</span><br><span class="line">				<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> c, err</span><br><span class="line">		&#125;,</span><br><span class="line">		TestOnBorrow: <span class="function"><span class="keyword">func</span><span class="params">(c redis.Conn, t time.Time)</span></span> <span class="type">error</span> &#123;</span><br><span class="line">			_, err := c.Do(<span class="string">&quot;PING&quot;</span>)</span><br><span class="line">			<span class="keyword">return</span> err</span><br><span class="line">		&#125;,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>设置 RedisConn 为 redis.Pool（连接池）并配置了它的一些参数：</p>
 <ul>
@@ -320,411 +186,84 @@
 <li>IdleTimeout：在给定时间内，保持空闲状态的时间，若到达时间限制则关闭连接（当为零时，没有限制）。</li>
 </ul>
 </blockquote>
-<h2 id="3、简单Redis指令操作"><a href="#3、简单Redis指令操作" class="headerlink" title="3、简单Redis指令操作"></a>3、简单Redis指令操作</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">//Do 方法将命令参数转换为批量字符串以传输到Redis服务器,交给Redis处理</span><br><span class="hljs-comment">//redis.String将Do操作后的返回值转换为String格式输出</span><br>s1, err := redis.String(c.Do(<span class="hljs-string">&quot;SET&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>, <span class="hljs-string">&quot;18&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s1)<br><br>s2, err := redis.String(c.Do(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;linzy&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s2)<br><br>s3, err := redis.String(c.Do(<span class="hljs-string">&quot;GET&quot;</span>, <span class="hljs-string">&quot;linzydashuaige&quot;</span>))<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Fatal(err)<br>&#125;<br>fmt.Println(s3)<br></code></pre></td></tr></table></figure>
+<h2 id="3、简单Redis指令操作"><a href="#3、简单Redis指令操作" class="headerlink" title="3、简单Redis指令操作"></a>3、简单Redis指令操作</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//Do 方法将命令参数转换为批量字符串以传输到Redis服务器,交给Redis处理</span></span><br><span class="line"><span class="comment">//redis.String将Do操作后的返回值转换为String格式输出</span></span><br><span class="line">s1, err := redis.String(c.Do(<span class="string">&quot;SET&quot;</span>, <span class="string">&quot;linzy&quot;</span>, <span class="string">&quot;18&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Fatal(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(s1)</span><br><span class="line"></span><br><span class="line">s2, err := redis.String(c.Do(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;linzy&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Fatal(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(s2)</span><br><span class="line"></span><br><span class="line">s3, err := redis.String(c.Do(<span class="string">&quot;GET&quot;</span>, <span class="string">&quot;linzydashuaige&quot;</span>))</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Fatal(err)</span><br><span class="line">&#125;</span><br><span class="line">fmt.Println(s3)</span><br></pre></td></tr></table></figure>
 <p><img src="/img/redis_redigo/redis.png"></p>
 <blockquote>
 <p>可以参考我上一篇文章<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/09/19/redis-five-basicdata-types/">《Redis五大基础数据类型》</a>，自己动手测试吧。</p>
 </blockquote>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io">Linzy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io/2022/10/11/redis-redigo/">https://gopherlinzy.github.io/2022/10/11/redis-redigo/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://gopherlinzy.github.io" target="_blank">Linzy 知识库</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a><a class="post-meta__tags" href="/tags/go/">go</a><a class="post-meta__tags" href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">数据库</a><a class="post-meta__tags" href="/tags/Redis/">Redis</a></div><div class="post-share"><div class="social-share" data-image="/img/redis.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2022/10/11/gorm_begin/" title="Gorm学习（一）入门：Gorm入门指南"><img class="cover" src="/img/gorm.jpg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Gorm学习（一）入门：Gorm入门指南</div></div><div class="info-2"><div class="info-item-1">前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、GORM介绍1、GORM概述GORM一个目前比较热门的，使用简单，对开发人员友好的 Golang ORM 库。GORM框架是go的一个数据库连接及交互框架，主要是把struct类型和数据库记录进行映射，数据库语句复杂的情况下可以直接手写语句，一般用于连接关系型数据库，这里我主要使用MySQL数据库。  对象关系映射（英语：Object Relational Mapping，简称ORM）： 通过使用描述对象和数据库之间映射的元数据，将程序中的对象与关系数据库相互映射，可以使用面向对象的范例从数据库中查询和操作数据。简而言之：代码结构即是数据库结构，代码行为就是数据库行为。  2、为什么选择GORM？特性：  数据库连接(以MySQL为例)和自动建表方便。 文档内容详细全面，适合快速入门上手。 支持关联 (一对一，一对多，多对多的关系)。 带有Create，Save，Update，Delete，Find 中钩子方法。 支持 Preload、Joins 的预加载，对于关联查询很重要，主要用于显示关联子结构...</div></div></div></a><a class="pagination-related" href="/2022/09/19/redis-five-BasicData-types/" title="Redis（三）基础：Redis五大基础数据类型"><img class="cover" src="/img/redis.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Redis（三）基础：Redis五大基础数据类型</div></div><div class="info-2"><div class="info-item-1">前言 Redis官网：https://redis.io/docs/Redis中文文档：http://www.redis.cn/topics/data-types-intro.html#strings结合官网的学习一定是正确合理的，如果有命令或者理论我讲的不对，可以评论指出谢谢！  一、Redis数据类型介绍Redis不仅只有key-value存储，实际上是一个数据结构服务器，支持不同的数据类型，可以解决从缓存到队列再到事件处理的各种问题。  Strings：二进制安全的字符串 Lists：按插入顺序排序的字符串元素的集合。Redis 列表是字符串值的链表。（用于实现栈和队列） Sets：不重复且无序的字符串元素的集合 Sorted sets：类似Sets，不同的地方在于每个字符串元素都关联一个叫score的浮动数值（floating number value）。里面的元素是按score进行排序。它可以检索一系列的元素。（可以直接看前10个元素或后10个元素） Hashes：由field和关联的value组成的map。field和value都是字符串。实现类似于哈希表的概念。 Bi...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/10/11/gorm-migrate/" title="Gorm学习（三）基础：迁移(数据库建表以及字段设置)"><img class="cover" src="/img/gorm.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-11</div><div class="info-item-2">Gorm学习（三）基础：迁移(数据库建表以及字段设置)</div></div><div class="info-2"><div class="info-item-1">前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、迁移概念在项目开发中，我们可能会随时调整声明的模型，比如添加字段和索引，使用 GORM 的自动迁移功能，可以始终让我们的数据库表结构保持最新。 此外，GORM 还提供了一些迁移接口的方法，可以帮助我们方便操作数据库表、字段和索引。 二、AutoMigrate 自动迁移AutoMigrate 用于自动迁移你的 schema(模式)，保持你的 schema(模式) 是最新的。  注意： AutoMigrate 会创建表、缺失的外键、约束、列和索引。 并且会更改现有列的类型，如果大小、精度、是否为空可以更改。 但不会删除未使用的列，以保护您的数据。(只增不减)  在执行 AutoMigrate时，我们需要先声明模型。 1234567891011121314151617type User struct &#123;	gorm.Model	Name string	Age  uint&#125;type Product struct &#123;	gorm.Model	Name  string	Price in...</div></div></div></a><a class="pagination-related" href="/2022/09/19/redis-NoSQL-SQL/" title="Redis（一）入门：NoSQL OR SQL，看完这篇你就懂了"><img class="cover" src="/img/redis.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-19</div><div class="info-item-2">Redis（一）入门：NoSQL OR SQL，看完这篇你就懂了</div></div><div class="info-2"><div class="info-item-1">前言 关系型数据库（MySql、Oracle）无法满足我们对存储的所有要求，因此对底层存储的选型，对每种存储引擎的理解非常重要。MySQL不香吗，为什么还要有NoSQL？请听我慢慢细说！  一、结构化数据、非结构化数据与半结构化数据文章的开始，了解一下结构化数据、非结构化数据与半结构化数据，因为数据特点的不同，将在技术上直接影响存储引擎的选型。  1、结构化数据结构化数据，根据定义是指由二维表结构来逻辑表达和实现的数据，严格遵循数据格式与长度规范，也称为行数据。 特点：数据以行为单位，二维表结构下一行数据就表示一个实体的信息，每一列数据的属性都是相同的。   因此关系型数据库刚好契合了结构化数据的特点，关系型数据库也是关系型数据最主要的存储与管理引擎。  2、非结构化数据非结构数据，根据定义是指数据结构不规则或不完整，没有任何预定义的数据模型，不方便用二维逻辑表来表现数据，例如网页日志、文本文档、图像、视频和音频文件等。 特点：没有固定组织原则的未经过滤的信息，通常被称为原始数据。通过对非结构化数据进行搜索和分析，可以提取有用的信息。  3、半结构化数据半结构化数据，根据定义是指...</div></div></div></a><a class="pagination-related" href="/2022/10/11/gorm-transaction/" title="Gorm学习（五）进阶：多态关联、关联标签以及事务"><img class="cover" src="/img/gorm.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-11</div><div class="info-item-2">Gorm学习（五）进阶：多态关联、关联标签以及事务</div></div><div class="info-2"><div class="info-item-1">前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、多态关联1、多态关联概述 什么是多态？   多态的概念：通俗来说，就是多种形态，具体点就是去完成某个行为，当不同的对象去完成时会产生出不同的状态。  什么是多态表？  假设我们有一张地址表，其中的地址可能是来自User中的，也可能是来自Orders中的。而区分不同的对象则用type字段。如：type&#x3D;User时对象是文章表。     什么是多态关联？  多态关联就是多态表和对象表之间的关联性。一个多态关联由使用同一外键发生的两个(或多个)关联组成.  2、为什么用多态关联？出现需要外键引用多个表的情况，不可能删除原来表结构，重新添加一个外键ID再建表，所以我们可以建立一个交叉表。让Addres不再依赖于User表或者Order表。has one的情况解决方案，如果我们希望一个给定的地址，只能够在一张交叉表中出现一次，上面的复合主键已经做到了。 has many的情况解决方案,如果希望一个地址可以在一张交叉表中出现多次，可以取消Address的复合主键。 3、Has OneGORM 为 ha...</div></div></div></a><a class="pagination-related" href="/2022/10/11/gorm_begin/" title="Gorm学习（一）入门：Gorm入门指南"><img class="cover" src="/img/gorm.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-11</div><div class="info-item-2">Gorm学习（一）入门：Gorm入门指南</div></div><div class="info-2"><div class="info-item-1">前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、GORM介绍1、GORM概述GORM一个目前比较热门的，使用简单，对开发人员友好的 Golang ORM 库。GORM框架是go的一个数据库连接及交互框架，主要是把struct类型和数据库记录进行映射，数据库语句复杂的情况下可以直接手写语句，一般用于连接关系型数据库，这里我主要使用MySQL数据库。  对象关系映射（英语：Object Relational Mapping，简称ORM）： 通过使用描述对象和数据库之间映射的元数据，将程序中的对象与关系数据库相互映射，可以使用面向对象的范例从数据库中查询和操作数据。简而言之：代码结构即是数据库结构，代码行为就是数据库行为。  2、为什么选择GORM？特性：  数据库连接(以MySQL为例)和自动建表方便。 文档内容详细全面，适合快速入门上手。 支持关联 (一对一，一对多，多对多的关系)。 带有Create，Save，Update，Delete，Find 中钩子方法。 支持 Preload、Joins 的预加载，对于关联查询很重要，主要用于显示关联子结构...</div></div></div></a><a class="pagination-related" href="/2022/09/19/redis-five-BasicData-types/" title="Redis（三）基础：Redis五大基础数据类型"><img class="cover" src="/img/redis.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-09-19</div><div class="info-item-2">Redis（三）基础：Redis五大基础数据类型</div></div><div class="info-2"><div class="info-item-1">前言 Redis官网：https://redis.io/docs/Redis中文文档：http://www.redis.cn/topics/data-types-intro.html#strings结合官网的学习一定是正确合理的，如果有命令或者理论我讲的不对，可以评论指出谢谢！  一、Redis数据类型介绍Redis不仅只有key-value存储，实际上是一个数据结构服务器，支持不同的数据类型，可以解决从缓存到队列再到事件处理的各种问题。  Strings：二进制安全的字符串 Lists：按插入顺序排序的字符串元素的集合。Redis 列表是字符串值的链表。（用于实现栈和队列） Sets：不重复且无序的字符串元素的集合 Sorted sets：类似Sets，不同的地方在于每个字符串元素都关联一个叫score的浮动数值（floating number value）。里面的元素是按score进行排序。它可以检索一系列的元素。（可以直接看前10个元素或后10个元素） Hashes：由field和关联的value组成的map。field和value都是字符串。实现类似于哈希表的概念。 Bi...</div></div></div></a><a class="pagination-related" href="/2022/10/11/gorm-associate/" title="Gorm学习（四）基础：关联"><img class="cover" src="/img/gorm.jpg" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-11</div><div class="info-item-2">Gorm学习（四）基础：关联</div></div><div class="info-2"><div class="info-item-1">前言 感谢开源项目gin-vue-admin，以及1010工作室的视频教程  一、One To One 一对一数据库连接例子： 1234567891011var db *gorm.DBfunc init() &#123;	var err error	//我这里用到数据库是mysql，需要配置DSN属性[username[:password]@][protocol[(address)]]/dbname[?param1=value1&amp;...&amp;paramN=valueN]	dsn := &quot;root:123456@tcp(127.0.0.1:3306)/go_test?charset=utf8&amp;parseTime=True&quot;	db, err = gorm.Open(mysql.Open(dsn), &amp;gorm.Config&#123;&#125;)	if err != nil &#123;		panic(&quot;failed to connect database&quot;)	&#125;&#125;  1、Belongs To ...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Linzy</div><div class="author-info-description">Backend Developer · Go Enthusiast · Gamer 🎮</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gopherlinzy"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">即使再小的帆也能远航 ⛵</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81Redigo"><span class="toc-number">2.</span> <span class="toc-text">一、Redigo</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81Redigo%E6%A6%82%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">1、Redigo概述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%AE%89%E8%A3%85"><span class="toc-number">2.2.</span> <span class="toc-text">2、安装</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81Redigo%E4%BD%BF%E7%94%A8"><span class="toc-number">3.</span> <span class="toc-text">二、Redigo使用</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E6%99%AE%E9%80%9A%E8%BF%9E%E6%8E%A5"><span class="toc-number">3.1.</span> <span class="toc-text">1、普通连接</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%88%9B%E5%BB%BARedis%E8%BF%9E%E6%8E%A5%E6%B1%A0-%E6%8E%A8%E8%8D%90"><span class="toc-number">3.2.</span> <span class="toc-text">2、创建Redis连接池(推荐)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%AE%80%E5%8D%95Redis%E6%8C%87%E4%BB%A4%E6%93%8D%E4%BD%9C"><span class="toc-number">3.3.</span> <span class="toc-text">3、简单Redis指令操作</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"/></a><div class="content"><a class="title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"/></a><div class="content"><a class="title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"/></a><div class="content"><a class="title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"/></a><div class="content"><a class="title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"/></a><div class="content"><a class="title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Linzy</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.2.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
 
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Redis/" class="category-chain-item">Redis</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-      
-        <a href="/tags/go/">#go</a>
-      
-        <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/">#数据库</a>
-      
-        <a href="/tags/Redis/">#Redis</a>
-      
-    </div>
-  
-</div>
-
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>Redis（四）实战：redigo的安装和连接使用</div>
-      <div>https://gopherlinzy.github.io/2022/10/11/redis-redigo/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>孙禄毅</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2022年10月11日</div>
-        </div>
-      
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
-                  </span>
-                </a>
-              
-            
-          </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
-
-
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2022/10/11/gorm_begin/" title="Gorm学习（一）入门：Gorm入门指南">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Gorm学习（一）入门：Gorm入门指南</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2022/09/19/redis-five-BasicData-types/" title="Redis（三）基础：Redis五大基础数据类型">
-                        <span class="hidden-mobile">Redis（三）基础：Redis五大基础数据类型</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-  <article id="comments">
-    
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#comments', function() {
-      var light = 'github-light';
-      var dark = 'github-dark';
-      var schema = document.documentElement.getAttribute('data-user-color-scheme');
-      if (schema === 'dark') {
-        schema = dark;
-      } else {
-        schema = light;
-      }
-      window.UtterancesThemeLight = light;
-      window.UtterancesThemeDark = dark;
-      var s = document.createElement('script');
-      s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'Gopherlinzy/Gopherlinzy.github.io');
-      s.setAttribute('issue-term', 'pathname');
-      
-      s.setAttribute('label', 'utterances');
-      
-      s.setAttribute('theme', schema);
-      s.setAttribute('crossorigin', 'anonymous');
-      document.getElementById('comments').appendChild(s);
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
     })
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    return ele
+  }
 
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
 
-  </article>
-
-
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
-    </div>
-  
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Gopherlinzy/linzy-knowledge',
+      'data-repo-id': 'R_kgDORkWX8A',
+      'data-category-id': 'DIC_kwDORkWX8M4C4Koo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
     }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
         }
       }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
     }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
+  }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
         }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
       }
-    });
-  });
-</script>
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
 
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
 
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
 
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
-</body>
-</html>
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

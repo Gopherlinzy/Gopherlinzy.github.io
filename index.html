@@ -1,1068 +1,279 @@
-
-
-<!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="孙禄毅">
-  <meta name="keywords" content="">
-  
-    <meta name="description" content="这是我用来每日学习和分享的地方">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Linzy 知识库 - 即使再小的帆也能远航</title><meta name="author" content="Linzy"><meta name="copyright" content="Linzy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="这是我用来每日学习和分享的地方">
 <meta property="og:type" content="website">
-<meta property="og:title" content="linzy">
+<meta property="og:title" content="Linzy 知识库">
 <meta property="og:url" content="https://gopherlinzy.github.io/index.html">
-<meta property="og:site_name" content="linzy">
+<meta property="og:site_name" content="Linzy 知识库">
 <meta property="og:description" content="这是我用来每日学习和分享的地方">
 <meta property="og:locale" content="zh_CN">
-<meta property="article:author" content="孙禄毅">
-<meta name="twitter:card" content="summary_large_image">
-  
-  
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  
-  
-  <title>linzy</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
-    }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
-  
-
-
-  
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 100vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>LinzyBlog</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/background.jpeg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="即使再小的帆也能远航"></span>
-          
-        </div>
-
-        
-      </div>
-
+<meta property="og:image" content="https://gopherlinzy.github.io/img/avatar.jpg">
+<meta property="article:author" content="Linzy">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/avatar.jpg"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  "name": "Linzy 知识库",
+  "alternateName": [
+    "即使再小的帆也能远航",
+    "gopherlinzy.github.io"
+  ],
+  "url": "https://gopherlinzy.github.io/"
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://gopherlinzy.github.io/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
       
-        <div class="scroll-down-bar">
-          <i class="iconfont icon-arrowdown"></i>
-        </div>
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      <div class="container nopadding-x-md">
-        <div id="board"
-          style="margin-top: 0">
-          
-          <div class="container">
-            <div class="row">
-              <div class="col-12 col-md-10 m-auto">
-                
-
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/05/17/go-interface/" target="_self">
-          <img src="/img/gin.jpeg" alt="Go基础篇：接口">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/05/17/go-interface/" target="_self">
-          Go基础篇：接口
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/05/17/go-interface/" target="_self">
-        <div>
-          前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是接口？Go语言中的接口（interface）是一种类型，它定义了一组方法的集合，但没有具体的实现。接口可以被任何类型实现，只要该类型实现了接口中定义的所有方法。这种设计
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-05-17 16:53" pubdate>
-              2023-05-17
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/golang/">#golang</a>
-            
-              <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/28/go-type-system/" target="_self">
-          <img src="/img/gin.jpeg" alt="Go基础篇：类型系统">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/28/go-type-system/" target="_self">
-          Go基础篇：类型系统
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/04/28/go-type-system/" target="_self">
-        <div>
-          前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-28 23:25" pubdate>
-              2023-04-28
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/golang/">#golang</a>
-            
-              <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/24/go-dataStructure/" target="_self">
-          <img src="/img/gin.jpeg" alt="Go基础：数据结构（定义和go语言实现）">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/24/go-dataStructure/" target="_self">
-          Go基础：数据结构（定义和go语言实现）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/04/24/go-dataStructure/" target="_self">
-        <div>
-          前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-24 16:32" pubdate>
-              2023-04-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/golang/">#golang</a>
-            
-              <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/">#数据结构</a>
-            
-              <a href="/tags/%E7%AE%97%E6%B3%95/">#算法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/24/go-GMP-1/" target="_self">
-          <img src="/img/gin.jpeg" alt="Go底层原理：一起来唠唠GMP调度（一）">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/24/go-GMP-1/" target="_self">
-          Go底层原理：一起来唠唠GMP调度（一）
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/04/24/go-GMP-1/" target="_self">
-        <div>
-          前言 春招开始了，作为23届的科班咸鱼学习记录一下八股文和go底层原理（GC、GMP调度、goroutine等）本文介绍 Go 语言运行时调度器的实现原理，其中包含调度器的设计与实现原理、演变过程以及与运行时调度相关的数据结构。参考几篇不错的文章：mingguangtu《深入分析Go1.18 GMP调度器底层原理》刘丹冰Aceld《Golang 调度器 GMP 原理与调度全分析》  一、进程、线程
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-24 16:16" pubdate>
-              2023-04-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/golang/">#golang</a>
-            
-              <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-            
-              <a href="/tags/GMP%E8%B0%83%E5%BA%A6/">#GMP调度</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2023/04/24/go-sort/" target="_self">
-          <img src="/img/gin.jpeg" alt="Go基础入门：sort包">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2023/04/24/go-sort/" target="_self">
-          Go基础入门：sort包
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2023/04/24/go-sort/" target="_self">
-        <div>
-          前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介G
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2023-04-24 16:13" pubdate>
-              2023-04-24
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/golang/">#golang</a>
-            
-              <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-            
-              <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">#排序算法</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/10/grpc-gateway/" target="_self">
-          <img src="/img/grpc.png" alt="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/10/grpc-gateway/" target="_self">
-          gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/10/grpc-gateway/" target="_self">
-        <div>
-          前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转grpc-gateway官方文档：点击跳转源自 coreos 的一篇博客，转载到了 gRPC 官方博客 gRPC with REST and Open APIs。  一、gRPC-Gateway概述1、简述 取自官方概述：grpc-gateway is a plugin of protoc. It reads gRPC ser
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-10 18:20" pubdate>
-              2022-11-10
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-              <a href="/tags/grpc-gateway/">#grpc-gateway</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/08/grpc-token/" target="_self">
-          <img src="/img/grpc.png" alt="gRPC（七）进阶：自定义身份验证">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/08/grpc-token/" target="_self">
-          gRPC（七）进阶：自定义身份验证
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/08/grpc-token/" target="_self">
-        <div>
-          前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-08 13:19" pubdate>
-              2022-11-08
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/07/grpc-interceptor/" target="_self">
-          <img src="/img/grpc.png" alt="gRPC（六）进阶：拦截器 interceptor">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/07/grpc-interceptor/" target="_self">
-          gRPC（六）进阶：拦截器 interceptor
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/07/grpc-interceptor/" target="_self">
-        <div>
-          前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、拦截器概述1、什么是拦截器？在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。  中间件：中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-07 19:51" pubdate>
-              2022-11-07
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/03/grpc-TLS/" target="_self">
-          <img src="/img/grpc.png" alt="gRPC（五）进阶：通过TLS建立安全连接">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/03/grpc-TLS/" target="_self">
-          gRPC（五）进阶：通过TLS建立安全连接
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/03/grpc-TLS/" target="_self">
-        <div>
-          前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、明文传输先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。 我们抓个包查看一下：是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。 二、TL
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-03 20:36" pubdate>
-              2022-11-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-  <div class="row mx-auto index-card">
-    
-    
-      <div class="col-12 col-md-4 m-auto index-img">
-        <a href="/2022/11/03/grpc-stream/" target="_self">
-          <img src="/img/grpc.png" alt="gRPC（四）基础：gRPC流">
-        </a>
-      </div>
-    
-    <article class="col-12 col-md-8 mx-auto index-info">
-      <h1 class="index-header">
-        
-        <a href="/2022/11/03/grpc-stream/" target="_self">
-          gRPC（四）基础：gRPC流
-        </a>
-      </h1>
-
-      
-      <a class="index-excerpt " href="/2022/11/03/grpc-stream/" target="_self">
-        <div>
-          前言 这章的内容需要安装好插件和protoc，建议阅读我的上一篇grpc使用篇示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、gRPC的请求模型gRPC 有两种类型的请求模型：  一元 - 直接的请求响应映射在 HTTP/2 请求响应之上。 简单来说一元就是一个简单的 RPC，其中客户端使用存根向服务器发送请求并等待响应返回，就像正常的函数调用一样。    1rpc Sa
-        </div>
-      </a>
-
-      <div class="index-btm post-metas">
-        
-          <div class="post-meta mr-3">
-            <i class="iconfont icon-date"></i>
-            <time datetime="2022-11-03 12:47" pubdate>
-              2022-11-03
-            </time>
-          </div>
-        
-        
-          <div class="post-meta mr-3 d-flex align-items-center">
-            <i class="iconfont icon-category"></i>
-            
-
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-          </div>
-        
-        
-          <div class="post-meta">
-            <i class="iconfont icon-tags"></i>
-            
-              <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-            
-              <a href="/tags/go/">#go</a>
-            
-              <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-            
-              <a href="/tags/grpc/">#grpc</a>
-            
-          </div>
-        
-      </div>
-    </article>
-  </div>
-
-
-
-  <nav aria-label="navigation">
-    <span class="pagination" id="pagination">
-      <span class="page-number current">1</span><a class="page-number" href="/page/2/#board">2</a><a class="page-number" href="/page/3/#board">3</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#board">5</a><a class="extend next" rel="next" href="/page/2/#board"><i class="iconfont icon-arrowright"></i></a>
-    </span>
-  </nav>
-
-
-
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
-    </div>
-  
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
       }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
+    }
 
-
-
-
-
-
-
-  <script  src="/js/local-search.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
-</body>
-</html>
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
+
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
+  
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Linzy 知识库',
+  isHighlightShrink: false,
+  isToc: false,
+  pageType: 'home'
+}</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="page" id="body-wrap"><header class="full_page" id="page-header" style="background-image: url(/img/background.jpeg);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Linzy 知识库</span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="site-info"><h1 id="site-title">Linzy 知识库</h1><div id="site-subtitle"><span id="subtitle"></span></div><div id="site_social_icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div id="scroll-down"><i class="fas fa-angle-down scroll-down-effects"></i></div></header><main class="layout" id="content-inner"><div class="recent-posts nc" id="recent-posts"><div class="recent-post-items"><div class="recent-post-item"><div class="post_cover left"><a href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img class="post-bg" src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="content">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是接口？Go语言中的接口（interface）是一种类型，它定义了一组方法的集合，但没有具体的实现。接口可以被任何类型实现，只要该类型实现了接口中定义的所有方法。这种设计方式使得Go语言具有很高的灵活性和可扩展性。 1234567891011121314151617181920212223// 定义一个接口，包含一个String方法type Stringer interface &#123;	String() string&#125;// 定义一个结构体，实现Stringer接口type Person struct &#123;	Name string	Age  int&#125;func (p Person) String() string &#123;	return fmt.Sprintf(&quot;%s (%d)&quot;, p.Name, p...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img class="post-bg" src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="content">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量上可以执行一组操作，例如：int 类型可以执行 + 和 - 等运算，而对于 string 类型，可以执行连接、空检查等操作；  在Go语言中，类型是用来描述变量、常量、函数参数、函数返回值等值的属性。它定义了变量或表达式可以存储的数据类型，以及可以对其执行的操作。 Go语言中的类型可以分为基本数据类型和引用类型两种。基本数据类型包括整型、浮点型、布尔型、字符串型等，而引用类型包括数组、切片、结构体、接口、channel等。    类型 说明 例子    布尔型 表示真或假的值 true, false   整型 表示整数的值，有不同的位数和符号 int, int8, int16, int3...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img class="post-bg" src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="content">前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数组是一种值类型，声明数组时必须指定长度，长度不能被修改。 12345// 定义一个长度为5的整型数组var a [5]int// 访问数组元素，下标从0开始a[0] = 1 1、优缺点 优点： 数组的访问速度很快，因为它们是在内存中连续存储的 数组是一种简单、清晰的数据结构，易于理解和实现   缺点： 数组的长度是固定的，无法动态增加或缩小 插入或删除元素时需要移动数组中的其他元素，效率较低    2、适用场景和不适用场景 适用场景： 当需要在一个集合中存储相同类型的元素时，可以使用数组，例如存储身份证号、学号等 当需要快速访问数组中的元素时，可以使用数组   不适用场景： 当需要动态地...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img class="post-bg" src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="content">前言 春招开始了，作为23届的科班咸鱼学习记录一下八股文和go底层原理（GC、GMP调度、goroutine等）本文介绍 Go 语言运行时调度器的实现原理，其中包含调度器的设计与实现原理、演变过程以及与运行时调度相关的数据结构。参考几篇不错的文章：mingguangtu《深入分析Go1.18 GMP调度器底层原理》刘丹冰Aceld《Golang 调度器 GMP 原理与调度全分析》  一、进程、线程、Goroutine1、进程与线程在了解Go的调度器的时候，都离不开操作系统、进程与线程这些概念。    进程 线程    操作系统资源调度和分配的基本单位 CPU调度和分派的基本单位   一个进程可以有多个线程 一个线程只能属于一个进程   有独立的地址空间 同一类线程共享代码和数据空间，每个线程有独立的运行栈和程序计数器   创建销毁开销大，进程切换时，耗费资源较大 创建销毁开销小，线程切换时，耗费资源小   实现操作系统的并发 实现进程内部的并发   进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存。资源分配给进程，同一进程的所有线程共享该进程的所有资源。同一进程中的多...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img class="post-bg" src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="content">前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介Go的sort包用来排序，二分查找等操作。 二、sort包内排序原理实现123456789101112131415161718type Interface interface &#123;	// Len是集合中元素的个数。	Len() int	// Less是排序条件（索引i与j的元素对比排序）	Less(i, j int) bool	// Swap交换索引i和j的元素。	Swap(i, j int)&#125;// Sort按Less方法确定的升序对数据进行排序。func Sort(data Interface) &#123;	n := data.Len()	if n &lt;= 1 &...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2023/04/24/hello-world/" title="Hello World"><img class="post-bg" src="/img/background.jpeg" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Hello World"></a></div><div class="recent-post-info"><a class="article-title" href="/2023/04/24/hello-world/" title="Hello World">Hello World</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2023-04-24T07:09:18.000Z" title="发表于 2023-04-24 15:09:18">2023-04-24</time></span></div><div class="content">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2022/11/10/grpc-gateway/" title="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api"><img class="post-bg" src="/img/grpc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/11/10/grpc-gateway/" title="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-11-10T10:20:37.000Z" title="发表于 2022-11-10 18:20:37">2022-11-10</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/">gRPC学习</a></span></div><div class="content">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转grpc-gateway官方文档：点击跳转源自 coreos 的一篇博客，转载到了 gRPC 官方博客 gRPC with REST and Open APIs。  一、gRPC-Gateway概述1、简述 取自官方概述：grpc-gateway is a plugin of protoc. It reads gRPC service definition, and generates a reverse-proxy server which translates a RESTful JSON API into gRPC. This server is generated according to custom options in your gRPC definition.  gRPC-Gateway 是 protoc 的插件。它读取gRPC服务定义并生成反向代理服务器，将 RESTful JSON API 转换为 gRPC。该服务器是根据服务定义中的 google.api.http 注释生成的。 2、出现...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证"><img class="post-bg" src="/img/grpc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="gRPC（七）进阶：自定义身份验证"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证">gRPC（七）进阶：自定义身份验证</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-11-08T05:19:06.000Z" title="发表于 2022-11-08 13:19:06">2022-11-08</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/">gRPC学习</a></span></div><div class="content">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断用户是否登陆、以及权限等，实现Token认证的前提是，需要定义一个结构体，并实现credentials.PerRPCCredentials接口。 1、credentials.PerRPCCredentials 接口类型定义： 123456type PerRPCCredentials interface &#123;	// 返回需要认证的必要信息	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)	// 是否使用安全链接(TLS)	RequireTransportSecurity...</div></div></div><div class="recent-post-item"><div class="post_cover left"><a href="/2022/11/07/grpc-interceptor/" title="gRPC（六）进阶：拦截器 interceptor"><img class="post-bg" src="/img/grpc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="gRPC（六）进阶：拦截器 interceptor"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/11/07/grpc-interceptor/" title="gRPC（六）进阶：拦截器 interceptor">gRPC（六）进阶：拦截器 interceptor</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-11-07T11:51:02.000Z" title="发表于 2022-11-07 19:51:02">2022-11-07</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/">gRPC学习</a></span></div><div class="content">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、拦截器概述1、什么是拦截器？在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。  中间件：中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技术、工具和数据库之间的桥梁，例如他可以记录响应时长、记录请求和响应数据日志，身份验证等。中间件可以在拦截到发送给 handler 的请求，且可以拦截 handler 返回给客户端的响应  gRPC 不同，它允许在服务器和客户端都使用拦截器。  服务器端拦截器是 gRPC 服务器在到达实际 RPC 方法之前调用的函数。它可以用于多种用途，例如日志记录、跟踪、速率限制、身份验证和授权。 同样，客户端拦截器是 gRPC 客户端在调用实际 RPC 之前调用的函数。  2、gRPC 拦截器核心概念 一元是我们大多数人使用的。就是发送一个请求并获得一个响应。 流是当您发送或接收 protobuf 消...</div></div></div><div class="recent-post-item"><div class="post_cover right"><a href="/2022/11/03/grpc-TLS/" title="gRPC（五）进阶：通过TLS建立安全连接"><img class="post-bg" src="/img/grpc.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="gRPC（五）进阶：通过TLS建立安全连接"></a></div><div class="recent-post-info"><a class="article-title" href="/2022/11/03/grpc-TLS/" title="gRPC（五）进阶：通过TLS建立安全连接">gRPC（五）进阶：通过TLS建立安全连接</a><div class="article-meta-wrap"><span class="post-meta-date"><i class="far fa-calendar-alt"></i><span class="article-meta-label">发表于</span><time datetime="2022-11-03T12:36:53.000Z" title="发表于 2022-11-03 20:36:53">2022-11-03</time></span><span class="article-meta"><span class="article-meta-separator">|</span><i class="fas fa-inbox"></i><a class="article-meta__categories" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/">gRPC学习</a></span></div><div class="content">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、明文传输先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。 我们抓个包查看一下：是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。 二、TLS概述传输层安全 (TLS) 对通过 Internet 发送的数据进行加密，以确保窃听者和黑客无法看到您传输的内容，这对于密码、信用卡号和个人通信等私人和敏感信息特别有用。 1、什么是TLS？传输层安全 (TLS) 是一种 Internet 工程任务组 ( IETF ) 标准协议，可在两个通信计算机应用程序之间提供身份验证、隐私和数据完整性。它是当今使用最广泛部署的安全协议，最适合需要通过网络安全交换数据的 Web 浏览器和其他应用程序。这包括 Web 浏览会话、文件传输、虚拟专用网络 (VPN) 连接、远程桌面会话和 IP 语音 (VoIP)。最近，TLS 被集成到包括 5G 在内的现...</div></div></div></div><nav id="pagination"><div class="pagination"><span class="page-number current">1</span><a class="page-number" href="/page/2/#content-inner">2</a><span class="space">&hellip;</span><a class="page-number" href="/page/5/#content-inner">5</a><a class="extend next" rel="next" href="/page/2/#content-inner"><i class="fas fa-chevron-right fa-fw"></i></a></div></nav></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Linzy</div><div class="author-info-description">Backend Developer · Go Enthusiast · Gamer 🎮</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gopherlinzy"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">即使再小的帆也能远航 ⛵</div></div><div class="sticky_layout"><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"/></a><div class="content"><a class="title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"/></a><div class="content"><a class="title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"/></a><div class="content"><a class="title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"/></a><div class="content"><a class="title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"/></a><div class="content"><a class="title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></div></div></div></div><div class="card-widget card-categories"><div class="item-headline">
+            <i class="fas fa-folder-open"></i>
+            <span>分类</span>
+            
+          </div>
+          <ul class="card-category-list" id="aside-cat-list">
+            <li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Docker%E5%AE%B9%E5%99%A8/"><span class="card-category-list-name">Docker容器</span><span class="card-category-list-count">7</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Gin%E6%A1%86%E6%9E%B6/"><span class="card-category-list-name">Gin框架</span><span class="card-category-list-count">9</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Gorm/"><span class="card-category-list-name">Gorm</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/"><span class="card-category-list-name">Go基础入门</span><span class="card-category-list-count">5</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Go%E9%AB%98%E6%80%A7%E8%83%BD%E7%BC%96%E7%A8%8B/"><span class="card-category-list-name">Go高性能编程</span><span class="card-category-list-count">1</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Redis/"><span class="card-category-list-name">Redis</span><span class="card-category-list-count">4</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/Vue%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">Vue学习</span><span class="card-category-list-count">2</span></a></li><li class="card-category-list-item "><a class="card-category-list-link" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/"><span class="card-category-list-name">gRPC学习</span><span class="card-category-list-count">8</span></a></li>
+          </ul></div><div class="card-widget card-tags"><div class="item-headline"><i class="fas fa-tags"></i><span>标签</span></div><div class="card-tag-cloud"><a href="/tags/Gorm/" style="font-size: 1.28em; color: #99a0aa">Gorm</a> <a href="/tags/%E7%BD%91%E7%BB%9C%E5%8D%8F%E8%AE%AE/" style="font-size: 1.28em; color: #99a0aa">网络协议</a> <a href="/tags/js/" style="font-size: 1.14em; color: #999b9d">js</a> <a href="/tags/NoSQL/" style="font-size: 1.19em; color: #999da1">NoSQL</a> <a href="/tags/casbin/" style="font-size: 1.14em; color: #999b9d">casbin</a> <a href="/tags/%E5%89%8D%E7%AB%AF/" style="font-size: 1.14em; color: #999b9d">前端</a> <a href="/tags/%E4%BA%91%E5%8E%9F%E7%94%9F/" style="font-size: 1.32em; color: #99a2ae">云原生</a> <a href="/tags/JWT/" style="font-size: 1.1em; color: #999">JWT</a> <a href="/tags/file/" style="font-size: 1.1em; color: #999">file</a> <a href="/tags/gin%EF%BC%8Cjson/" style="font-size: 1.1em; color: #999">gin，json</a> <a href="/tags/%E6%9E%B6%E6%9E%84/" style="font-size: 1.1em; color: #999">架构</a> <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/" style="font-size: 1.14em; color: #999b9d">排序算法</a> <a href="/tags/Docker/" style="font-size: 1.37em; color: #99a4b2">Docker</a> <a href="/tags/SQL/" style="font-size: 1.1em; color: #999">SQL</a> <a href="/tags/golang/" style="font-size: 1.32em; color: #99a2ae">golang</a> <a href="/tags/%E5%90%8E%E7%AB%AF/" style="font-size: 1.28em; color: #99a0aa">后端</a> <a href="/tags/grpc-gateway/" style="font-size: 1.1em; color: #999">grpc-gateway</a> <a href="/tags/%E5%AE%B9%E5%99%A8/" style="font-size: 1.37em; color: #99a4b2">容器</a> <a href="/tags/grpc/" style="font-size: 1.32em; color: #99a2ae">grpc</a> <a href="/tags/Vue/" style="font-size: 1.14em; color: #999b9d">Vue</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/" style="font-size: 1.1em; color: #999">数据结构</a> <a href="/tags/postman/" style="font-size: 1.32em; color: #99a2ae">postman</a> <a href="/tags/%E8%BF%90%E7%BB%B4/" style="font-size: 1.14em; color: #999b9d">运维</a> <a href="/tags/json/" style="font-size: 1.14em; color: #999b9d">json</a> <a href="/tags/protobuf/" style="font-size: 1.1em; color: #999">protobuf</a> <a href="/tags/%E4%B8%AD%E9%97%B4%E4%BB%B6/" style="font-size: 1.1em; color: #999">中间件</a> <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/" style="font-size: 1.41em; color: #99a5b7">微服务</a> <a href="/tags/rpc/" style="font-size: 1.19em; color: #999da1">rpc</a> <a href="/tags/go/" style="font-size: 1.46em; color: #99a7bb">go</a> <a href="/tags/npm/" style="font-size: 1.14em; color: #999b9d">npm</a> <a href="/tags/Redis/" style="font-size: 1.23em; color: #999ea6">Redis</a> <a href="/tags/GMP%E8%B0%83%E5%BA%A6/" style="font-size: 1.1em; color: #999">GMP调度</a> <a href="/tags/%E5%AD%A6%E4%B9%A0/" style="font-size: 1.5em; color: #99a9bf">学习</a> <a href="/tags/gin%EF%BC%8Chttp/" style="font-size: 1.28em; color: #99a0aa">gin，http</a> <a href="/tags/mysql/" style="font-size: 1.32em; color: #99a2ae">mysql</a> <a href="/tags/%E7%AE%97%E6%B3%95/" style="font-size: 1.1em; color: #999">算法</a> <a href="/tags/%E6%95%B0%E6%8D%AE%E5%BA%93/" style="font-size: 1.41em; color: #99a5b7">数据库</a> <a href="/tags/gin/" style="font-size: 1.19em; color: #999da1">gin</a> <a href="/tags/linux/" style="font-size: 1.32em; color: #99a2ae">linux</a></div></div><div class="card-widget card-archives">
+    <div class="item-headline">
+      <i class="fas fa-archive"></i>
+      <span>归档</span>
+      
+    </div>
+  
+    <ul class="card-archive-list">
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/05/">
+            <span class="card-archive-list-date">
+              五月 2023
+            </span>
+            <span class="card-archive-list-count">1</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2023/04/">
+            <span class="card-archive-list-date">
+              四月 2023
+            </span>
+            <span class="card-archive-list-count">5</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/11/">
+            <span class="card-archive-list-date">
+              十一月 2022
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/10/">
+            <span class="card-archive-list-date">
+              十月 2022
+            </span>
+            <span class="card-archive-list-count">9</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/09/">
+            <span class="card-archive-list-date">
+              九月 2022
+            </span>
+            <span class="card-archive-list-count">4</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/08/">
+            <span class="card-archive-list-date">
+              八月 2022
+            </span>
+            <span class="card-archive-list-count">6</span>
+          </a>
+        </li>
+      
+        <li class="card-archive-list-item">
+          <a class="card-archive-list-link" href="/archives/2022/07/">
+            <span class="card-archive-list-date">
+              七月 2022
+            </span>
+            <span class="card-archive-list-count">11</span>
+          </a>
+        </li>
+      
+    </ul>
+  </div><div class="card-widget card-webinfo"><div class="item-headline"><i class="fas fa-chart-line"></i><span>网站信息</span></div><div class="webinfo"><div class="webinfo-item"><div class="item-name">文章数目 :</div><div class="item-count">42</div></div><div class="webinfo-item"><div class="item-name">本站访客数 :</div><div class="item-count" id="busuanzi_value_site_uv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">本站总浏览量 :</div><div class="item-count" id="busuanzi_value_site_pv"><i class="fa-solid fa-spinner fa-spin"></i></div></div><div class="webinfo-item"><div class="item-name">最后更新时间 :</div><div class="item-count" id="last-push-date" data-lastPushDate="2026-03-12T05:40:08.569Z"><i class="fa-solid fa-spinner fa-spin"></i></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Linzy</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.2.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>window.typedJSFn = {
+  init: str => {
+    window.typed = new Typed('#subtitle', Object.assign({
+      strings: str,
+      startDelay: 300,
+      typeSpeed: 150,
+      loop: true,
+      backSpeed: 50,
+    }, null))
+  },
+  run: subtitleType => {
+    if (true) {
+      if (typeof Typed === 'function') {
+        subtitleType()
+      } else {
+        btf.getScript('https://cdn.jsdelivr.net/npm/typed.js@3.0.0/dist/typed.umd.min.js').then(subtitleType)
+      }
+    } else {
+      subtitleType()
+    }
+  },
+  processSubtitle: (content, extraContents = []) => {
+    if (true) {
+      const sub = ["即使再小的帆也能远航","Backend Developer · Go Enthusiast · Gamer"].slice()
+
+      if (extraContents.length > 0) {
+        sub.unshift(...extraContents)
+      }
+
+      if (typeof content === 'string') {
+        sub.unshift(content)
+      } else if (Array.isArray(content)) {
+        sub.unshift(...content)
+      }
+
+      sub.length > 0 && typedJSFn.init(sub)
+    } else {
+      document.getElementById('subtitle').textContent = typeof content === 'string' ? content :
+        (Array.isArray(content) && content.length > 0 ? content[0] : '')
+    }
+  }
+}
+btf.addGlobalFn('pjaxSendOnce', () => { typed.destroy() }, 'typedDestroy')
+</script><script>function subtitleType () {
+  typedJSFn.processSubtitle(["即使再小的帆也能远航","Backend Developer · Go Enthusiast · Gamer"])
+}
+typedJSFn.run(subtitleType)</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

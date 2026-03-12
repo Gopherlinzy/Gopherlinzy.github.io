@@ -1,300 +1,166 @@
-
-
-<!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="孙禄毅">
-  <meta name="keywords" content="">
-  
-    <meta name="description" content="前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Go基础篇：类型系统 | Linzy 知识库</title><meta name="author" content="Linzy"><meta name="copyright" content="Linzy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go基础篇：类型系统">
 <meta property="og:url" content="https://gopherlinzy.github.io/2023/04/28/go-type-system/index.html">
-<meta property="og:site_name" content="linzy">
+<meta property="og:site_name" content="Linzy 知识库">
 <meta property="og:description" content="前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/default.png">
 <meta property="article:published_time" content="2023-04-28T15:25:54.000Z">
-<meta property="article:modified_time" content="2023-04-28T15:31:20.197Z">
-<meta property="article:author" content="孙禄毅">
+<meta property="article:modified_time" content="2026-03-12T05:30:57.155Z">
+<meta property="article:author" content="Linzy">
 <meta property="article:tag" content="golang">
 <meta property="article:tag" content="后端">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
-  
-  
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  
-  
-  <title>Go基础篇：类型系统 - linzy</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/default.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Go基础篇：类型系统",
+  "url": "https://gopherlinzy.github.io/2023/04/28/go-type-system/",
+  "image": "https://gopherlinzy.github.io/img/default.png",
+  "datePublished": "2023-04-28T15:25:54.000Z",
+  "dateModified": "2026-03-12T05:30:57.155Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Linzy",
+      "url": "https://gopherlinzy.github.io"
     }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://gopherlinzy.github.io/2023/04/28/go-type-system/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>LinzyBlog</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/pkg7.jpg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="Go基础篇：类型系统"></span>
-          
-        </div>
-
-        
-          
-  <div class="mt-3">
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-28 23:25" pubdate>
-          2023年4月28日 晚上
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          7k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          59 分钟
-        
-      </span>
-    
-
-    
-    
-      
-        <span id="busuanzi_container_page_pv" style="display: none">
-          <i class="iconfont icon-eye" aria-hidden="true"></i>
-          <span id="busuanzi_value_page_pv"></span> 次
-        </span>
-        
-      
-    
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">Go基础篇：类型系统</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    本文最后更新于：5 个月前
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="前言✨"><a href="#前言✨" class="headerlink" title="前言✨"></a>前言✨</h1><blockquote>
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Go基础篇：类型系统',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/default.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Linzy 知识库</span></a><a class="nav-page-title" href="/"><span class="site-name">Go基础篇：类型系统</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Go基础篇：类型系统</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-12T05:30:57.155Z" title="更新于 2026-03-12 13:30:57">2026-03-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言✨"><a href="#前言✨" class="headerlink" title="前言✨"></a>前言✨</h1><blockquote>
 <p>前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。</p>
 </blockquote>
 <h1 id="一、什么是类型？"><a href="#一、什么是类型？" class="headerlink" title="一、什么是类型？"></a>一、什么是类型？</h1><p>类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。</p>
@@ -378,36 +244,36 @@
 </blockquote>
 <h1 id="二、类型特性"><a href="#二、类型特性" class="headerlink" title="二、类型特性"></a>二、类型特性</h1><h2 id="1、静态类型检查"><a href="#1、静态类型检查" class="headerlink" title="1、静态类型检查"></a>1、静态类型检查</h2><p>Go语言是一种静态类型的编程语言，这意味着每个变量都有一个明确的类型，不能随意改变。<br><code>类型具有静态类型检查的特性，这意味着在编译时就能够检查出类型错误，避免了在运行时出现类型不匹配的错误。</code>这种特性可以提高程序的可靠性和稳定性，减少调试和修复错误的时间和成本。</p>
 <p>例如，如果一个函数需要接收一个整型参数，但是在调用该函数时传入了一个字符串类型的参数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">IntToString</span><span class="hljs-params">(n <span class="hljs-type">int</span>)</span></span> &#123;<br>	fmt.Println(<span class="hljs-string">&quot;IntToString&quot;</span>)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">var</span> n <span class="hljs-type">string</span><br>	IntToString(n)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">IntToString</span><span class="params">(n <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;IntToString&quot;</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> n <span class="type">string</span></span><br><span class="line">	IntToString(n)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>我们编译一下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">➜ interfaceTest (main) ✗ <span class="hljs-keyword">go</span> build ./main.<span class="hljs-keyword">go</span><br># command-line-arguments<br>./main.<span class="hljs-keyword">go</span>:<span class="hljs-number">13</span>:<span class="hljs-number">14</span>: cannot use n (variable of <span class="hljs-keyword">type</span> <span class="hljs-type">string</span>) as <span class="hljs-keyword">type</span> <span class="hljs-type">int</span> in argument to IntToString<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">➜ interfaceTest (main) ✗ <span class="keyword">go</span> build ./main.<span class="keyword">go</span></span><br><span class="line"># command-line-arguments</span><br><span class="line">./main.<span class="keyword">go</span>:<span class="number">13</span>:<span class="number">14</span>: cannot use n (variable of <span class="keyword">type</span> <span class="type">string</span>) as <span class="keyword">type</span> <span class="type">int</span> in argument to IntToString</span><br></pre></td></tr></table></figure>
 <p>编译器就会在编译时发现这个错误，并提示开发者进行修改。这样就可以避免在运行时出现类型不匹配的错误，提高了程序的可靠性。</p>
 <h2 id="2、类型推断"><a href="#2、类型推断" class="headerlink" title="2、类型推断"></a>2、类型推断</h2><p>类型推断可以根据变量的值自动推断出其类型，简化了代码的书写。这种特性<code>可以让开发者在不显式指定变量类型的情况下，编写更加简洁、易读的代码。</code></p>
 <p>例如，可以使用以下代码声明一个整型变量：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">var</span> x <span class="hljs-type">int</span> = <span class="hljs-number">10</span> <span class="hljs-comment">// 显式地声明x为int类型，并赋值为10</span><br>y := <span class="hljs-number">20</span> <span class="hljs-comment">// 语法糖，隐式地声明y为int类型，并赋值为20</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">var</span> x <span class="type">int</span> = <span class="number">10</span> <span class="comment">// 显式地声明x为int类型，并赋值为10</span></span><br><span class="line">y := <span class="number">20</span> <span class="comment">// 语法糖，隐式地声明y为int类型，并赋值为20</span></span><br></pre></td></tr></table></figure>
 <p>在这个例子中，变量 y 的类型会被自动推断为整型。这样就可以避免在声明变量时重复书写类型信息，提高了代码的可读性和简洁性。</p>
 <h1 id="三、类型别名和自定义类型"><a href="#三、类型别名和自定义类型" class="headerlink" title="三、类型别名和自定义类型"></a>三、类型别名和自定义类型</h1><h2 id="1、类型别名"><a href="#1、类型别名" class="headerlink" title="1、类型别名"></a>1、类型别名</h2><p>类型别名是在Go 1.9版本中引入的一个特性，<code>它可以让你为一个已有的类型定义一个新的名称，但是这个新的名称并不是一个新的类型，它只是一个别名，它和原来的类型是完全相同的，可以互换使用。</code></p>
 <p>你可以使用<code>type xxx = type</code>关键字来定义一个类型别名，例如：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyInt = <span class="hljs-type">int</span> <span class="hljs-comment">// 定义一个int类型的别名MyInt</span><br><br><span class="hljs-comment">// 比如byte和rune就是类型别名，他们的定义如下：</span><br><span class="hljs-keyword">type</span> <span class="hljs-type">byte</span> = <span class="hljs-type">uint8</span><br><span class="hljs-keyword">type</span> <span class="hljs-type">rune</span> = <span class="hljs-type">int32</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyInt = <span class="type">int</span> <span class="comment">// 定义一个int类型的别名MyInt</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 比如byte和rune就是类型别名，他们的定义如下：</span></span><br><span class="line"><span class="keyword">type</span> <span class="type">byte</span> = <span class="type">uint8</span></span><br><span class="line"><span class="keyword">type</span> <span class="type">rune</span> = <span class="type">int32</span></span><br></pre></td></tr></table></figure>
 <h2 id="2、自定义类型"><a href="#2、自定义类型" class="headerlink" title="2、自定义类型"></a>2、自定义类型</h2><p>在Go语言中，自定义类型是在Go语言中使用type关键字来定义一个新的类型，它可以基于已有的类型或者引用类型来定义，但是<code>它和原来的类型是不同的，它有自己的方法集合和行为。</code></p>
 <p>可以使用type关键字来定义自定义类型。自定义类型可以是基本类型的别名，也可以是引用类型的新类型。</p>
 <p>定义自定义类型的语法如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> TypeName BaseType <span class="hljs-comment">// TypeName是自定义类型的名称，BaseType是基本类型或引用类型。</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> TypeName BaseType <span class="comment">// TypeName是自定义类型的名称，BaseType是基本类型或引用类型。</span></span><br></pre></td></tr></table></figure>
 
 <p>例如，可以使用以下代码定义一个自定义类型MyInt，它是int类型的别名：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MyInt <span class="hljs-type">int</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MyInt <span class="type">int</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>在这个例子中，MyInt类型和int类型具有相同的底层类型，但是它们是不同的类型。可以使用MyInt类型来声明变量、函数参数、函数返回值等。</p>
 </blockquote>
 <p>除了基本类型的别名，还可以使用自定义类型来定义新的引用类型。例如，可以使用以下代码定义一个自定义类型Person，它是一个结构体类型：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Person <span class="hljs-keyword">struct</span> &#123;<br>    Name <span class="hljs-type">string</span><br>    Age <span class="hljs-type">int</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Person <span class="keyword">struct</span> &#123;</span><br><span class="line">    Name <span class="type">string</span></span><br><span class="line">    Age <span class="type">int</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>在这个例子中，Person类型是一个由Name和Age两个字段组成的结构体类型。可以使用Person类型来声明变量、函数参数、函数返回值等。</p>
 </blockquote>
 <h2 id="3、类型别名和自定义类型的区别"><a href="#3、类型别名和自定义类型的区别" class="headerlink" title="3、类型别名和自定义类型的区别"></a>3、类型别名和自定义类型的区别</h2><p>类型别名与自定义类型表面上看只有一个等号的差异，但他们的使用场景却完全不一样，我们通过下面的这段代码来理解它们之间的区别：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> test <span class="hljs-keyword">struct</span> &#123;<br>&#125;<br><br><span class="hljs-comment">// 类型别名</span><br><span class="hljs-keyword">type</span> MyTest1 = test<br><span class="hljs-keyword">type</span> MyTest2 = MyTest1<br><br><span class="hljs-comment">// 自定义类型</span><br><span class="hljs-keyword">type</span> MyTest3 test<br><span class="hljs-keyword">type</span> MyTest4 MyTest3<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(test)</span></span> Print(str <span class="hljs-type">string</span>) &#123;<br>	fmt.Println(<span class="hljs-string">&quot;======&quot;</span>, str)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(MyTest1)</span></span> Print1(str <span class="hljs-type">string</span>) &#123;<br>	fmt.Println(<span class="hljs-string">&quot;-----&quot;</span>, str)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(MyTest2)</span></span> Print2(str <span class="hljs-type">string</span>) &#123;<br>	fmt.Println(<span class="hljs-string">&quot;+++++&quot;</span>, str)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(MyTest3)</span></span> Print3(str <span class="hljs-type">string</span>) &#123;<br>	fmt.Println(<span class="hljs-string">&quot;!!!!!&quot;</span>, str)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(MyTest4)</span></span> Print4(str <span class="hljs-type">string</span>) &#123;<br>	fmt.Println(<span class="hljs-string">&quot;、、、、、&quot;</span>, str)<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestTypeSystem</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> m1 MyTest1<br>	fmt.Printf(<span class="hljs-string">&quot;type of MyTest1:%T\n&quot;</span>, m1)<br>	m1.Print(<span class="hljs-string">&quot;MyTest1&quot;</span>)<br>	m1.Print1(<span class="hljs-string">&quot;MyTest1&quot;</span>)<br>	m1.Print2(<span class="hljs-string">&quot;MyTest1&quot;</span>)<br><br>	<span class="hljs-keyword">var</span> m2 MyTest2<br>	fmt.Printf(<span class="hljs-string">&quot;type of MyTest2:%T\n&quot;</span>, m2)<br>	m2.Print(<span class="hljs-string">&quot;MyTest2&quot;</span>)<br>	m2.Print1(<span class="hljs-string">&quot;MyTest2&quot;</span>)<br>	m2.Print2(<span class="hljs-string">&quot;MyTest2&quot;</span>)<br><br>	<span class="hljs-keyword">var</span> m3 MyTest3<br>	fmt.Printf(<span class="hljs-string">&quot;type of MyTest3:%T\n&quot;</span>, m3)<br>	<span class="hljs-comment">// m3.Print undefined (type MyTest3 has no field or method Print)</span><br>	<span class="hljs-comment">//m3.Print(&quot;MyTest3&quot;)</span><br>	m3.Print3(<span class="hljs-string">&quot;MyTest3&quot;</span>)<br>	<span class="hljs-comment">// m3.Print4 undefined (type MyTest3 has no field or method Print4)</span><br>	<span class="hljs-comment">//m3.Print4(&quot;MyTest3&quot;)</span><br><br>	<span class="hljs-keyword">var</span> m4 MyTest4<br>	fmt.Printf(<span class="hljs-string">&quot;type of MyTest4:%T\n&quot;</span>, m4)<br>	<span class="hljs-comment">// m4.Print undefined (type MyTest4 has no field or method Print)</span><br>	<span class="hljs-comment">//m4.Print(&quot;MyTest4&quot;)</span><br>	<span class="hljs-comment">// m4.Print3 undefined (type MyTest4 has no field or method Print3)</span><br>	<span class="hljs-comment">//m4.Print3(&quot;MyTest4&quot;)</span><br>	m4.Print4(<span class="hljs-string">&quot;MyTest4&quot;</span>)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> test <span class="keyword">struct</span> &#123;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 类型别名</span></span><br><span class="line"><span class="keyword">type</span> MyTest1 = test</span><br><span class="line"><span class="keyword">type</span> MyTest2 = MyTest1</span><br><span class="line"></span><br><span class="line"><span class="comment">// 自定义类型</span></span><br><span class="line"><span class="keyword">type</span> MyTest3 test</span><br><span class="line"><span class="keyword">type</span> MyTest4 MyTest3</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(test)</span></span> Print(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;======&quot;</span>, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(MyTest1)</span></span> Print1(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;-----&quot;</span>, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(MyTest2)</span></span> Print2(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;+++++&quot;</span>, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(MyTest3)</span></span> Print3(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;!!!!!&quot;</span>, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(MyTest4)</span></span> Print4(str <span class="type">string</span>) &#123;</span><br><span class="line">	fmt.Println(<span class="string">&quot;、、、、、&quot;</span>, str)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestTypeSystem</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> m1 MyTest1</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type of MyTest1:%T\n&quot;</span>, m1)</span><br><span class="line">	m1.Print(<span class="string">&quot;MyTest1&quot;</span>)</span><br><span class="line">	m1.Print1(<span class="string">&quot;MyTest1&quot;</span>)</span><br><span class="line">	m1.Print2(<span class="string">&quot;MyTest1&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> m2 MyTest2</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type of MyTest2:%T\n&quot;</span>, m2)</span><br><span class="line">	m2.Print(<span class="string">&quot;MyTest2&quot;</span>)</span><br><span class="line">	m2.Print1(<span class="string">&quot;MyTest2&quot;</span>)</span><br><span class="line">	m2.Print2(<span class="string">&quot;MyTest2&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> m3 MyTest3</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type of MyTest3:%T\n&quot;</span>, m3)</span><br><span class="line">	<span class="comment">// m3.Print undefined (type MyTest3 has no field or method Print)</span></span><br><span class="line">	<span class="comment">//m3.Print(&quot;MyTest3&quot;)</span></span><br><span class="line">	m3.Print3(<span class="string">&quot;MyTest3&quot;</span>)</span><br><span class="line">	<span class="comment">// m3.Print4 undefined (type MyTest3 has no field or method Print4)</span></span><br><span class="line">	<span class="comment">//m3.Print4(&quot;MyTest3&quot;)</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> m4 MyTest4</span><br><span class="line">	fmt.Printf(<span class="string">&quot;type of MyTest4:%T\n&quot;</span>, m4)</span><br><span class="line">	<span class="comment">// m4.Print undefined (type MyTest4 has no field or method Print)</span></span><br><span class="line">	<span class="comment">//m4.Print(&quot;MyTest4&quot;)</span></span><br><span class="line">	<span class="comment">// m4.Print3 undefined (type MyTest4 has no field or method Print3)</span></span><br><span class="line">	<span class="comment">//m4.Print3(&quot;MyTest4&quot;)</span></span><br><span class="line">	m4.Print4(<span class="string">&quot;MyTest4&quot;</span>)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>测试运行一下<br><img src="/img/go-type-system/1ead2154063b4f66b68a7ae34531f4ac.png"></p>
 <blockquote>
 <p>结果显示 m1 和 m2 的类型是 typeSystemTest.test，表示 typeSystemTest 包下定义的 test 类型。m3 的类型是 MyTest3。m4 的类型是 MyTest4。<br>MyTest1 和 MyTest2 类型只会在代码中存在，编译完成时并不会有MyTest1 和 MyTest2类型，他们底层都是类型。<br>我们可以看出他们之间最大的区别：</p>
@@ -418,7 +284,7 @@
 </blockquote>
 <h1 id="四、类型底层结构"><a href="#四、类型底层结构" class="headerlink" title="四、类型底层结构"></a>四、类型底层结构</h1><h2 id="1、类型元数据"><a href="#1、类型元数据" class="headerlink" title="1、类型元数据"></a>1、类型元数据</h2><p>在Go语言中无论是内置类型还是自定义类型他们都有类型描述，也就是<code>类型元数据</code>，每种类型元数据都是全局唯一的，_type结构体包含了类型的名称、大小、对齐方式、哈希函数、比较函数等信息。</p>
 <p>在runtime._type 中定义了类型元数据的结构体：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> _type <span class="hljs-keyword">struct</span> &#123;<br>	size       <span class="hljs-type">uintptr</span><br>	ptrdata    <span class="hljs-type">uintptr</span> <span class="hljs-comment">// size of memory prefix holding all pointers</span><br>	hash       <span class="hljs-type">uint32</span><br>	tflag      tflag<br>	align      <span class="hljs-type">uint8</span><br>	fieldAlign <span class="hljs-type">uint8</span><br>	kind       <span class="hljs-type">uint8</span><br>	<span class="hljs-comment">// function for comparing objects of this type</span><br>	<span class="hljs-comment">// (ptr to object A, ptr to object B) -&gt; ==?</span><br>	equal <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(unsafe.Pointer, unsafe.Pointer)</span></span> <span class="hljs-type">bool</span><br>	<span class="hljs-comment">// gcdata stores the GC type data for the garbage collector.</span><br>	<span class="hljs-comment">// If the KindGCProg bit is set in kind, gcdata is a GC program.</span><br>	<span class="hljs-comment">// Otherwise it is a ptrmask bitmap. See mbitmap.go for details.</span><br>	gcdata    *<span class="hljs-type">byte</span><br>	str       nameOff<br>	ptrToThis typeOff<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> _type <span class="keyword">struct</span> &#123;</span><br><span class="line">	size       <span class="type">uintptr</span></span><br><span class="line">	ptrdata    <span class="type">uintptr</span> <span class="comment">// size of memory prefix holding all pointers</span></span><br><span class="line">	hash       <span class="type">uint32</span></span><br><span class="line">	tflag      tflag</span><br><span class="line">	align      <span class="type">uint8</span></span><br><span class="line">	fieldAlign <span class="type">uint8</span></span><br><span class="line">	kind       <span class="type">uint8</span></span><br><span class="line">	<span class="comment">// function for comparing objects of this type</span></span><br><span class="line">	<span class="comment">// (ptr to object A, ptr to object B) -&gt; ==?</span></span><br><span class="line">	equal <span class="function"><span class="keyword">func</span><span class="params">(unsafe.Pointer, unsafe.Pointer)</span></span> <span class="type">bool</span></span><br><span class="line">	<span class="comment">// gcdata stores the GC type data for the garbage collector.</span></span><br><span class="line">	<span class="comment">// If the KindGCProg bit is set in kind, gcdata is a GC program.</span></span><br><span class="line">	<span class="comment">// Otherwise it is a ptrmask bitmap. See mbitmap.go for details.</span></span><br><span class="line">	gcdata    *<span class="type">byte</span></span><br><span class="line">	str       nameOff</span><br><span class="line">	ptrToThis typeOff</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>_type结构体中的字段含义如下：</p>
 <ul>
 <li>size：类型大小，单位是字节；</li>
@@ -435,7 +301,7 @@
 </ul>
 <h2 id="2、其他描述信息"><a href="#2、其他描述信息" class="headerlink" title="2、其他描述信息"></a>2、其他描述信息</h2><p>基本数据类型只需要一个 _type 类型描述结构体就足够，但是引用类型在自身_type 存储之后，还需要额外描述信息来补充。</p>
 <p>比如 slicetype 类型元数据结构体:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> slicetype <span class="hljs-keyword">struct</span> &#123;<br>	typ  _type<br>	elem *_type<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> slicetype <span class="keyword">struct</span> &#123;</span><br><span class="line">	typ  _type</span><br><span class="line">	elem *_type</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p>在 slice 类型元数据后面还记录了一个 elem 的类型元数据，指向其存储元素的类型元数据。如果是 string 类型的 slice，那 elem 指针指向的就是 string 类型的元数据。</p>
@@ -443,7 +309,7 @@
 <p><img src="/img/go-type-system/0f0ceb1d6e1a495b9c409c8570d4e929.png"></p>
 <h2 id="3、uncommontype"><a href="#3、uncommontype" class="headerlink" title="3、uncommontype"></a>3、uncommontype</h2><p>在Go语言中，自定义类型的类型元数据可以通过reflect包中的TypeOf函数获取。对于非常规类型（如struct、interface、chan等），其类型元数据可能包含在uncommontype结构体中。</p>
 <p>uncommontype结构体中包含了一些非常规类型的元数据信息。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> uncommontype <span class="hljs-keyword">struct</span> &#123;<br>	pkgpath nameOff<br>	mcount  <span class="hljs-type">uint16</span> <span class="hljs-comment">// number of methods</span><br>	xcount  <span class="hljs-type">uint16</span> <span class="hljs-comment">// number of exported methods</span><br>	moff    <span class="hljs-type">uint32</span> <span class="hljs-comment">// offset from this uncommontype to [mcount]method</span><br>	_       <span class="hljs-type">uint32</span> <span class="hljs-comment">// unused</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> uncommontype <span class="keyword">struct</span> &#123;</span><br><span class="line">	pkgpath nameOff</span><br><span class="line">	mcount  <span class="type">uint16</span> <span class="comment">// number of methods</span></span><br><span class="line">	xcount  <span class="type">uint16</span> <span class="comment">// number of exported methods</span></span><br><span class="line">	moff    <span class="type">uint32</span> <span class="comment">// offset from this uncommontype to [mcount]method</span></span><br><span class="line">	_       <span class="type">uint32</span> <span class="comment">// unused</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>uncommontype结构体中的字段含义如下：</p>
 <ul>
 <li>pkgpath：包路径，记录了类型所在的包；</li>
@@ -463,7 +329,7 @@
 <p><code>uncommontype结构体通常紧跟在_type结构体后面，通过_type结构体中的tflag字段可以判断是否存在uncommontype结构体。</code></p>
 <h1 id="五、小结"><a href="#五、小结" class="headerlink" title="五、小结"></a>五、小结</h1><p>我们知道了 <code>uncommontype结构体定义了方法的个数和uncommontype结构体到方法元数据数组的偏移量。</code>现在通过实例了解类型系统以及如何找到他的方法数组。</p>
 <p>method结构体的作用是描述类型关联的方法的元数据，比如方法名和方法签名。它是一个数组元素，由uncommontype结构体中的moff字段指向：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> method <span class="hljs-keyword">struct</span> &#123;<br>	name nameOff<br>	mtyp typeOff<br>	ifn  textOff<br>	tfn  textOff<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> method <span class="keyword">struct</span> &#123;</span><br><span class="line">	name nameOff</span><br><span class="line">	mtyp typeOff</span><br><span class="line">	ifn  textOff</span><br><span class="line">	tfn  textOff</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>method结构体中的字段含义如下：</p>
 <ul>
@@ -474,404 +340,81 @@
 </ul>
 </blockquote>
 <p>例如，我们基于 []string 定义一个新类型 MySlice，并定义两个方法：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> MySlice []<span class="hljs-type">string</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ms MySlice)</span></span> Len() &#123;<br>	fmt.Println(<span class="hljs-built_in">len</span>(ms))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(ms MySlice)</span></span> Cap() &#123;<br>	fmt.Println(<span class="hljs-built_in">cap</span>(ms))<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">TestType</span><span class="hljs-params">(t *testing.T)</span></span> &#123;<br>	<span class="hljs-keyword">var</span> ms MySlice<br>	<span class="hljs-comment">// cannot use []string&#123;…&#125; (value of type []string) as type string in argument to append</span><br>	<span class="hljs-comment">// ms = append(ms, []string&#123;&quot;aaaa&quot;, &quot;bbbb&quot;, &quot;cccc&quot;&#125;)</span><br>	ms = <span class="hljs-built_in">append</span>(ms, MySlice&#123;<span class="hljs-string">&quot;aaaa&quot;</span>, <span class="hljs-string">&quot;bbbb&quot;</span>, <span class="hljs-string">&quot;cccc&quot;</span>&#125;...)<br>	ms.Len()<br>	ms.Cap()<br>	fmt.Println(ms)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> MySlice []<span class="type">string</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ms MySlice)</span></span> Len() &#123;</span><br><span class="line">	fmt.Println(<span class="built_in">len</span>(ms))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(ms MySlice)</span></span> Cap() &#123;</span><br><span class="line">	fmt.Println(<span class="built_in">cap</span>(ms))</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">TestType</span><span class="params">(t *testing.T)</span></span> &#123;</span><br><span class="line">	<span class="keyword">var</span> ms MySlice</span><br><span class="line">	<span class="comment">// cannot use []string&#123;…&#125; (value of type []string) as type string in argument to append</span></span><br><span class="line">	<span class="comment">// ms = append(ms, []string&#123;&quot;aaaa&quot;, &quot;bbbb&quot;, &quot;cccc&quot;&#125;)</span></span><br><span class="line">	ms = <span class="built_in">append</span>(ms, MySlice&#123;<span class="string">&quot;aaaa&quot;</span>, <span class="string">&quot;bbbb&quot;</span>, <span class="string">&quot;cccc&quot;</span>&#125;...)</span><br><span class="line">	ms.Len()</span><br><span class="line">	ms.Cap()</span><br><span class="line">	fmt.Println(ms)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><img src="/img/go-type-system/f8199d55c8614a2cbe69991286d7f57a.png"></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io">Linzy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io/2023/04/28/go-type-system/">https://gopherlinzy.github.io/2023/04/28/go-type-system/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://gopherlinzy.github.io" target="_blank">Linzy 知识库</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/golang/">golang</a><a class="post-meta__tags" href="/tags/%E5%90%8E%E7%AB%AF/">后端</a></div><div class="post-share"><div class="social-share" data-image="/img/default.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img class="cover" src="/img/default.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Go基础篇：接口</div></div><div class="info-2"><div class="info-item-1">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是接口？Go语言中的接口（interface）是一种类型，它定义了一组方法的集合，但没有具体的实现。接口可以被任何类型实现，只要该类型实现了接口中定义的所有方法。这种设计方式使得Go语言具有很高的灵活性和可扩展性。 1234567891011121314151617181920212223// 定义一个接口，包含一个String方法type Stringer interface &#123;	String() string&#125;// 定义一个结构体，实现Stringer接口type Person struct &#123;	Name string	Age  int&#125;func (p Person) String() string &#123;	return fmt.Sprintf(&quot;%s (%d)&quot;, p.Name, p...</div></div></div></a><a class="pagination-related" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img class="cover" src="/img/default.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Go基础：数据结构（定义和go语言实现）</div></div><div class="info-2"><div class="info-item-1">前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数组是一种值类型，声明数组时必须指定长度，长度不能被修改。 12345// 定义一个长度为5的整型数组var a [5]int// 访问数组元素，下标从0开始a[0] = 1 1、优缺点 优点： 数组的访问速度很快，因为它们是在内存中连续存储的 数组是一种简单、清晰的数据结构，易于理解和实现   缺点： 数组的长度是固定的，无法动态增加或缩小 插入或删除元素时需要移动数组中的其他元素，效率较低    2、适用场景和不适用场景 适用场景： 当需要在一个集合中存储相同类型的元素时，可以使用数组，例如存储身份证号、学号等 当需要快速访问数组中的元素时，可以使用数组   不适用场景： 当需要动态地...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-24</div><div class="info-item-2">Go底层原理：一起来唠唠GMP调度（一）</div></div><div class="info-2"><div class="info-item-1">前言 春招开始了，作为23届的科班咸鱼学习记录一下八股文和go底层原理（GC、GMP调度、goroutine等）本文介绍 Go 语言运行时调度器的实现原理，其中包含调度器的设计与实现原理、演变过程以及与运行时调度相关的数据结构。参考几篇不错的文章：mingguangtu《深入分析Go1.18 GMP调度器底层原理》刘丹冰Aceld《Golang 调度器 GMP 原理与调度全分析》  一、进程、线程、Goroutine1、进程与线程在了解Go的调度器的时候，都离不开操作系统、进程与线程这些概念。    进程 线程    操作系统资源调度和分配的基本单位 CPU调度和分派的基本单位   一个进程可以有多个线程 一个线程只能属于一个进程   有独立的地址空间 同一类线程共享代码和数据空间，每个线程有独立的运行栈和程序计数器   创建销毁开销大，进程切换时，耗费资源较大 创建销毁开销小，线程切换时，耗费资源小   实现操作系统的并发 实现进程内部的并发   进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存。资源分配给进程，同一进程的所有线程共享该进程的所有资源。同一进程中的多...</div></div></div></a><a class="pagination-related" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-24</div><div class="info-item-2">Go基础入门：sort包</div></div><div class="info-2"><div class="info-item-1">前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介Go的sort包用来排序，二分查找等操作。 二、sort包内排序原理实现123456789101112131415161718type Interface interface &#123;	// Len是集合中元素的个数。	Len() int	// Less是排序条件（索引i与j的元素对比排序）	Less(i, j int) bool	// Swap交换索引i和j的元素。	Swap(i, j int)&#125;// Sort按Less方法确定的升序对数据进行排序。func Sort(data Interface) &#123;	n := data.Len()	if n &lt;= 1 &...</div></div></div></a><a class="pagination-related" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-17</div><div class="info-item-2">Go基础篇：接口</div></div><div class="info-2"><div class="info-item-1">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是接口？Go语言中的接口（interface）是一种类型，它定义了一组方法的集合，但没有具体的实现。接口可以被任何类型实现，只要该类型实现了接口中定义的所有方法。这种设计方式使得Go语言具有很高的灵活性和可扩展性。 1234567891011121314151617181920212223// 定义一个接口，包含一个String方法type Stringer interface &#123;	String() string&#125;// 定义一个结构体，实现Stringer接口type Person struct &#123;	Name string	Age  int&#125;func (p Person) String() string &#123;	return fmt.Sprintf(&quot;%s (%d)&quot;, p.Name, p...</div></div></div></a><a class="pagination-related" href="/2022/10/25/go-memory-layout/" title="Go高性能编程-Go中的类型对齐保证"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-25</div><div class="info-item-2">Go高性能编程-Go中的类型对齐保证</div></div><div class="info-2"><div class="info-item-1">前言 本文将介绍Go中的各种字段类型的字节数和对齐保证。  一、内存对齐1、什么是内存对齐？元素是按照定义顺序一个一个放到内存中去的，但并不是紧密排列的。从结构体存储的首地址开始，每个元素放置到内存中时，它都会认为内存是按照自己的大小（通常它为4字节(32位)或8字节(64位)）来划分的，因此元素放置的位置一定会在自己宽度的整数倍上开始，这就是所谓的内存对齐。 2、为什么需要内存对齐？CPU 访问内存时，并不是逐个字节访问，而是以字长（word size）为单位访问。比如 32 位的 CPU ，字长为 4 字节，那么 CPU 访问内存的单位也是 4 字节。64位 CPU 访问内存的单位是8个字节。 这么设计的目的，是减少 CPU 访问内存的次数，加大 CPU 访问内存的吞吐量。比如同样读取 8 个字节的数据，一次读取 4 个字节那么只需要读取 2 次。CPU 始终以字长访问内存。 提出设想如果我们不进行内存对齐，而是按照类型字节长度紧密对齐呢？ 变量 a、b 各占据 3 字节的空间，我们使用32位 CPU 访问内存读取变量，例如：   内存对齐后，a、b 占据 4 字节空间，CP...</div></div></div></a><a class="pagination-related" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-24</div><div class="info-item-2">Go基础：数据结构（定义和go语言实现）</div></div><div class="info-2"><div class="info-item-1">前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数组是一种值类型，声明数组时必须指定长度，长度不能被修改。 12345// 定义一个长度为5的整型数组var a [5]int// 访问数组元素，下标从0开始a[0] = 1 1、优缺点 优点： 数组的访问速度很快，因为它们是在内存中连续存储的 数组是一种简单、清晰的数据结构，易于理解和实现   缺点： 数组的长度是固定的，无法动态增加或缩小 插入或删除元素时需要移动数组中的其他元素，效率较低    2、适用场景和不适用场景 适用场景： 当需要在一个集合中存储相同类型的元素时，可以使用数组，例如存储身份证号、学号等 当需要快速访问数组中的元素时，可以使用数组   不适用场景： 当需要动态地...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Linzy</div><div class="author-info-description">Backend Developer · Go Enthusiast · Gamer 🎮</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gopherlinzy"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">即使再小的帆也能远航 ⛵</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80%E2%9C%A8"><span class="toc-number">1.</span> <span class="toc-text">前言✨</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81%E4%BB%80%E4%B9%88%E6%98%AF%E7%B1%BB%E5%9E%8B%EF%BC%9F"><span class="toc-number">2.</span> <span class="toc-text">一、什么是类型？</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E7%B1%BB%E5%9E%8B%E7%89%B9%E6%80%A7"><span class="toc-number">3.</span> <span class="toc-text">二、类型特性</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E9%9D%99%E6%80%81%E7%B1%BB%E5%9E%8B%E6%A3%80%E6%9F%A5"><span class="toc-number">3.1.</span> <span class="toc-text">1、静态类型检查</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%B1%BB%E5%9E%8B%E6%8E%A8%E6%96%AD"><span class="toc-number">3.2.</span> <span class="toc-text">2、类型推断</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D%E5%92%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.</span> <span class="toc-text">三、类型别名和自定义类型</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D"><span class="toc-number">4.1.</span> <span class="toc-text">1、类型别名</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B"><span class="toc-number">4.2.</span> <span class="toc-text">2、自定义类型</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%B1%BB%E5%9E%8B%E5%88%AB%E5%90%8D%E5%92%8C%E8%87%AA%E5%AE%9A%E4%B9%89%E7%B1%BB%E5%9E%8B%E7%9A%84%E5%8C%BA%E5%88%AB"><span class="toc-number">4.3.</span> <span class="toc-text">3、类型别名和自定义类型的区别</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E7%B1%BB%E5%9E%8B%E5%BA%95%E5%B1%82%E7%BB%93%E6%9E%84"><span class="toc-number">5.</span> <span class="toc-text">四、类型底层结构</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%B1%BB%E5%9E%8B%E5%85%83%E6%95%B0%E6%8D%AE"><span class="toc-number">5.1.</span> <span class="toc-text">1、类型元数据</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%85%B6%E4%BB%96%E6%8F%8F%E8%BF%B0%E4%BF%A1%E6%81%AF"><span class="toc-number">5.2.</span> <span class="toc-text">2、其他描述信息</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81uncommontype"><span class="toc-number">5.3.</span> <span class="toc-text">3、uncommontype</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E5%B0%8F%E7%BB%93"><span class="toc-number">6.</span> <span class="toc-text">五、小结</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"/></a><div class="content"><a class="title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"/></a><div class="content"><a class="title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"/></a><div class="content"><a class="title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"/></a><div class="content"><a class="title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"/></a><div class="content"><a class="title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Linzy</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.2.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
 
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/golang/">#golang</a>
-      
-        <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-      
-    </div>
-  
-</div>
-
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>Go基础篇：类型系统</div>
-      <div>https://gopherlinzy.github.io/2023/04/28/go-type-system/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>孙禄毅</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2023年4月28日</div>
-        </div>
-      
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
-                  </span>
-                </a>
-              
-            
-          </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
-
-
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2023/05/17/go-interface/" title="Go基础篇：接口">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Go基础篇：接口</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">
-                        <span class="hidden-mobile">Go基础：数据结构（定义和go语言实现）</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-  <article id="comments">
-    
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#comments', function() {
-      var light = 'github-light';
-      var dark = 'github-dark';
-      var schema = document.documentElement.getAttribute('data-user-color-scheme');
-      if (schema === 'dark') {
-        schema = dark;
-      } else {
-        schema = light;
-      }
-      window.UtterancesThemeLight = light;
-      window.UtterancesThemeDark = dark;
-      var s = document.createElement('script');
-      s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'Gopherlinzy/Gopherlinzy.github.io');
-      s.setAttribute('issue-term', 'pathname');
-      
-      s.setAttribute('label', 'utterances');
-      
-      s.setAttribute('theme', schema);
-      s.setAttribute('crossorigin', 'anonymous');
-      document.getElementById('comments').appendChild(s);
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
     })
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    return ele
+  }
 
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
 
-  </article>
-
-
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
-    </div>
-  
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Gopherlinzy/linzy-knowledge',
+      'data-repo-id': 'R_kgDORkWX8A',
+      'data-category-id': 'DIC_kwDORkWX8M4C4Koo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
     }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
         }
       }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
     }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
+  }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
         }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
       }
-    });
-  });
-</script>
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
 
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
 
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
 
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
-</body>
-</html>
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

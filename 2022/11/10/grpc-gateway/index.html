@@ -1,303 +1,169 @@
-
-
-<!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="孙禄毅">
-  <meta name="keywords" content="">
-  
-    <meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转grpc-gateway官方文档：点击跳转源自 coreos 的一篇博客，转载到了 gRPC 官方博客 gRPC with REST and Open APIs。  一、gRPC-Gateway概述1、简述 取自官方概述：grpc-gateway is a plugin of protoc. It reads gRPC ser">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api | Linzy 知识库</title><meta name="author" content="Linzy"><meta name="copyright" content="Linzy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转grpc-gateway官方文档：点击跳转源自 coreos 的一篇博客，转载到了 gRPC 官方博客 gRPC with REST and Open APIs。  一、gRPC-Gateway概述1、简述 取自官方概述：grpc-gateway is a plugin of protoc. It reads gRPC ser">
 <meta property="og:type" content="article">
 <meta property="og:title" content="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api">
 <meta property="og:url" content="https://gopherlinzy.github.io/2022/11/10/grpc-gateway/index.html">
-<meta property="og:site_name" content="linzy">
+<meta property="og:site_name" content="Linzy 知识库">
 <meta property="og:description" content="前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转grpc-gateway官方文档：点击跳转源自 coreos 的一篇博客，转载到了 gRPC 官方博客 gRPC with REST and Open APIs。  一、gRPC-Gateway概述1、简述 取自官方概述：grpc-gateway is a plugin of protoc. It reads gRPC ser">
 <meta property="og:locale" content="zh_CN">
 <meta property="og:image" content="https://gopherlinzy.github.io/img/grpc.png">
 <meta property="article:published_time" content="2022-11-10T10:20:37.000Z">
-<meta property="article:modified_time" content="2022-11-10T10:30:49.164Z">
-<meta property="article:author" content="孙禄毅">
+<meta property="article:modified_time" content="2026-03-12T05:30:57.145Z">
+<meta property="article:author" content="Linzy">
 <meta property="article:tag" content="学习">
 <meta property="article:tag" content="go">
 <meta property="article:tag" content="微服务">
 <meta property="article:tag" content="grpc">
 <meta property="article:tag" content="grpc-gateway">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png">
-  
-  
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  
-  
-  <title>gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api - linzy</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/grpc.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api",
+  "url": "https://gopherlinzy.github.io/2022/11/10/grpc-gateway/",
+  "image": "https://gopherlinzy.github.io/img/grpc.png",
+  "datePublished": "2022-11-10T10:20:37.000Z",
+  "dateModified": "2026-03-12T05:30:57.145Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Linzy",
+      "url": "https://gopherlinzy.github.io"
     }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://gopherlinzy.github.io/2022/11/10/grpc-gateway/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>LinzyBlog</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/pkg11.jpg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api"></span>
-          
-        </div>
-
-        
-          
-  <div class="mt-3">
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2022-11-10 18:20" pubdate>
-          2022年11月10日 晚上
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          21k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          173 分钟
-        
-      </span>
-    
-
-    
-    
-      
-        <span id="busuanzi_container_page_pv" style="display: none">
-          <i class="iconfont icon-eye" aria-hidden="true"></i>
-          <span id="busuanzi_value_page_pv"></span> 次
-        </span>
-        
-      
-    
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    本文最后更新于：10 个月前
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/grpc.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Linzy 知识库</span></a><a class="nav-page-title" href="/"><span class="site-name">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2022-11-10T10:20:37.000Z" title="发表于 2022-11-10 18:20:37">2022-11-10</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-12T05:30:57.145Z" title="更新于 2026-03-12 13:30:57">2026-03-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/gRPC%E5%AD%A6%E4%B9%A0/">gRPC学习</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p>示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/grpc-gateway-example">点击跳转</a><br>gRPC官方文档：<a target="_blank" rel="noopener" href="https://grpc.io/docs/languages/go/basics/">点击跳转</a><br>grpc-gateway官方文档：<a target="_blank" rel="noopener" href="https://grpc-ecosystem.github.io/grpc-gateway/">点击跳转</a><br>源自 coreos 的一篇博客，转载到了 gRPC 官方博客 <a target="_blank" rel="noopener" href="https://grpc.io/blog/coreos/">gRPC with REST and Open APIs</a>。</p>
 </blockquote>
 <h1 id="一、gRPC-Gateway概述"><a href="#一、gRPC-Gateway概述" class="headerlink" title="一、gRPC-Gateway概述"></a>一、gRPC-Gateway概述</h1><h2 id="1、简述"><a href="#1、简述" class="headerlink" title="1、简述"></a>1、简述</h2><blockquote>
@@ -318,7 +184,7 @@
 <h1 id="二、准备工作"><a href="#二、准备工作" class="headerlink" title="二、准备工作"></a>二、准备工作</h1><p>由于本实践偏向 Grpc+Grpc Gateway的方面，我们的需求是同一个服务端支持Rpc和Restful Api，那么就意味着<code>http2、TLS</code>等等的应用，功能方面就是一个服务端能够接受来自grpc和Restful Api的请求并响应。</p>
 <p>本文示例代码已经上传到github：<a target="_blank" rel="noopener" href="https://github.com/Gopherlinzy/grpc-gateway-example">点击跳转</a></p>
 <h2 id="1、目录结构"><a href="#1、目录结构" class="headerlink" title="1、目录结构"></a>1、目录结构</h2><p>新建grpc-gateway-example文件夹，我们项目的初始目录目录如下：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><code class="hljs go">grpc-gateway-example/<br>├── certs<br>├── client<br>├── cmd<br>├── pkg<br>├── proto<br>│   ├── google<br>│   │   └── api<br>│   │   │   └── annotations.proto<br>│   │   │   └── http.proto<br>│   │   └── protobuf<br>│   │   │   └── descriptor.proto<br>├── server<br>└── Makefile<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">grpc-gateway-example/</span><br><span class="line">├── certs</span><br><span class="line">├── client</span><br><span class="line">├── cmd</span><br><span class="line">├── pkg</span><br><span class="line">├── proto</span><br><span class="line">│   ├── google</span><br><span class="line">│   │   └── api</span><br><span class="line">│   │   │   └── annotations.proto</span><br><span class="line">│   │   │   └── http.proto</span><br><span class="line">│   │   └── protobuf</span><br><span class="line">│   │   │   └── descriptor.proto</span><br><span class="line">├── server</span><br><span class="line">└── Makefile</span><br></pre></td></tr></table></figure>
 <ul>
 <li>certs：存放证书凭证</li>
 <li>client：客户端</li>
@@ -336,10 +202,10 @@
 <h2 id="2、环境准备"><a href="#2、环境准备" class="headerlink" title="2、环境准备"></a>2、环境准备</h2><h3 id="1）Protobuf"><a href="#1）Protobuf" class="headerlink" title="1）Protobuf"></a>1）Protobuf</h3><p>详细的请移步到<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/10/31/grpc-protobuf/">《gRPC（二）入门：Protobuf入门》</a></p>
 <h3 id="2）gRPC"><a href="#2）gRPC" class="headerlink" title="2）gRPC"></a>2）gRPC</h3><p>详细的请移步到<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/01/grpc-use/">《gRPC（三）基础：gRPC快速入门》</a>	</p>
 <h3 id="3）gRPC-Gateway"><a href="#3）gRPC-Gateway" class="headerlink" title="3）gRPC-Gateway"></a>3）gRPC-Gateway</h3><p>gRPC-Gateway 只是一个插件，只需要安装一下就可以了。这里建议科学上网：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span> get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get -u github.com/grpc-ecosystem/grpc-gateway/protoc-gen-grpc-gateway</span><br></pre></td></tr></table></figure>
 <h2 id="3、编写-IDL"><a href="#3、编写-IDL" class="headerlink" title="3、编写 IDL"></a>3、编写 IDL</h2><h3 id="1）google-api"><a href="#1）google-api" class="headerlink" title="1）google.api"></a>1）google.api</h3><p><code>proto</code> 目录中有 <code>google/api</code> 目录，它用到了 google 官方提供的两个 api 描述文件，主要是针对 grpc-gateway 的 http 转换提供支持，定义了 Protocol Buffer 所扩展的 HTTP Option。</p>
 <h3 id="2）hello-proto"><a href="#2）hello-proto" class="headerlink" title="2）hello.proto"></a>2）hello.proto</h3><p>编写Demo的 <code>.proto </code>文件，我们在 proto目录下新建 hello.proto 文件，写入文件内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><code class="hljs go">syntax = <span class="hljs-string">&quot;proto3&quot;</span>;<br><br><span class="hljs-keyword">package</span> proto;<br>option go_package = <span class="hljs-string">&quot;./proto/helloworld;helloworld&quot;</span>;<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;proto/google/api/annotations.proto&quot;</span>;<br><br><span class="hljs-comment">// 定义Hello服务</span><br>service Hello &#123;<br>  <span class="hljs-comment">// 定义SayHello方法</span><br>  rpc SayHello(HelloRequest) returns (HelloResponse) &#123;<br>    <span class="hljs-comment">// http option 网关</span><br>    option (google.api.http) = &#123;<br>      post: <span class="hljs-string">&quot;/hello_world&quot;</span><br>      body: <span class="hljs-string">&quot;*&quot;</span><br>    &#125;;<br>  &#125;<br>&#125;<br><br><span class="hljs-comment">// HelloRequest 请求结构</span><br>message HelloRequest &#123;<br>  <span class="hljs-type">string</span> referer = <span class="hljs-number">1</span>;<br>&#125;<br><br><span class="hljs-comment">// HelloResponse 响应结构</span><br>message HelloResponse &#123;<br>  <span class="hljs-type">string</span> message = <span class="hljs-number">1</span>;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br></pre></td><td class="code"><pre><span class="line">syntax = <span class="string">&quot;proto3&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">package</span> proto;</span><br><span class="line">option go_package = <span class="string">&quot;./proto/helloworld;helloworld&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;proto/google/api/annotations.proto&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 定义Hello服务</span></span><br><span class="line">service Hello &#123;</span><br><span class="line">  <span class="comment">// 定义SayHello方法</span></span><br><span class="line">  rpc SayHello(HelloRequest) returns (HelloResponse) &#123;</span><br><span class="line">    <span class="comment">// http option 网关</span></span><br><span class="line">    option (google.api.http) = &#123;</span><br><span class="line">      post: <span class="string">&quot;/hello_world&quot;</span></span><br><span class="line">      body: <span class="string">&quot;*&quot;</span></span><br><span class="line">    &#125;;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// HelloRequest 请求结构</span></span><br><span class="line">message HelloRequest &#123;</span><br><span class="line">  <span class="type">string</span> referer = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// HelloResponse 响应结构</span></span><br><span class="line">message HelloResponse &#123;</span><br><span class="line">  <span class="type">string</span> message = <span class="number">1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>在 hello.proto 文件中，引用了 <code>google/api/annotations.proto </code>，达到支持HTTP Option的效果</p>
 <ul>
 <li>定义了一个 serviceRPC 服务 HelloWorld，在其内部定义了一个 <code>HTTP Option</code> 的POST方法，HTTP 响应路径为<code>/hello_world</code>。</li>
@@ -349,7 +215,7 @@
 <p>每个方法都必须添加 <code>google.api.http</code> 注解后 gRPC-Gateway 才能生成对应 http 方法。<br>其中post为 HTTP Method，即 POST 方法，<code>/hello_world</code> 则是请求路径。</p>
 </blockquote>
 <h3 id="3）编译proto"><a href="#3）编译proto" class="headerlink" title="3）编译proto"></a>3）编译proto</h3><p>在Makefile文件内输入以下内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">protoc:<br>		protoc  --go_out=.  --<span class="hljs-keyword">go</span>-grpc_out=. --grpc-gateway_out=. ./proto<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">protoc:</span><br><span class="line">		protoc  --go_out=.  --<span class="keyword">go</span>-grpc_out=. --grpc-gateway_out=. ./proto<span class="comment">/*.proto</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>Go Plugins 用于生成 .pb.go 文件</li>
@@ -357,43 +223,43 @@
 <li>gRPC-Gateway 则是 pb.gw.go</li>
 </ul>
 <p>使用 <code>make protoc</code> 编译proto：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go">➜ <span class="hljs-built_in">make</span> protoc<br>protoc  --go_out=.  --<span class="hljs-keyword">go</span>-grpc_out=. --grpc-gateway_out=. ./proto<span class="hljs-comment">/*.proto</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">➜ <span class="built_in">make</span> protoc</span><br><span class="line">protoc  --go_out=.  --<span class="keyword">go</span>-grpc_out=. --grpc-gateway_out=. ./proto<span class="comment">/*.proto</span></span><br></pre></td></tr></table></figure>
 <p><img src="/img/grpc-gateway/grpc2.png"></p>
 <h2 id="4、制作证书"><a href="#4、制作证书" class="headerlink" title="4、制作证书"></a>4、制作证书</h2><p>详细的请移步到<a target="_blank" rel="noopener" href="https://linzyblog.netlify.app/2022/11/03/grpc-tls/">《gRPC（五）进阶：通过TLS建立安全连接》</a></p>
 <p>在服务端支持Rpc和Restful Api，需要用到TLS，因此我们要先制作证书</p>
 <p>进入certs目录，生成TLS所需的公钥密钥文件</p>
 <h3 id="1）生成CA根证书"><a href="#1）生成CA根证书" class="headerlink" title="1）生成CA根证书"></a>1）生成CA根证书</h3><p>在 <code>ca.conf</code> 文件并写入内容如下:</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">4096</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = GB<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = linzyblog.netlify.app<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">[ req ]</span><br><span class="line">default_bits       = <span class="number">4096</span></span><br><span class="line">distinguished_name = req_distinguished_name</span><br><span class="line"></span><br><span class="line">[ req_distinguished_name ]</span><br><span class="line">countryName                 = GB</span><br><span class="line">countryName_default         = CN</span><br><span class="line">stateOrProvinceName         = State or Province Name (full name)</span><br><span class="line">stateOrProvinceName_default = ZheJiang</span><br><span class="line">localityName                = Locality Name (eg, city)</span><br><span class="line">localityName_default        = HuZhou</span><br><span class="line">organizationName            = Organization Name (eg, company)</span><br><span class="line">organizationName_default    = Step</span><br><span class="line">commonName                  = linzyblog.netlify.app</span><br><span class="line">commonName_max              = <span class="number">64</span></span><br><span class="line">commonName_default          = linzyblog.netlify.app</span><br></pre></td></tr></table></figure>
 <ol>
 <li>生成ca私钥，得到ca.key</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl genrsa -out ca.key <span class="hljs-number">4096</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out ca.key <span class="number">4096</span></span><br></pre></td></tr></table></figure>
 
 <ol start="2">
 <li>生成ca证书签发请求，得到ca.csr</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go">$ openssl req -<span class="hljs-built_in">new</span> -sha256 -out ca.csr -key ca.key -config ca.conf<br>GB [CN]:<br>State or Province Name (full name) [ZheJiang]:<br>Locality Name (eg, city) [HuZhou]:<br>Organization Name (eg, company) [Step]:<br>linzyblog.netlify.app [linzyblog.netlify.app]:<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">$ openssl req -<span class="built_in">new</span> -sha256 -out ca.csr -key ca.key -config ca.conf</span><br><span class="line">GB [CN]:</span><br><span class="line">State or Province Name (full name) [ZheJiang]:</span><br><span class="line">Locality Name (eg, city) [HuZhou]:</span><br><span class="line">Organization Name (eg, company) [Step]:</span><br><span class="line">linzyblog.netlify.app [linzyblog.netlify.app]:</span><br></pre></td></tr></table></figure>
 <ol start="3">
 <li>生成ca根证书，得到ca.crt</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -in ca.csr -signkey ca.key -out ca.crt<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days <span class="number">3650</span> -in ca.csr -signkey ca.key -out ca.crt</span><br></pre></td></tr></table></figure>
 
 <p><img src="/img/grpc-gateway/grpc3.png"></p>
 <h3 id="2）生成终端用户证书"><a href="#2）生成终端用户证书" class="headerlink" title="2）生成终端用户证书"></a>2）生成终端用户证书</h3><p>在 <code>server.conf</code> 写入以下内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go">[ req ]<br>default_bits       = <span class="hljs-number">2048</span><br>distinguished_name = req_distinguished_name<br><br>[ req_distinguished_name ]<br>countryName                 = Country Name (<span class="hljs-number">2</span> letter code)<br>countryName_default         = CN<br>stateOrProvinceName         = State or Province Name (full name)<br>stateOrProvinceName_default = ZheJiang<br>localityName                = Locality Name (eg, city)<br>localityName_default        = HuZhou<br>organizationName            = Organization Name (eg, company)<br>organizationName_default    = Step<br>commonName                  = CommonName (e.g. server FQDN or YOUR name)<br>commonName_max              = <span class="hljs-number">64</span><br>commonName_default          = linzyblog.netlify.app<br><br>[ req_ext ]<br>subjectAltName = @alt_names<br><br>[alt_names]<br>DNS<span class="hljs-number">.1</span>   = grpc-gateway-example<br>IP      = <span class="hljs-number">127.0</span><span class="hljs-number">.0</span><span class="hljs-number">.1</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">[ req ]</span><br><span class="line">default_bits       = <span class="number">2048</span></span><br><span class="line">distinguished_name = req_distinguished_name</span><br><span class="line"></span><br><span class="line">[ req_distinguished_name ]</span><br><span class="line">countryName                 = Country Name (<span class="number">2</span> letter code)</span><br><span class="line">countryName_default         = CN</span><br><span class="line">stateOrProvinceName         = State or Province Name (full name)</span><br><span class="line">stateOrProvinceName_default = ZheJiang</span><br><span class="line">localityName                = Locality Name (eg, city)</span><br><span class="line">localityName_default        = HuZhou</span><br><span class="line">organizationName            = Organization Name (eg, company)</span><br><span class="line">organizationName_default    = Step</span><br><span class="line">commonName                  = CommonName (e.g. server FQDN or YOUR name)</span><br><span class="line">commonName_max              = <span class="number">64</span></span><br><span class="line">commonName_default          = linzyblog.netlify.app</span><br><span class="line"></span><br><span class="line">[ req_ext ]</span><br><span class="line">subjectAltName = @alt_names</span><br><span class="line"></span><br><span class="line">[alt_names]</span><br><span class="line">DNS<span class="number">.1</span>   = grpc-gateway-example</span><br><span class="line">IP      = <span class="number">127.0</span><span class="number">.0</span><span class="number">.1</span></span><br></pre></td></tr></table></figure>
 <ol>
 <li>生成私钥，得到server.key</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl genrsa -out server.key <span class="hljs-number">2048</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl genrsa -out server.key <span class="number">2048</span></span><br></pre></td></tr></table></figure>
 <ol start="2">
 <li>生成证书签发请求，得到server.csr</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl req -<span class="hljs-built_in">new</span> -sha256 -out server.csr -key server.key -config server.conf<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl req -<span class="built_in">new</span> -sha256 -out server.csr -key server.key -config server.conf</span><br></pre></td></tr></table></figure>
 <p>这里也一直回车就好。</p>
 <ol start="3">
 <li>用CA证书生成终端用户证书，得到server.crt</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go">openssl x509 -req -days <span class="hljs-number">3650</span> -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.pem -extensions req_ext -extfile server.conf<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">openssl x509 -req -days <span class="number">3650</span> -CA ca.crt -CAkey ca.key -CAcreateserial -in server.csr -out server.pem -extensions req_ext -extfile server.conf</span><br></pre></td></tr></table></figure>
 <p><img src="/img/grpc-gateway/grpc4.png"></p>
 <blockquote>
 <p>这样我们需要的证书凭证就足够了</p>
@@ -425,44 +291,44 @@
 </ul>
 <p>最好的命令行程序在实际使用时，就应该像在读一段优美的语句，能够更加直观的知道如何与用户进行交互。</p>
 <p>执行命令行程序应该遵循一般的格式：</p>
-<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><code class="hljs bash"><span class="hljs-comment">#appname command  arguments</span><br>docker pull alpine:latest<br><br><span class="hljs-comment">#appname command flag</span><br>docker ps -a<br><br><span class="hljs-comment">#appname command flag argument</span><br>git commit -m <span class="hljs-string">&quot;linzy&quot;</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#appname command  arguments</span></span><br><span class="line">docker pull alpine:latest</span><br><span class="line"></span><br><span class="line"><span class="comment">#appname command flag</span></span><br><span class="line">docker ps -a</span><br><span class="line"></span><br><span class="line"><span class="comment">#appname command flag argument</span></span><br><span class="line">git commit -m <span class="string">&quot;linzy&quot;</span></span><br></pre></td></tr></table></figure>
 
 <h2 id="3、安装"><a href="#3、安装" class="headerlink" title="3、安装"></a>3、安装</h2><p>使用 Cobra 很容易。首先，用于go get安装最新版本的库。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">go</span> get -u github.com/spf13/cobra@latest<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">go</span> get -u github.com/spf13/cobra@latest</span><br></pre></td></tr></table></figure>
 
 <h2 id="4、编写-server"><a href="#4、编写-server" class="headerlink" title="4、编写 server"></a>4、编写 server</h2><p>在编写 cmd 时需要先用 server 进行测试关联，因此这一步我们先写 server.go 用于测试</p>
 <p>在 server 模块下 新建 <code>server.go</code> 文件，写入测试内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> server<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-keyword">var</span> (<br>	ServerPort  <span class="hljs-type">string</span><br>	CertName    <span class="hljs-type">string</span><br>	CertPemPath <span class="hljs-type">string</span><br>	CertKeyPath <span class="hljs-type">string</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Serve</span><span class="hljs-params">()</span></span> (err <span class="hljs-type">error</span>) &#123;<br>	log.Println(ServerPort)<br><br>	log.Println(CertName)<br><br>	log.Println(CertPemPath)<br><br>	log.Println(CertKeyPath)<br><br>	<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> server</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	ServerPort  <span class="type">string</span></span><br><span class="line">	CertName    <span class="type">string</span></span><br><span class="line">	CertPemPath <span class="type">string</span></span><br><span class="line">	CertKeyPath <span class="type">string</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">()</span></span> (err <span class="type">error</span>) &#123;</span><br><span class="line">	log.Println(ServerPort)</span><br><span class="line"></span><br><span class="line">	log.Println(CertName)</span><br><span class="line"></span><br><span class="line">	log.Println(CertPemPath)</span><br><span class="line"></span><br><span class="line">	log.Println(CertKeyPath)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="5、编写-cmd"><a href="#5、编写-cmd" class="headerlink" title="5、编写 cmd"></a>5、编写 cmd</h2><p>在cmd模块下 新建 <code>root.go</code> 文件，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> cmd<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;fmt&quot;</span><br>	<span class="hljs-string">&quot;os&quot;</span><br><br>	<span class="hljs-string">&quot;github.com/spf13/cobra&quot;</span><br>)<br><br><span class="hljs-comment">// rootCmd表示在没有任何子命令的情况下的基本命令</span><br><span class="hljs-keyword">var</span> rootCmd = &amp;cobra.Command&#123;<br>	<span class="hljs-comment">// Command的用法，Use是一个行用法消息</span><br>	Use: <span class="hljs-string">&quot;grpc&quot;</span>,<br>	<span class="hljs-comment">// Short是help命令输出中显示的简短描述</span><br>	Short: <span class="hljs-string">&quot;Run the gRPC hello-world server&quot;</span>,<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Execute</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-keyword">if</span> err := rootCmd.Execute(); err != <span class="hljs-literal">nil</span> &#123;<br>		fmt.Println(err)<br>		os.Exit(<span class="hljs-number">-1</span>)<br>	&#125;<br>&#125;<br><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cmd</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;fmt&quot;</span></span><br><span class="line">	<span class="string">&quot;os&quot;</span></span><br><span class="line"></span><br><span class="line">	<span class="string">&quot;github.com/spf13/cobra&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// rootCmd表示在没有任何子命令的情况下的基本命令</span></span><br><span class="line"><span class="keyword">var</span> rootCmd = &amp;cobra.Command&#123;</span><br><span class="line">	<span class="comment">// Command的用法，Use是一个行用法消息</span></span><br><span class="line">	Use: <span class="string">&quot;grpc&quot;</span>,</span><br><span class="line">	<span class="comment">// Short是help命令输出中显示的简短描述</span></span><br><span class="line">	Short: <span class="string">&quot;Run the gRPC hello-world server&quot;</span>,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Execute</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="keyword">if</span> err := rootCmd.Execute(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		fmt.Println(err)</span><br><span class="line">		os.Exit(<span class="number">-1</span>)</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 <p>当前 cmd 目录下继续 新建 <code>server.go</code> 文件，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> cmd<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;github.com/spf13/cobra&quot;</span><br>	<span class="hljs-string">&quot;grpc-gateway-example/server&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-comment">// 创建附加命令</span><br><span class="hljs-comment">// 本地标签：在本地分配一个标志，该标志仅适用于该特定命令。</span><br><span class="hljs-keyword">var</span> serverCmd = &amp;cobra.Command&#123;<br>	Use:   <span class="hljs-string">&quot;server&quot;</span>,<br>	Short: <span class="hljs-string">&quot;Run the gRPC hello-world server&quot;</span>,<br>	<span class="hljs-comment">// 运行:典型的实际工作功能。大多数命令只会实现这一点；</span><br>	<span class="hljs-comment">// 另外还有PreRun、PreRunE、PostRun、PostRunE等等不同时期的运行命令，但比较少用，具体使用时再查看亦可</span><br>	Run: <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(cmd *cobra.Command, args []<span class="hljs-type">string</span>)</span></span> &#123;<br>		<span class="hljs-keyword">defer</span> <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">()</span></span> &#123;<br>			<span class="hljs-keyword">if</span> err := <span class="hljs-built_in">recover</span>(); err != <span class="hljs-literal">nil</span> &#123;<br>				log.Println(<span class="hljs-string">&quot;Recover error : %v&quot;</span>, err)<br>			&#125;<br>		&#125;()<br><br>		server.Serve()<br>	&#125;,<br>&#125;<br><br><span class="hljs-comment">// 在 init() 函数中定义flags和处理配置。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">init</span><span class="hljs-params">()</span></span> &#123;<br>	<span class="hljs-comment">// 我们定义了一个flag，值存储在&amp;server.ServerPort中，长命令为--port，短命令为-p，，默认值为50052。</span><br>	<span class="hljs-comment">// 命令的描述为server port。这一种调用方式成为Local Flags 本地标签</span><br>	serverCmd.Flags().StringVarP(&amp;server.ServerPort, <span class="hljs-string">&quot;port&quot;</span>, <span class="hljs-string">&quot;p&quot;</span>, <span class="hljs-string">&quot;50052&quot;</span>, <span class="hljs-string">&quot;server port&quot;</span>)<br>	serverCmd.Flags().StringVarP(&amp;server.CertPemPath, <span class="hljs-string">&quot;cert-pem&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;./certs/server.pem&quot;</span>, <span class="hljs-string">&quot;cert pem path&quot;</span>)<br>	serverCmd.Flags().StringVarP(&amp;server.CertKeyPath, <span class="hljs-string">&quot;cert-key&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;./certs/server.key&quot;</span>, <span class="hljs-string">&quot;cert key path&quot;</span>)<br>	serverCmd.Flags().StringVarP(&amp;server.CertName, <span class="hljs-string">&quot;cert-name&quot;</span>, <span class="hljs-string">&quot;&quot;</span>, <span class="hljs-string">&quot;grpc-gateway-example&quot;</span>, <span class="hljs-string">&quot;server&#x27;s hostname&quot;</span>)<br><br>	<span class="hljs-comment">// AddCommand向这父命令（rootCmd）添加一个或多个命令</span><br>	rootCmd.AddCommand(serverCmd)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> cmd</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;github.com/spf13/cobra&quot;</span></span><br><span class="line">	<span class="string">&quot;grpc-gateway-example/server&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 创建附加命令</span></span><br><span class="line"><span class="comment">// 本地标签：在本地分配一个标志，该标志仅适用于该特定命令。</span></span><br><span class="line"><span class="keyword">var</span> serverCmd = &amp;cobra.Command&#123;</span><br><span class="line">	Use:   <span class="string">&quot;server&quot;</span>,</span><br><span class="line">	Short: <span class="string">&quot;Run the gRPC hello-world server&quot;</span>,</span><br><span class="line">	<span class="comment">// 运行:典型的实际工作功能。大多数命令只会实现这一点；</span></span><br><span class="line">	<span class="comment">// 另外还有PreRun、PreRunE、PostRun、PostRunE等等不同时期的运行命令，但比较少用，具体使用时再查看亦可</span></span><br><span class="line">	Run: <span class="function"><span class="keyword">func</span><span class="params">(cmd *cobra.Command, args []<span class="type">string</span>)</span></span> &#123;</span><br><span class="line">		<span class="keyword">defer</span> <span class="function"><span class="keyword">func</span><span class="params">()</span></span> &#123;</span><br><span class="line">			<span class="keyword">if</span> err := <span class="built_in">recover</span>(); err != <span class="literal">nil</span> &#123;</span><br><span class="line">				log.Println(<span class="string">&quot;Recover error : %v&quot;</span>, err)</span><br><span class="line">			&#125;</span><br><span class="line">		&#125;()</span><br><span class="line"></span><br><span class="line">		server.Serve()</span><br><span class="line">	&#125;,</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 在 init() 函数中定义flags和处理配置。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">init</span><span class="params">()</span></span> &#123;</span><br><span class="line">	<span class="comment">// 我们定义了一个flag，值存储在&amp;server.ServerPort中，长命令为--port，短命令为-p，，默认值为50052。</span></span><br><span class="line">	<span class="comment">// 命令的描述为server port。这一种调用方式成为Local Flags 本地标签</span></span><br><span class="line">	serverCmd.Flags().StringVarP(&amp;server.ServerPort, <span class="string">&quot;port&quot;</span>, <span class="string">&quot;p&quot;</span>, <span class="string">&quot;50052&quot;</span>, <span class="string">&quot;server port&quot;</span>)</span><br><span class="line">	serverCmd.Flags().StringVarP(&amp;server.CertPemPath, <span class="string">&quot;cert-pem&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;./certs/server.pem&quot;</span>, <span class="string">&quot;cert pem path&quot;</span>)</span><br><span class="line">	serverCmd.Flags().StringVarP(&amp;server.CertKeyPath, <span class="string">&quot;cert-key&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;./certs/server.key&quot;</span>, <span class="string">&quot;cert key path&quot;</span>)</span><br><span class="line">	serverCmd.Flags().StringVarP(&amp;server.CertName, <span class="string">&quot;cert-name&quot;</span>, <span class="string">&quot;&quot;</span>, <span class="string">&quot;grpc-gateway-example&quot;</span>, <span class="string">&quot;server&#x27;s hostname&quot;</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// AddCommand向这父命令（rootCmd）添加一个或多个命令</span></span><br><span class="line">	rootCmd.AddCommand(serverCmd)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="6、启动-amp-请求"><a href="#6、启动-amp-请求" class="headerlink" title="6、启动 &amp; 请求"></a>6、启动 &amp; 请求</h2><p>我们在 <code>grpc-gateway-example</code> 目录下，新建文件main.go，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> <span class="hljs-string">&quot;grpc-gateway-example/cmd&quot;</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	cmd.Execute()<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> <span class="string">&quot;grpc-gateway-example/cmd&quot;</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	cmd.Execute()</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>当前目录下执行·go run main.go server·，查看输出是否为（此时应为默认值）：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">$ <span class="hljs-keyword">go</span> run main.<span class="hljs-keyword">go</span> server<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">08</span>:<span class="hljs-number">22</span> <span class="hljs-number">50052</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">08</span>:<span class="hljs-number">22</span> grpc-gateway-example                       <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">08</span>:<span class="hljs-number">22</span> ./certs/server.pem                         <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">08</span>:<span class="hljs-number">22</span> ./certs/server.key                         <br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">go</span> run main.<span class="keyword">go</span> server</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">08</span>:<span class="number">22</span> <span class="number">50052</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">08</span>:<span class="number">22</span> grpc-gateway-example                       </span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">08</span>:<span class="number">22</span> ./certs/server.pem                         </span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">08</span>:<span class="number">22</span> ./certs/server.key                         </span><br></pre></td></tr></table></figure>
 <p>执行<code>go run main.go server --port=8000 --cert-pem=test-pem --cert-key=test-key --cert-name=test-name</code>，检验命令行参数是否正确：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">$ <span class="hljs-keyword">go</span> run main.<span class="hljs-keyword">go</span> server --port=<span class="hljs-number">8000</span> --cert-pem=test-pem --cert-key=test-key --cert-name=test-name<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">24</span>:<span class="hljs-number">53</span> <span class="hljs-number">8000</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">24</span>:<span class="hljs-number">54</span> test-name<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">24</span>:<span class="hljs-number">54</span> test-pem <br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">12</span>:<span class="hljs-number">24</span>:<span class="hljs-number">54</span> test-key<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">$ <span class="keyword">go</span> run main.<span class="keyword">go</span> server --port=<span class="number">8000</span> --cert-pem=test-pem --cert-key=test-key --cert-name=test-name</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">24</span>:<span class="number">53</span> <span class="number">8000</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">24</span>:<span class="number">54</span> test-name</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">24</span>:<span class="number">54</span> test-pem </span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">12</span>:<span class="number">24</span>:<span class="number">54</span> test-key</span><br></pre></td></tr></table></figure>
 <p>到这都无误，我们的 <code>cmd</code> 模块编写就正确了，下面开始我们的重点</p>
 <h2 id="7、目录结构"><a href="#7、目录结构" class="headerlink" title="7、目录结构"></a>7、目录结构</h2><p>完成以上操作之后我们的目录是这样的结构，看看是不是缺少了：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go">grpc-gateway-example/<br>├── certs<br>├── client<br>├── cmd						<span class="hljs-comment">// 命令行模块</span><br>│   ├── root.<span class="hljs-keyword">go</span><br>│   └── server.<span class="hljs-keyword">go</span><br>├── pkg<br>├── proto<br>│   ├── google<br>│   │   └── api<br>│   │   │   ├── annotations.proto<br>│   │   │   └── http.proto<br>│   │   └── protobuf<br>│   │   │   └── descriptor.proto<br>│   ├── helloworld<br>│   │   ├── hello.pb.<span class="hljs-keyword">go</span>		<span class="hljs-comment">// proto编译后文件</span><br>│   │   ├── hello.pb.gw.<span class="hljs-keyword">go</span>	<span class="hljs-comment">// gateway编译后文件</span><br>│   │   └── hello_grpc.pb.<span class="hljs-keyword">go</span><span class="hljs-comment">// proto编译后接口文件</span><br>│   ├── hello.proto<br>├── server					<span class="hljs-comment">// GRPC服务端</span><br>│   └── server.<span class="hljs-keyword">go</span><br>└── Makefile<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line">grpc-gateway-example/</span><br><span class="line">├── certs</span><br><span class="line">├── client</span><br><span class="line">├── cmd						<span class="comment">// 命令行模块</span></span><br><span class="line">│   ├── root.<span class="keyword">go</span></span><br><span class="line">│   └── server.<span class="keyword">go</span></span><br><span class="line">├── pkg</span><br><span class="line">├── proto</span><br><span class="line">│   ├── google</span><br><span class="line">│   │   └── api</span><br><span class="line">│   │   │   ├── annotations.proto</span><br><span class="line">│   │   │   └── http.proto</span><br><span class="line">│   │   └── protobuf</span><br><span class="line">│   │   │   └── descriptor.proto</span><br><span class="line">│   ├── helloworld</span><br><span class="line">│   │   ├── hello.pb.<span class="keyword">go</span>		<span class="comment">// proto编译后文件</span></span><br><span class="line">│   │   ├── hello.pb.gw.<span class="keyword">go</span>	<span class="comment">// gateway编译后文件</span></span><br><span class="line">│   │   └── hello_grpc.pb.<span class="keyword">go</span><span class="comment">// proto编译后接口文件</span></span><br><span class="line">│   ├── hello.proto</span><br><span class="line">├── server					<span class="comment">// GRPC服务端</span></span><br><span class="line">│   └── server.<span class="keyword">go</span></span><br><span class="line">└── Makefile</span><br></pre></td></tr></table></figure>
 
 <h1 id="四、服务端模块-server"><a href="#四、服务端模块-server" class="headerlink" title="四、服务端模块 server"></a>四、服务端模块 server</h1><h2 id="1、编写-hello-proto"><a href="#1、编写-hello-proto" class="headerlink" title="1、编写 hello.proto"></a>1、编写 hello.proto</h2><p>在server目录下新建文件 <code>hello.go</code> ，写入文件内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> server<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;grpc-gateway-example/proto/helloworld&quot;</span><br>)<br><br><span class="hljs-keyword">type</span> helloService <span class="hljs-keyword">struct</span> &#123;<br>	helloworld.UnimplementedHelloServer<br>&#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewHelloService</span><span class="hljs-params">()</span></span> *helloService &#123;<br>	<span class="hljs-keyword">return</span> &amp;helloService&#123;&#125;<br>&#125;<br><br><span class="hljs-comment">// ctx context.Context用于接受上下文参数</span><br><span class="hljs-comment">// r *pb.HelloWorldRequest用于接受protobuf的Request参数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(h helloService)</span></span> SayHello(ctx context.Context, r *helloworld.HelloRequest) (*helloworld.HelloResponse, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-keyword">return</span> &amp;helloworld.HelloResponse&#123;<br>		Message: <span class="hljs-string">&quot;hello grpc-gateway&quot;</span>,<br>	&#125;, <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> server</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;grpc-gateway-example/proto/helloworld&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">type</span> helloService <span class="keyword">struct</span> &#123;</span><br><span class="line">	helloworld.UnimplementedHelloServer</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewHelloService</span><span class="params">()</span></span> *helloService &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;helloService&#123;&#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// ctx context.Context用于接受上下文参数</span></span><br><span class="line"><span class="comment">// r *pb.HelloWorldRequest用于接受protobuf的Request参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(h helloService)</span></span> SayHello(ctx context.Context, r *helloworld.HelloRequest) (*helloworld.HelloResponse, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="keyword">return</span> &amp;helloworld.HelloResponse&#123;</span><br><span class="line">		Message: <span class="string">&quot;hello grpc-gateway&quot;</span>,</span><br><span class="line">	&#125;, <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="2、编写-grpc-go"><a href="#2、编写-grpc-go" class="headerlink" title="2、编写 grpc.go"></a>2、编写 grpc.go</h2><p>在 pkg 下新建 util 目录，新建 <code>grpc.go</code> 文件，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> util<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;google.golang.org/grpc&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>	<span class="hljs-string">&quot;strings&quot;</span><br>)<br><br><span class="hljs-comment">// 将gRPC请求和HTTP请求分别调用不同的handler处理。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GrpcHandlerFunc</span><span class="hljs-params">(grpcServer *grpc.Server, otherHandler http.Handler)</span></span> http.Handler &#123;<br>	<span class="hljs-keyword">if</span> otherHandler == <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> http.HandlerFunc(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;<br>			grpcServer.ServeHTTP(w, r)<br>		&#125;)<br>	&#125;<br>	<span class="hljs-keyword">return</span> http.HandlerFunc(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;<br>		<span class="hljs-keyword">if</span> r.ProtoMajor == <span class="hljs-number">2</span> &amp;&amp; strings.Contains(r.Header.Get(<span class="hljs-string">&quot;Content-Type&quot;</span>), <span class="hljs-string">&quot;application/grpc&quot;</span>) &#123;<br>			grpcServer.ServeHTTP(w, r)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			otherHandler.ServeHTTP(w, r)<br>		&#125;<br>	&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> util</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;google.golang.org/grpc&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">	<span class="string">&quot;strings&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将gRPC请求和HTTP请求分别调用不同的handler处理。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GrpcHandlerFunc</span><span class="params">(grpcServer *grpc.Server, otherHandler http.Handler)</span></span> http.Handler &#123;</span><br><span class="line">	<span class="keyword">if</span> otherHandler == <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">			grpcServer.ServeHTTP(w, r)</span><br><span class="line">		&#125;)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.ProtoMajor == <span class="number">2</span> &amp;&amp; strings.Contains(r.Header.Get(<span class="string">&quot;Content-Type&quot;</span>), <span class="string">&quot;application/grpc&quot;</span>) &#123;</span><br><span class="line">			grpcServer.ServeHTTP(w, r)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			otherHandler.ServeHTTP(w, r)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p><code>GrpcHandlerFunc</code> 函数是用于判断请求是来源于 Rpc 客户端还是 Restful Api 的请求，根据不同的请求注册不同的 ServeHTTP 服务；<code>r.ProtoMajor == 2</code> 也代表着请求必须基于<code>HTTP/2</code>。<br>简而言之函数将gRPC请求和HTTP请求分别调用不同的handler处理。</p>
 </blockquote>
 <p>如果不需要 TLS 建立安全链接，则可以使用<code>h2c</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GrpcHandlerFunc</span><span class="hljs-params">(grpcServer *grpc.Server, otherHandler http.Handler)</span></span> http.Handler &#123;<br>	<span class="hljs-keyword">return</span> h2c.NewHandler(http.HandlerFunc(<span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;<br>		<span class="hljs-keyword">if</span> r.ProtoMajor == <span class="hljs-number">2</span> &amp;&amp; strings.Contains(r.Header.Get(<span class="hljs-string">&quot;Content-Type&quot;</span>), <span class="hljs-string">&quot;application/grpc&quot;</span>) &#123;<br>			grpcServer.ServeHTTP(w, r)<br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			otherHandler.ServeHTTP(w, r)<br>		&#125;<br>	&#125;), &amp;http2.Server&#123;&#125;)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GrpcHandlerFunc</span><span class="params">(grpcServer *grpc.Server, otherHandler http.Handler)</span></span> http.Handler &#123;</span><br><span class="line">	<span class="keyword">return</span> h2c.NewHandler(http.HandlerFunc(<span class="function"><span class="keyword">func</span><span class="params">(w http.ResponseWriter, r *http.Request)</span></span> &#123;</span><br><span class="line">		<span class="keyword">if</span> r.ProtoMajor == <span class="number">2</span> &amp;&amp; strings.Contains(r.Header.Get(<span class="string">&quot;Content-Type&quot;</span>), <span class="string">&quot;application/grpc&quot;</span>) &#123;</span><br><span class="line">			grpcServer.ServeHTTP(w, r)</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			otherHandler.ServeHTTP(w, r)</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;), &amp;http2.Server&#123;&#125;)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <h2 id="3、编写-tls-go"><a href="#3、编写-tls-go" class="headerlink" title="3、编写 tls.go"></a>3、编写 tls.go</h2><p>在pkg下的 util 目录下，新建 <code>tls.go</code> 文件，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> util<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;crypto/tls&quot;</span><br>	<span class="hljs-string">&quot;golang.org/x/net/http2&quot;</span><br>	<span class="hljs-string">&quot;io/ioutil&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-comment">// 用于处理从证书凭证文件（PEM），最终获取tls.Config作为HTTP2的使用参数</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">GetTLSConfig</span><span class="hljs-params">(certPemPath, certKeyPath <span class="hljs-type">string</span>)</span></span> *tls.Config &#123;<br>	<span class="hljs-keyword">var</span> certKeyPair *tls.Certificate<br>	cert, _ := ioutil.ReadFile(certPemPath)<br>	key, _ := ioutil.ReadFile(certKeyPath)<br><br>	<span class="hljs-comment">// 从一对PEM编码的数据中解析公钥/私钥对。成功则返回公钥/私钥对</span><br>	pair, err := tls.X509KeyPair(cert, key)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Println(<span class="hljs-string">&quot;TLS KeyPair err: %v\n&quot;</span>, err)<br>	&#125;<br><br>	certKeyPair = &amp;pair<br><br>	<span class="hljs-keyword">return</span> &amp;tls.Config&#123;<br>		<span class="hljs-comment">// tls.Certificate：返回一个或多个证书，实质我们解析PEM调用的X509KeyPair的函数声明</span><br>		<span class="hljs-comment">// 就是func X509KeyPair(certPEMBlock, keyPEMBlock []byte) (Certificate, error)，返回值就是Certificate</span><br>		Certificates: []tls.Certificate&#123;*certKeyPair&#125;,<br>		<span class="hljs-comment">// http2.NextProtoTLS：NextProtoTLS是谈判期间的NPN/ALPN协议，用于HTTP/2的TLS设置</span><br>		NextProtos: []<span class="hljs-type">string</span>&#123;http2.NextProtoTLS&#125;,<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> util</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;crypto/tls&quot;</span></span><br><span class="line">	<span class="string">&quot;golang.org/x/net/http2&quot;</span></span><br><span class="line">	<span class="string">&quot;io/ioutil&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="comment">// 用于处理从证书凭证文件（PEM），最终获取tls.Config作为HTTP2的使用参数</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">GetTLSConfig</span><span class="params">(certPemPath, certKeyPath <span class="type">string</span>)</span></span> *tls.Config &#123;</span><br><span class="line">	<span class="keyword">var</span> certKeyPair *tls.Certificate</span><br><span class="line">	cert, _ := ioutil.ReadFile(certPemPath)</span><br><span class="line">	key, _ := ioutil.ReadFile(certKeyPath)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 从一对PEM编码的数据中解析公钥/私钥对。成功则返回公钥/私钥对</span></span><br><span class="line">	pair, err := tls.X509KeyPair(cert, key)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(<span class="string">&quot;TLS KeyPair err: %v\n&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	certKeyPair = &amp;pair</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> &amp;tls.Config&#123;</span><br><span class="line">		<span class="comment">// tls.Certificate：返回一个或多个证书，实质我们解析PEM调用的X509KeyPair的函数声明</span></span><br><span class="line">		<span class="comment">// 就是func X509KeyPair(certPEMBlock, keyPEMBlock []byte) (Certificate, error)，返回值就是Certificate</span></span><br><span class="line">		Certificates: []tls.Certificate&#123;*certKeyPair&#125;,</span><br><span class="line">		<span class="comment">// http2.NextProtoTLS：NextProtoTLS是谈判期间的NPN/ALPN协议，用于HTTP/2的TLS设置</span></span><br><span class="line">		NextProtos: []<span class="type">string</span>&#123;http2.NextProtoTLS&#125;,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>GetTLSConfig 函数是用于获取TLS配置</code>，在内部，我们读取了 server.key 和 server.pem 这类证书凭证文件。经过一系列处理获取 <code>tls.Config</code> 作为 HTTP2 的使用参数。</p>
 <h2 id="4、重新编写核心文件-server-x2F-server-go"><a href="#4、重新编写核心文件-server-x2F-server-go" class="headerlink" title="4、重新编写核心文件 server&#x2F;server.go"></a>4、重新编写核心文件 server&#x2F;server.go</h2><p>修改server目录下的server.go文件，该文件是我们服务里的核心文件，写入内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> server<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;context&quot;</span><br>	<span class="hljs-string">&quot;crypto/tls&quot;</span><br>	<span class="hljs-string">&quot;github.com/grpc-ecosystem/grpc-gateway/v2/runtime&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/grpc&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/grpc/credentials&quot;</span><br>	<span class="hljs-string">&quot;grpc-gateway-example/pkg/util&quot;</span><br>	<span class="hljs-string">&quot;grpc-gateway-example/proto/helloworld&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>	<span class="hljs-string">&quot;net&quot;</span><br>	<span class="hljs-string">&quot;net/http&quot;</span><br>)<br><br><span class="hljs-keyword">var</span> (<br>	ServerPort  <span class="hljs-type">string</span><br>	CertName    <span class="hljs-type">string</span><br>	CertPemPath <span class="hljs-type">string</span><br>	CertKeyPath <span class="hljs-type">string</span><br>	EndPoint    <span class="hljs-type">string</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Serve</span><span class="hljs-params">()</span></span> (err <span class="hljs-type">error</span>) &#123;<br>	EndPoint = <span class="hljs-string">&quot;:&quot;</span> + ServerPort<br>	<span class="hljs-comment">// 用于监听本地的网络地址通知</span><br>	<span class="hljs-comment">// 它的函数原型func Listen(network, address string) (Listener, error)</span><br>	conn, err := net.Listen(<span class="hljs-string">&quot;tcp&quot;</span>, EndPoint)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;TCP Listen err:%v\n&quot;</span>, err)<br>	&#125;<br><br>	<span class="hljs-comment">// 通过util.GetTLSConfig解析得到tls.Config，传达给http.Server服务的TLSConfig配置项使用</span><br>	tlsConfig := util.GetTLSConfig(CertPemPath, CertKeyPath)<br>	srv := createInternalServer(conn, tlsConfig)<br><br>	log.Printf(<span class="hljs-string">&quot;gRPC and https listen on: %s\n&quot;</span>, ServerPort)<br><br>	<span class="hljs-comment">// NewListener将会创建一个Listener</span><br>	<span class="hljs-comment">// 它接受两个参数，第一个是来自内部Listener的监听器，第二个参数是tls.Config（必须包含至少一个证书）</span><br>	<span class="hljs-keyword">if</span> err = srv.Serve(tls.NewListener(conn, tlsConfig)); err != <span class="hljs-literal">nil</span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;ListenAndServe: %v\n&quot;</span>, err)<br>	&#125;<br><br>	<span class="hljs-keyword">return</span> err<br>&#125;<br><br><span class="hljs-comment">// 将认证的中间件注册进去, 前面所获取的tlsConfig仅能给HTTP使用</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">createInternalServer</span><span class="hljs-params">(conn net.Listener, tlsConfig *tls.Config)</span></span> *http.Server &#123;<br>	<span class="hljs-keyword">var</span> opts []grpc.ServerOption<br><br>	<span class="hljs-comment">// 输入证书文件和服务器的密钥文件构造TLS证书凭证</span><br>	creds, err := credentials.NewServerTLSFromFile(CertPemPath, CertKeyPath)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;Failed to create server TLS credentials %v&quot;</span>, err)<br>	&#125;<br><br>	<span class="hljs-comment">// grpc.Creds()其原型为func Creds(c credentials.TransportCredentials) ServerOption</span><br>	<span class="hljs-comment">// 该函数返回 ServerOption，它为服务器连接设置凭据</span><br>	opts = <span class="hljs-built_in">append</span>(opts, grpc.Creds(creds))<br><br>	<span class="hljs-comment">// 创建了一个没有注册服务的grpc服务端</span><br>	grpcServer := grpc.NewServer(opts...)<br><br>	<span class="hljs-comment">// 注册grpc服务</span><br>	helloworld.RegisterHelloServer(grpcServer, NewHelloService())<br><br>	<span class="hljs-comment">// 创建 grpc-gateway 关联组件</span><br>	<span class="hljs-comment">// context.Background()返回一个非空的空上下文。</span><br>	<span class="hljs-comment">// 它没有被注销，没有值，没有过期时间。它通常由主函数、初始化和测试使用，并作为传入请求的顶级上下文</span><br>	ctx := context.Background()<br>	<span class="hljs-comment">// 从客户端的输入证书文件构造TLS凭证</span><br>	dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, CertName)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;Failed to create client TLS credentials %v&quot;</span>, err)<br>	&#125;<br>	<span class="hljs-comment">// grpc.WithTransportCredentials 配置一个连接级别的安全凭据(例：TLS、SSL)，返回值为type DialOption</span><br>	<span class="hljs-comment">// grpc.DialOption DialOption选项配置我们如何设置连接（其内部具体由多个的DialOption组成，决定其设置连接的内容）</span><br>	dopts := []grpc.DialOption&#123;grpc.WithTransportCredentials(dcreds)&#125;<br><br>	<span class="hljs-comment">// 创建HTTP NewServeMux及注册grpc-gateway逻辑</span><br>	<span class="hljs-comment">// runtime.NewServeMux：返回一个新的ServeMux，它的内部映射是空的；</span><br>	<span class="hljs-comment">// ServeMux是grpc-gateway的一个请求多路复用器。它将http请求与模式匹配，并调用相应的处理程序</span><br>	gwmux := runtime.NewServeMux()<br><br>	<span class="hljs-comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span><br>	<span class="hljs-keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="hljs-literal">nil</span> &#123;<br>		log.Printf(<span class="hljs-string">&quot;Failed to register gw server: %v\n&quot;</span>, err)<br>	&#125;<br><br>	<span class="hljs-comment">// http服务</span><br>	<span class="hljs-comment">// 分配并返回一个新的ServeMux</span><br>	mux := http.NewServeMux()<br>	<span class="hljs-comment">// 为给定模式注册处理程序</span><br>	mux.Handle(<span class="hljs-string">&quot;/&quot;</span>, gwmux)<br><br>	<span class="hljs-keyword">return</span> &amp;http.Server&#123;<br>		Addr:      EndPoint,<br>		Handler:   util.GrpcHandlerFunc(grpcServer, mux),<br>		TLSConfig: tlsConfig,<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> server</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;context&quot;</span></span><br><span class="line">	<span class="string">&quot;crypto/tls&quot;</span></span><br><span class="line">	<span class="string">&quot;github.com/grpc-ecosystem/grpc-gateway/v2/runtime&quot;</span></span><br><span class="line">	<span class="string">&quot;google.golang.org/grpc&quot;</span></span><br><span class="line">	<span class="string">&quot;google.golang.org/grpc/credentials&quot;</span></span><br><span class="line">	<span class="string">&quot;grpc-gateway-example/pkg/util&quot;</span></span><br><span class="line">	<span class="string">&quot;grpc-gateway-example/proto/helloworld&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">	<span class="string">&quot;net&quot;</span></span><br><span class="line">	<span class="string">&quot;net/http&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> (</span><br><span class="line">	ServerPort  <span class="type">string</span></span><br><span class="line">	CertName    <span class="type">string</span></span><br><span class="line">	CertPemPath <span class="type">string</span></span><br><span class="line">	CertKeyPath <span class="type">string</span></span><br><span class="line">	EndPoint    <span class="type">string</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Serve</span><span class="params">()</span></span> (err <span class="type">error</span>) &#123;</span><br><span class="line">	EndPoint = <span class="string">&quot;:&quot;</span> + ServerPort</span><br><span class="line">	<span class="comment">// 用于监听本地的网络地址通知</span></span><br><span class="line">	<span class="comment">// 它的函数原型func Listen(network, address string) (Listener, error)</span></span><br><span class="line">	conn, err := net.Listen(<span class="string">&quot;tcp&quot;</span>, EndPoint)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">&quot;TCP Listen err:%v\n&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 通过util.GetTLSConfig解析得到tls.Config，传达给http.Server服务的TLSConfig配置项使用</span></span><br><span class="line">	tlsConfig := util.GetTLSConfig(CertPemPath, CertKeyPath)</span><br><span class="line">	srv := createInternalServer(conn, tlsConfig)</span><br><span class="line"></span><br><span class="line">	log.Printf(<span class="string">&quot;gRPC and https listen on: %s\n&quot;</span>, ServerPort)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// NewListener将会创建一个Listener</span></span><br><span class="line">	<span class="comment">// 它接受两个参数，第一个是来自内部Listener的监听器，第二个参数是tls.Config（必须包含至少一个证书）</span></span><br><span class="line">	<span class="keyword">if</span> err = srv.Serve(tls.NewListener(conn, tlsConfig)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">&quot;ListenAndServe: %v\n&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> err</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// 将认证的中间件注册进去, 前面所获取的tlsConfig仅能给HTTP使用</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">createInternalServer</span><span class="params">(conn net.Listener, tlsConfig *tls.Config)</span></span> *http.Server &#123;</span><br><span class="line">	<span class="keyword">var</span> opts []grpc.ServerOption</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 输入证书文件和服务器的密钥文件构造TLS证书凭证</span></span><br><span class="line">	creds, err := credentials.NewServerTLSFromFile(CertPemPath, CertKeyPath)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">&quot;Failed to create server TLS credentials %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// grpc.Creds()其原型为func Creds(c credentials.TransportCredentials) ServerOption</span></span><br><span class="line">	<span class="comment">// 该函数返回 ServerOption，它为服务器连接设置凭据</span></span><br><span class="line">	opts = <span class="built_in">append</span>(opts, grpc.Creds(creds))</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建了一个没有注册服务的grpc服务端</span></span><br><span class="line">	grpcServer := grpc.NewServer(opts...)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 注册grpc服务</span></span><br><span class="line">	helloworld.RegisterHelloServer(grpcServer, NewHelloService())</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建 grpc-gateway 关联组件</span></span><br><span class="line">	<span class="comment">// context.Background()返回一个非空的空上下文。</span></span><br><span class="line">	<span class="comment">// 它没有被注销，没有值，没有过期时间。它通常由主函数、初始化和测试使用，并作为传入请求的顶级上下文</span></span><br><span class="line">	ctx := context.Background()</span><br><span class="line">	<span class="comment">// 从客户端的输入证书文件构造TLS凭证</span></span><br><span class="line">	dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, CertName)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">&quot;Failed to create client TLS credentials %v&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// grpc.WithTransportCredentials 配置一个连接级别的安全凭据(例：TLS、SSL)，返回值为type DialOption</span></span><br><span class="line">	<span class="comment">// grpc.DialOption DialOption选项配置我们如何设置连接（其内部具体由多个的DialOption组成，决定其设置连接的内容）</span></span><br><span class="line">	dopts := []grpc.DialOption&#123;grpc.WithTransportCredentials(dcreds)&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 创建HTTP NewServeMux及注册grpc-gateway逻辑</span></span><br><span class="line">	<span class="comment">// runtime.NewServeMux：返回一个新的ServeMux，它的内部映射是空的；</span></span><br><span class="line">	<span class="comment">// ServeMux是grpc-gateway的一个请求多路复用器。它将http请求与模式匹配，并调用相应的处理程序</span></span><br><span class="line">	gwmux := runtime.NewServeMux()</span><br><span class="line"></span><br><span class="line">	<span class="comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span></span><br><span class="line">	<span class="keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Printf(<span class="string">&quot;Failed to register gw server: %v\n&quot;</span>, err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	<span class="comment">// http服务</span></span><br><span class="line">	<span class="comment">// 分配并返回一个新的ServeMux</span></span><br><span class="line">	mux := http.NewServeMux()</span><br><span class="line">	<span class="comment">// 为给定模式注册处理程序</span></span><br><span class="line">	mux.Handle(<span class="string">&quot;/&quot;</span>, gwmux)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">return</span> &amp;http.Server&#123;</span><br><span class="line">		Addr:      EndPoint,</span><br><span class="line">		Handler:   util.GrpcHandlerFunc(grpcServer, mux),</span><br><span class="line">		TLSConfig: tlsConfig,</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h2 id="5、server流程刨析"><a href="#5、server流程刨析" class="headerlink" title="5、server流程刨析"></a>5、server流程刨析</h2><h3 id="1）启动监听"><a href="#1）启动监听" class="headerlink" title="1）启动监听"></a>1）启动监听</h3><p><code>net.Listen(&quot;tcp&quot;, EndPoint)</code> 函数用于监听本地网络地址的监听。其函数原型<code>Listen(ctx context.Context, network, address string) (Listener, error)</code></p>
 <p>参数：</p>
@@ -471,7 +337,7 @@
 <li>address：对于TCP网络，如果address参数中的host为空或未指定的IP地址，则会自动返回一个可用的端口或者IP地址。</li>
 </ul>
 <p>net.Listen(“tcp”, EndPoint)函数返回值是<code>Listener</code>：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Listener <span class="hljs-keyword">interface</span> &#123;<br>	<span class="hljs-comment">// 接受等待并将下一个连接返回给Listener</span><br>	Accept() (Conn, <span class="hljs-type">error</span>)<br><br>	<span class="hljs-comment">// 关闭Listener</span><br>	Close() <span class="hljs-type">error</span><br><br>	<span class="hljs-comment">// 返回 Listener 的网络地址。</span><br>	Addr() Addr<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Listener <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// 接受等待并将下一个连接返回给Listener</span></span><br><span class="line">	Accept() (Conn, <span class="type">error</span>)</span><br><span class="line"></span><br><span class="line">	<span class="comment">// 关闭Listener</span></span><br><span class="line">	Close() <span class="type">error</span></span><br><span class="line"></span><br><span class="line">	<span class="comment">// 返回 Listener 的网络地址。</span></span><br><span class="line">	Addr() Addr</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p><code>net.Listen</code> 会返回一个监听器的结构体，返回接下来的动作，让其执行下一步的操作，可用执行以下操作Accept、Close、Addr。</p>
 <h3 id="2）获取TLSConfig"><a href="#2）获取TLSConfig" class="headerlink" title="2）获取TLSConfig"></a>2）获取TLSConfig</h3><p>通过调用 <code>util.GetTLSConfig</code> 函数解析得到 <code>tls.Config</code>，通过传达给 <code>createInternalServer</code>函数完成 http.Server 服务的 <code>TLSConfig</code> 配置项使用。</p>
 <h3 id="3）创建内部服务"><a href="#3）创建内部服务" class="headerlink" title="3）创建内部服务"></a>3）创建内部服务</h3><p>程序采用HTTP2、HTTPS，需要支持TLS，在启动 <code>grpc.NewServer()</code> 前需要将<code>serverOptions</code>（服务器选项，类似于中间件，可用设置例如凭证、编解码器和保持存活参数等选项。），而前面所获取的 tlsConfig 仅能给HTTP使用，因此第一步我们要创建 grpc 的 TLS 认证凭证。</p>
@@ -479,7 +345,7 @@
 <li>创建 grpc 的 TLS 认证凭证<br>引用 <code>google.golang.org/grpc/credentials</code> 第三方包，<code>credentials</code> 包实现gRPC库支持的各种凭据，这些凭据封装了客户机与服务器进行身份验证所需的所有状态，并进行各种断言，例如，关于客户机的身份、角色或是否授权进行特定调用。</li>
 </ol>
 <p>我们调用 <code>NewServerTLSFromFile</code> 它能够从服务器的输入证书文件和密钥文件构造TLS凭据。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">NewServerTLSFromFile</span><span class="hljs-params">(certFile, keyFile <span class="hljs-type">string</span>)</span></span> (TransportCredentials, <span class="hljs-type">error</span>) &#123;<br>	<span class="hljs-comment">// LoadX509KeyPair从一对文件中读取并解析一个公私钥对。文件中必须包含PEM编码的数据。</span><br>	cert, err := tls.LoadX509KeyPair(certFile, keyFile)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		<span class="hljs-keyword">return</span> <span class="hljs-literal">nil</span>, err<br>	&#125;<br>	<span class="hljs-comment">// NewTLS使用tls.Config来构建基于TLS的TransportCredentials（传输凭证）</span><br>	<span class="hljs-keyword">return</span> NewTLS(&amp;tls.Config&#123;Certificates: []tls.Certificate&#123;cert&#125;&#125;), <span class="hljs-literal">nil</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">NewServerTLSFromFile</span><span class="params">(certFile, keyFile <span class="type">string</span>)</span></span> (TransportCredentials, <span class="type">error</span>) &#123;</span><br><span class="line">	<span class="comment">// LoadX509KeyPair从一对文件中读取并解析一个公私钥对。文件中必须包含PEM编码的数据。</span></span><br><span class="line">	cert, err := tls.LoadX509KeyPair(certFile, keyFile)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">nil</span>, err</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="comment">// NewTLS使用tls.Config来构建基于TLS的TransportCredentials（传输凭证）</span></span><br><span class="line">	<span class="keyword">return</span> NewTLS(&amp;tls.Config&#123;Certificates: []tls.Certificate&#123;cert&#125;&#125;), <span class="literal">nil</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ol start="2">
 <li>grpc ServerOption</li>
 </ol>
@@ -488,444 +354,115 @@
 <li>创建 grpc 服务端<br>grpc.NewServer() 创建一个没有注册服务的grpc服务端，可以配置 <code>ServerOption</code></li>
 <li>注册grpc服务</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 注册grpc服务</span><br>helloworld.RegisterHelloServer(grpcServer, NewHelloService())<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 注册grpc服务</span></span><br><span class="line">helloworld.RegisterHelloServer(grpcServer, NewHelloService())</span><br></pre></td></tr></table></figure>
 
 <ol start="5">
 <li>创建 <code>grpc-gateway</code> 关联组件</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// context.Background()返回一个非空的空上下文。</span><br><span class="hljs-comment">// 它没有被注销，没有值，没有过期时间。它通常由主函数、初始化和测试使用，并作为传入请求的顶级上下文</span><br>ctx := context.Background()<br><span class="hljs-comment">// 从客户端的输入证书文件构造TLS凭证</span><br>dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, CertName)<br><span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>	log.Printf(<span class="hljs-string">&quot;Failed to create client TLS credentials %v&quot;</span>, err)<br>&#125;<br><span class="hljs-comment">// grpc.WithTransportCredentials 配置一个连接级别的安全凭据(例：TLS、SSL)，返回值为type DialOption</span><br><span class="hljs-comment">// grpc.DialOption DialOption选项配置我们如何设置连接（其内部具体由多个的DialOption组成，决定其设置连接的内容）</span><br>dopts := []grpc.DialOption&#123;grpc.WithTransportCredentials(dcreds)&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// context.Background()返回一个非空的空上下文。</span></span><br><span class="line"><span class="comment">// 它没有被注销，没有值，没有过期时间。它通常由主函数、初始化和测试使用，并作为传入请求的顶级上下文</span></span><br><span class="line">ctx := context.Background()</span><br><span class="line"><span class="comment">// 从客户端的输入证书文件构造TLS凭证</span></span><br><span class="line">dcreds, err := credentials.NewClientTLSFromFile(CertPemPath, CertName)</span><br><span class="line"><span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;Failed to create client TLS credentials %v&quot;</span>, err)</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">// grpc.WithTransportCredentials 配置一个连接级别的安全凭据(例：TLS、SSL)，返回值为type DialOption</span></span><br><span class="line"><span class="comment">// grpc.DialOption DialOption选项配置我们如何设置连接（其内部具体由多个的DialOption组成，决定其设置连接的内容）</span></span><br><span class="line">dopts := []grpc.DialOption&#123;grpc.WithTransportCredentials(dcreds)&#125;</span><br></pre></td></tr></table></figure>
 <ol start="6">
 <li>创建HTTP NewServeMux及注册 <code>grpc-gateway</code> 逻辑</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// 创建HTTP NewServeMux及注册grpc-gateway逻辑</span><br><span class="hljs-comment">// runtime.NewServeMux：返回一个新的ServeMux，它的内部映射是空的；</span><br><span class="hljs-comment">// ServeMux是grpc-gateway的一个请求多路复用器。它将http请求与模式匹配，并调用相应的处理程序</span><br>gwmux := runtime.NewServeMux()<br><br><span class="hljs-comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span><br><span class="hljs-keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="hljs-literal">nil</span> &#123;<br>	log.Printf(<span class="hljs-string">&quot;Failed to register gw server: %v\n&quot;</span>, err)<br>&#125;<br><br><span class="hljs-comment">// http服务</span><br><span class="hljs-comment">// 分配并返回一个新的ServeMux</span><br>mux := http.NewServeMux()<br><span class="hljs-comment">// 为给定模式注册处理程序</span><br>mux.Handle(<span class="hljs-string">&quot;/&quot;</span>, gwmux)<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// 创建HTTP NewServeMux及注册grpc-gateway逻辑</span></span><br><span class="line"><span class="comment">// runtime.NewServeMux：返回一个新的ServeMux，它的内部映射是空的；</span></span><br><span class="line"><span class="comment">// ServeMux是grpc-gateway的一个请求多路复用器。它将http请求与模式匹配，并调用相应的处理程序</span></span><br><span class="line">gwmux := runtime.NewServeMux()</span><br><span class="line"></span><br><span class="line"><span class="comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span></span><br><span class="line"><span class="keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;Failed to register gw server: %v\n&quot;</span>, err)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// http服务</span></span><br><span class="line"><span class="comment">// 分配并返回一个新的ServeMux</span></span><br><span class="line">mux := http.NewServeMux()</span><br><span class="line"><span class="comment">// 为给定模式注册处理程序</span></span><br><span class="line">mux.Handle(<span class="string">&quot;/&quot;</span>, gwmux)</span><br></pre></td></tr></table></figure>
 
 <ol start="7">
 <li>注册具体服务</li>
 </ol>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span><br><span class="hljs-keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="hljs-literal">nil</span> &#123;<br>	log.Printf(<span class="hljs-string">&quot;Failed to register gw server: %v\n&quot;</span>, err)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// RegisterHelloWorldHandlerFromEndpoint：注册HelloWorld服务的HTTP Handle到grpc端点</span></span><br><span class="line"><span class="keyword">if</span> err := helloworld.RegisterHelloHandlerFromEndpoint(ctx, gwmux, EndPoint, dopts); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;Failed to register gw server: %v\n&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <ul>
 <li>ctx：上下文</li>
 <li>gwmux：<code>grpc-gateway</code> 的请求多路复用器</li>
 <li>EndPoint：服务网络地址</li>
 <li>dopts：配置好的安全凭据</li>
 </ul>
-<h3 id="4）创建Listener"><a href="#4）创建Listener" class="headerlink" title="4）创建Listener"></a>4）创建Listener</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// NewListener将会创建一个Listener</span><br><span class="hljs-comment">// 它接受两个参数，第一个是来自内部Listener的监听器，第二个参数是tls.Config（必须包含至少一个证书）</span><br><span class="hljs-keyword">if</span> err = srv.Serve(tls.NewListener(conn, tlsConfig)); err != <span class="hljs-literal">nil</span> &#123;<br>	log.Printf(<span class="hljs-string">&quot;ListenAndServe: %v\n&quot;</span>, err)<br>&#125;<br></code></pre></td></tr></table></figure>
+<h3 id="4）创建Listener"><a href="#4）创建Listener" class="headerlink" title="4）创建Listener"></a>4）创建Listener</h3><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// NewListener将会创建一个Listener</span></span><br><span class="line"><span class="comment">// 它接受两个参数，第一个是来自内部Listener的监听器，第二个参数是tls.Config（必须包含至少一个证书）</span></span><br><span class="line"><span class="keyword">if</span> err = srv.Serve(tls.NewListener(conn, tlsConfig)); err != <span class="literal">nil</span> &#123;</span><br><span class="line">	log.Printf(<span class="string">&quot;ListenAndServe: %v\n&quot;</span>, err)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <h3 id="5）服务接受请求"><a href="#5）服务接受请求" class="headerlink" title="5）服务接受请求"></a>5）服务接受请求</h3><p>我们调用 <code>srv.Serve(tls.NewListener(conn, tlsConfig))</code>它是http.Server的方法，并且需要一个Listener作为参数。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(srv *Server)</span></span> Serve(l net.Listener) <span class="hljs-type">error</span> &#123;<br>	...<br>    <span class="hljs-keyword">defer</span> l.Close()<br>    ...<br>    baseCtx := context.Background()<br>    ...<br>    ctx := context.WithValue(baseCtx, ServerContextKey, srv)<br>    <span class="hljs-keyword">for</span> &#123;<br>        rw, e := l.Accept()<br>        ...<br>        c := srv.newConn(rw)<br>        c.setState(c.rwc, StateNew, runHooks) <span class="hljs-comment">// before Serve can return</span><br>        <span class="hljs-keyword">go</span> c.serve(ctx)<br>    &#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(srv *Server)</span></span> Serve(l net.Listener) <span class="type">error</span> &#123;</span><br><span class="line">	...</span><br><span class="line">    <span class="keyword">defer</span> l.Close()</span><br><span class="line">    ...</span><br><span class="line">    baseCtx := context.Background()</span><br><span class="line">    ...</span><br><span class="line">    ctx := context.WithValue(baseCtx, ServerContextKey, srv)</span><br><span class="line">    <span class="keyword">for</span> &#123;</span><br><span class="line">        rw, e := l.Accept()</span><br><span class="line">        ...</span><br><span class="line">        c := srv.newConn(rw)</span><br><span class="line">        c.setState(c.rwc, StateNew, runHooks) <span class="comment">// before Serve can return</span></span><br><span class="line">        <span class="keyword">go</span> c.serve(ctx)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>它创建了一个 context.Background() 上下文对象，并调用 Listener 的 Accept 方法开始接受请求，在获取到连接数据后使用 newConn 创建连接对象，在最后使用goroutine的方式处理连接请求，完成请求后自动关闭连接。</p>
 <h1 id="五、验证功能"><a href="#五、验证功能" class="headerlink" title="五、验证功能"></a>五、验证功能</h1><h2 id="1、编写-client"><a href="#1、编写-client" class="headerlink" title="1、编写 client"></a>1、编写 client</h2><p>在目录client下，创建 main.go 文件，新增以下内容：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">package</span> main<br><br><span class="hljs-keyword">import</span> (<br>	<span class="hljs-string">&quot;golang.org/x/net/context&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/grpc&quot;</span><br>	<span class="hljs-string">&quot;google.golang.org/grpc/credentials&quot;</span><br>	<span class="hljs-string">&quot;grpc-gateway-example/proto/helloworld&quot;</span><br>	<span class="hljs-string">&quot;log&quot;</span><br>)<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	creds, err := credentials.NewClientTLSFromFile(<span class="hljs-string">&quot;./certs/server.pem&quot;</span>, <span class="hljs-string">&quot;grpc-gateway-example&quot;</span>)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Println(<span class="hljs-string">&quot;Failed to create TLS credentials %v&quot;</span>, err)<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	conn, err := grpc.Dial(<span class="hljs-string">&quot;:50052&quot;</span>, grpc.WithTransportCredentials(creds))<br>	<span class="hljs-keyword">defer</span> conn.Close()<br><br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Println(err)<br>	&#125;<br><br>	c := helloworld.NewHelloClient(conn)<br>	ct := context.Background()<br>	body := &amp;helloworld.HelloRequest&#123;<br>		Referer: <span class="hljs-string">&quot;Grpc&quot;</span>,<br>	&#125;<br><br>	r, err := c.SayHello(ct, body)<br>	<span class="hljs-keyword">if</span> err != <span class="hljs-literal">nil</span> &#123;<br>		log.Println(err)<br>	&#125;<br><br>	log.Println(r)<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">package</span> main</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> (</span><br><span class="line">	<span class="string">&quot;golang.org/x/net/context&quot;</span></span><br><span class="line">	<span class="string">&quot;google.golang.org/grpc&quot;</span></span><br><span class="line">	<span class="string">&quot;google.golang.org/grpc/credentials&quot;</span></span><br><span class="line">	<span class="string">&quot;grpc-gateway-example/proto/helloworld&quot;</span></span><br><span class="line">	<span class="string">&quot;log&quot;</span></span><br><span class="line">)</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	creds, err := credentials.NewClientTLSFromFile(<span class="string">&quot;./certs/server.pem&quot;</span>, <span class="string">&quot;grpc-gateway-example&quot;</span>)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(<span class="string">&quot;Failed to create TLS credentials %v&quot;</span>, err)</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	conn, err := grpc.Dial(<span class="string">&quot;:50052&quot;</span>, grpc.WithTransportCredentials(creds))</span><br><span class="line">	<span class="keyword">defer</span> conn.Close()</span><br><span class="line"></span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	c := helloworld.NewHelloClient(conn)</span><br><span class="line">	ct := context.Background()</span><br><span class="line">	body := &amp;helloworld.HelloRequest&#123;</span><br><span class="line">		Referer: <span class="string">&quot;Grpc&quot;</span>,</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	r, err := c.SayHello(ct, body)</span><br><span class="line">	<span class="keyword">if</span> err != <span class="literal">nil</span> &#123;</span><br><span class="line">		log.Println(err)</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	log.Println(r)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
-<h2 id="2、启动-amp-请求"><a href="#2、启动-amp-请求" class="headerlink" title="2、启动 &amp; 请求"></a>2、启动 &amp; 请求</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><code class="hljs go"># 启动服务端<br>$ <span class="hljs-keyword">go</span> run main.<span class="hljs-keyword">go</span> server<br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">16</span>:<span class="hljs-number">34</span>:<span class="hljs-number">06</span> gRPC and https listen on: <span class="hljs-number">50052</span><br><br># 启动客户端<br>$ <span class="hljs-keyword">go</span> run client/main.<span class="hljs-keyword">go</span><br><span class="hljs-number">2022</span>/<span class="hljs-number">11</span>/<span class="hljs-number">10</span> <span class="hljs-number">16</span>:<span class="hljs-number">34</span>:<span class="hljs-number">43</span> message:<span class="hljs-string">&quot;hello grpc-gateway&quot;</span><br></code></pre></td></tr></table></figure>
+<h2 id="2、启动-amp-请求"><a href="#2、启动-amp-请求" class="headerlink" title="2、启动 &amp; 请求"></a>2、启动 &amp; 请求</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"># 启动服务端</span><br><span class="line">$ <span class="keyword">go</span> run main.<span class="keyword">go</span> server</span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">06</span> gRPC and https listen on: <span class="number">50052</span></span><br><span class="line"></span><br><span class="line"># 启动客户端</span><br><span class="line">$ <span class="keyword">go</span> run client/main.<span class="keyword">go</span></span><br><span class="line"><span class="number">2022</span>/<span class="number">11</span>/<span class="number">10</span> <span class="number">16</span>:<span class="number">34</span>:<span class="number">43</span> message:<span class="string">&quot;hello grpc-gateway&quot;</span></span><br></pre></td></tr></table></figure>
 
 <p>执行测试Restful Api，用POST方式访问<a target="_blank" rel="noopener" href="https://localhost:50052/hello_world">https://localhost:50052/hello_world</a><br><img src="/img/grpc-gateway/grpc5.png"></p>
-<h1 id="六、最终目录结构"><a href="#六、最终目录结构" class="headerlink" title="六、最终目录结构"></a>六、最终目录结构</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><code class="hljs go">grpc-gateway-example/<br>├── certs					<span class="hljs-comment">//证书凭证</span><br>│   ├── ca.conf<br>│   ├── ca.crt<br>│   ├── ca.csr<br>│   ├── ca.key<br>│   ├── server.conf<br>│   ├── server.csr<br>│   ├── server.key<br>│   └── server.pem<br>├── client					<span class="hljs-comment">// 客户端</span><br>│   └── main.<span class="hljs-keyword">go</span><br>├── cmd						<span class="hljs-comment">// 命令行模块</span><br>│   ├── root.<span class="hljs-keyword">go</span><br>│   └── server.<span class="hljs-keyword">go</span><br>├── pkg						<span class="hljs-comment">// 第三方公共模块</span><br>│   └── util<br>│   │   │   ├── grpc.<span class="hljs-keyword">go</span><br>│   │   │   └── tls.<span class="hljs-keyword">go</span><br>├── proto<br>│   ├── google<br>│   │   └── api<br>│   │   │   ├── annotations.proto<br>│   │   │   └── http.proto<br>│   │   └── protobuf<br>│   │   │   └── descriptor.proto<br>│   ├── helloworld<br>│   │   ├── hello.pb.<span class="hljs-keyword">go</span>		<span class="hljs-comment">// proto编译后文件</span><br>│   │   ├── hello.pb.gw.<span class="hljs-keyword">go</span>	<span class="hljs-comment">// gateway编译后文件</span><br>│   │   └── hello_grpc.pb.<span class="hljs-keyword">go</span><span class="hljs-comment">// proto编译后接口文件</span><br>│   ├── hello.proto<br>├── server					<span class="hljs-comment">// GRPC服务端</span><br>│   └── server.<span class="hljs-keyword">go</span><br>├── main.<span class="hljs-keyword">go</span><br>└── Makefile<br></code></pre></td></tr></table></figure>
+<h1 id="六、最终目录结构"><a href="#六、最终目录结构" class="headerlink" title="六、最终目录结构"></a>六、最终目录结构</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line">grpc-gateway-example/</span><br><span class="line">├── certs					<span class="comment">//证书凭证</span></span><br><span class="line">│   ├── ca.conf</span><br><span class="line">│   ├── ca.crt</span><br><span class="line">│   ├── ca.csr</span><br><span class="line">│   ├── ca.key</span><br><span class="line">│   ├── server.conf</span><br><span class="line">│   ├── server.csr</span><br><span class="line">│   ├── server.key</span><br><span class="line">│   └── server.pem</span><br><span class="line">├── client					<span class="comment">// 客户端</span></span><br><span class="line">│   └── main.<span class="keyword">go</span></span><br><span class="line">├── cmd						<span class="comment">// 命令行模块</span></span><br><span class="line">│   ├── root.<span class="keyword">go</span></span><br><span class="line">│   └── server.<span class="keyword">go</span></span><br><span class="line">├── pkg						<span class="comment">// 第三方公共模块</span></span><br><span class="line">│   └── util</span><br><span class="line">│   │   │   ├── grpc.<span class="keyword">go</span></span><br><span class="line">│   │   │   └── tls.<span class="keyword">go</span></span><br><span class="line">├── proto</span><br><span class="line">│   ├── google</span><br><span class="line">│   │   └── api</span><br><span class="line">│   │   │   ├── annotations.proto</span><br><span class="line">│   │   │   └── http.proto</span><br><span class="line">│   │   └── protobuf</span><br><span class="line">│   │   │   └── descriptor.proto</span><br><span class="line">│   ├── helloworld</span><br><span class="line">│   │   ├── hello.pb.<span class="keyword">go</span>		<span class="comment">// proto编译后文件</span></span><br><span class="line">│   │   ├── hello.pb.gw.<span class="keyword">go</span>	<span class="comment">// gateway编译后文件</span></span><br><span class="line">│   │   └── hello_grpc.pb.<span class="keyword">go</span><span class="comment">// proto编译后接口文件</span></span><br><span class="line">│   ├── hello.proto</span><br><span class="line">├── server					<span class="comment">// GRPC服务端</span></span><br><span class="line">│   └── server.<span class="keyword">go</span></span><br><span class="line">├── main.<span class="keyword">go</span></span><br><span class="line">└── Makefile</span><br></pre></td></tr></table></figure>
 
 <p>参考：<br><a target="_blank" rel="noopener" href="https://developer.aliyun.com/article/879486">https://developer.aliyun.com/article/879486</a><br><a target="_blank" rel="noopener" href="https://eddycjy.com/posts/go/grpc-gateway/2018-02-27-hello-world/">https://eddycjy.com/posts/go/grpc-gateway/2018-02-27-hello-world/</a></p>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io">Linzy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io/2022/11/10/grpc-gateway/">https://gopherlinzy.github.io/2022/11/10/grpc-gateway/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://gopherlinzy.github.io" target="_blank">Linzy 知识库</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/%E5%AD%A6%E4%B9%A0/">学习</a><a class="post-meta__tags" href="/tags/go/">go</a><a class="post-meta__tags" href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">微服务</a><a class="post-meta__tags" href="/tags/grpc/">grpc</a><a class="post-meta__tags" href="/tags/grpc-gateway/">grpc-gateway</a></div><div class="post-share"><div class="social-share" data-image="/img/grpc.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/04/24/hello-world/" title="Hello World"><img class="cover" src="/img/background.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></a><a class="pagination-related" href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证"><img class="cover" src="/img/grpc.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">gRPC（七）进阶：自定义身份验证</div></div><div class="info-2"><div class="info-item-1">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断用户是否登陆、以及权限等，实现Token认证的前提是，需要定义一个结构体，并实现credentials.PerRPCCredentials接口。 1、credentials.PerRPCCredentials 接口类型定义： 123456type PerRPCCredentials interface &#123;	// 返回需要认证的必要信息	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)	// 是否使用安全链接(TLS)	RequireTransportSecurity...</div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/11/03/grpc-stream/" title="gRPC（四）基础：gRPC流"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-03</div><div class="info-item-2">gRPC（四）基础：gRPC流</div></div><div class="info-2"><div class="info-item-1">前言 这章的内容需要安装好插件和protoc，建议阅读我的上一篇grpc使用篇示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、gRPC的请求模型gRPC 有两种类型的请求模型：  一元 - 直接的请求响应映射在 HTTP/2 请求响应之上。 简单来说一元就是一个简单的 RPC，其中客户端使用存根向服务器发送请求并等待响应返回，就像正常的函数调用一样。    1rpc SayHi(Request) returns (Response);   流式传输——多个请求和响应通过长寿命  HTTP/2 流进行交换，可以是单向或双向的。 其中许多进程可以通过 HTTP/2 的多路复用能力（通过单个 TCP 连接一起发送多个响应或接收多个请求）在单个请求中发生。 Server-side streaming RPC—— 客户端向服务器发送单个请求并接收回数据序列流（读回一系列消息）。客户端从返回的流中读取，直到没有更多消息为止。 Client-side streaming RPC—— 客户端向服务器发送数据序列流（写入一系列消息），一旦客户端完成了消息的写入，它会等待服...</div></div></div></a><a class="pagination-related" href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-08</div><div class="info-item-2">gRPC（七）进阶：自定义身份验证</div></div><div class="info-2"><div class="info-item-1">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转在前面的章节中，我们介绍了两种可全局认证的方法：  基于 CA 的 TLS 证书认证 拦截器 interceptor  而在实际需求中，常常会对某些模块的 RPC 方法做特殊认证或校验，而gRPC也专门提供了这类特殊认证的接口。  一、概述gRPC为每个gRPC方法调用提供了Token认证支持，可以基于用户传入的Token判断用户是否登陆、以及权限等，实现Token认证的前提是，需要定义一个结构体，并实现credentials.PerRPCCredentials接口。 1、credentials.PerRPCCredentials 接口类型定义： 123456type PerRPCCredentials interface &#123;	// 返回需要认证的必要信息	GetRequestMetadata(ctx context.Context, uri ...string) (map[string]string, error)	// 是否使用安全链接(TLS)	RequireTransportSecurity...</div></div></div></a><a class="pagination-related" href="/2022/11/07/grpc-interceptor/" title="gRPC（六）进阶：拦截器 interceptor"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-07</div><div class="info-item-2">gRPC（六）进阶：拦截器 interceptor</div></div><div class="info-2"><div class="info-item-1">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、拦截器概述1、什么是拦截器？在常规的 HTTP 服务器中，我们可以设置有一个中间件将我们的处理程序包装在服务器上。此中间件可用于在实际提供正确内容之前执行服务器想要执行的任何操作，它可以是身份验证或日志记录或任​​何东西。  中间件：中间件供系统软件和应用软件之间连接、便于软件各部件之间的沟通的计算机软件，相当于不同技术、工具和数据库之间的桥梁，例如他可以记录响应时长、记录请求和响应数据日志，身份验证等。中间件可以在拦截到发送给 handler 的请求，且可以拦截 handler 返回给客户端的响应  gRPC 不同，它允许在服务器和客户端都使用拦截器。  服务器端拦截器是 gRPC 服务器在到达实际 RPC 方法之前调用的函数。它可以用于多种用途，例如日志记录、跟踪、速率限制、身份验证和授权。 同样，客户端拦截器是 gRPC 客户端在调用实际 RPC 之前调用的函数。  2、gRPC 拦截器核心概念 一元是我们大多数人使用的。就是发送一个请求并获得一个响应。 流是当您发送或接收 protobuf 消...</div></div></div></a><a class="pagination-related" href="/2022/11/01/grpc-use/" title="gRPC（三）基础：gRPC快速入门"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-01</div><div class="info-item-2">gRPC（三）基础：gRPC快速入门</div></div><div class="info-2"><div class="info-item-1">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、gRPC概述1、什么是gRPC？gRPC 是一个强大的开源 RPC（远程过程调用）框架，用于构建可扩展且快速的 API。它允许客户端和服务器应用程序透明地通信并开发连接的系统。gRPC框架依赖 HTTP/2、协议缓冲区和其他现代技术堆栈来确保最大的 API 安全性、性能和可扩展性。 在 gRPC 中，客户端应用程序可以直接调用不同机器上的服务器应用程序上的方法，就像是本地对象一样，更容易创建分布式应用程序和服务。 与许多 RPC 系统一样，gRPC 基于定义服务的思想，指定可以远程调用的方法及其参数和返回类型。在服务端，服务端实现这个接口并运行一个 gRPC 服务器来处理客户端调用。在客户端，客户端有一个存根（自动生成的文件），它提供与服务器相同的方法。  2、gRPC 的历史2015 年，Google 开发了 gRPC 作为 RPC 框架的扩展，以链接使用不同技术创建的许多微服务。最初，它与 Google 的内部基础设施密切相关，但后来，它被开源并标准化以供社区使用。在其发布的第一年，顶级组织利用它...</div></div></div></a><a class="pagination-related" href="/2022/11/03/grpc-TLS/" title="gRPC（五）进阶：通过TLS建立安全连接"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-11-03</div><div class="info-item-2">gRPC（五）进阶：通过TLS建立安全连接</div></div><div class="info-2"><div class="info-item-1">前言 示例代码已经上传到github：点击跳转gRPC官方文档：点击跳转  一、明文传输先前的例子中 gRPC Client&#x2F;Server 都是明文传输的，在明文通讯的情况下，你的请求就是裸奔的，有可能被第三方恶意篡改或者伪造为“非法”的数据。 我们抓个包查看一下：是明文传输，后面我们开始gRPC通过 TLS 证书建立安全连接，让数据能够加密处理，包括证书制作和CA签名校验等。 二、TLS概述传输层安全 (TLS) 对通过 Internet 发送的数据进行加密，以确保窃听者和黑客无法看到您传输的内容，这对于密码、信用卡号和个人通信等私人和敏感信息特别有用。 1、什么是TLS？传输层安全 (TLS) 是一种 Internet 工程任务组 ( IETF ) 标准协议，可在两个通信计算机应用程序之间提供身份验证、隐私和数据完整性。它是当今使用最广泛部署的安全协议，最适合需要通过网络安全交换数据的 Web 浏览器和其他应用程序。这包括 Web 浏览会话、文件传输、虚拟专用网络 (VPN) 连接、远程桌面会话和 IP 语音 (VoIP)。最近，TLS 被集成到包括 5G 在内的现...</div></div></div></a><a class="pagination-related" href="/2022/10/31/grpc-rpc/" title="gRPC（一）入门：什么是RPC？"><img class="cover" src="/img/grpc.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-31</div><div class="info-item-2">gRPC（一）入门：什么是RPC？</div></div><div class="info-2"><div class="info-item-1">前言 本文作为Grpc的开篇，通过文档先了解一下rpc。示例代码已经上传到github：点击跳转  一、RPC1、什么是RPC？RPC（Remote Procedure Call 远程过程调用）是一种软件通信协议，一个程序可以使用该协议向位于网络上另一台计算机中的程序请求服务，而无需了解网络的详细信息。RPC 用于调用远程系统上的其他进程，如本地系统。过程调用有时也称为 函数调用或 子程序调用。 RPC是一种客户端-服务器交互形式（调用者是客户端，执行者是服务器），通常通过请求-响应消息传递系统实现。与本地过程调用一样，RPC 是一种 同步 操作，需要阻塞请求程序，直到返回远程过程的结果。但是，使用共享相同地址空间的轻量级进程或 线程 可以同时执行多个 RPC。  通俗的解释：客户端在不知道调用细节的情况下，调用存在于远程计算机上的某个对象，就像调用本地应用程序中的对象一样。  接口定义语言（IDL）——用于描述软件组件的应用程序编程接口（API）的规范语言——通常用于远程过程调用软件。在这种情况下，IDL 在链路两端的机器之间提供了一座桥梁，这些机器可能使用不同的操作系统 (O...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Linzy</div><div class="author-info-description">Backend Developer · Go Enthusiast · Gamer 🎮</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gopherlinzy"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">即使再小的帆也能远航 ⛵</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81gRPC-Gateway%E6%A6%82%E8%BF%B0"><span class="toc-number">2.</span> <span class="toc-text">一、gRPC-Gateway概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%AE%80%E8%BF%B0"><span class="toc-number">2.1.</span> <span class="toc-text">1、简述</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%87%BA%E7%8E%B0"><span class="toc-number">2.2.</span> <span class="toc-text">2、出现</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="toc-number">3.</span> <span class="toc-text">二、准备工作</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">3.1.</span> <span class="toc-text">1、目录结构</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%8E%AF%E5%A2%83%E5%87%86%E5%A4%87"><span class="toc-number">3.2.</span> <span class="toc-text">2、环境准备</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89Protobuf"><span class="toc-number">3.2.1.</span> <span class="toc-text">1）Protobuf</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89gRPC"><span class="toc-number">3.2.2.</span> <span class="toc-text">2）gRPC</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89gRPC-Gateway"><span class="toc-number">3.2.3.</span> <span class="toc-text">3）gRPC-Gateway</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BC%96%E5%86%99-IDL"><span class="toc-number">3.3.</span> <span class="toc-text">3、编写 IDL</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89google-api"><span class="toc-number">3.3.1.</span> <span class="toc-text">1）google.api</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89hello-proto"><span class="toc-number">3.3.2.</span> <span class="toc-text">2）hello.proto</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E7%BC%96%E8%AF%91proto"><span class="toc-number">3.3.3.</span> <span class="toc-text">3）编译proto</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E5%88%B6%E4%BD%9C%E8%AF%81%E4%B9%A6"><span class="toc-number">3.4.</span> <span class="toc-text">4、制作证书</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E7%94%9F%E6%88%90CA%E6%A0%B9%E8%AF%81%E4%B9%A6"><span class="toc-number">3.4.1.</span> <span class="toc-text">1）生成CA根证书</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E7%94%9F%E6%88%90%E7%BB%88%E7%AB%AF%E7%94%A8%E6%88%B7%E8%AF%81%E4%B9%A6"><span class="toc-number">3.4.2.</span> <span class="toc-text">2）生成终端用户证书</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81%E5%91%BD%E4%BB%A4%E8%A1%8C%E6%A8%A1%E5%9D%97-cmd"><span class="toc-number">4.</span> <span class="toc-text">三、命令行模块 cmd</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81Cobra%E4%BB%8B%E7%BB%8D"><span class="toc-number">4.1.</span> <span class="toc-text">1、Cobra介绍</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E6%A6%82%E5%BF%B5"><span class="toc-number">4.2.</span> <span class="toc-text">2、概念</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E5%AE%89%E8%A3%85"><span class="toc-number">4.3.</span> <span class="toc-text">3、安装</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E7%BC%96%E5%86%99-server"><span class="toc-number">4.4.</span> <span class="toc-text">4、编写 server</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81%E7%BC%96%E5%86%99-cmd"><span class="toc-number">4.5.</span> <span class="toc-text">5、编写 cmd</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#6%E3%80%81%E5%90%AF%E5%8A%A8-amp-%E8%AF%B7%E6%B1%82"><span class="toc-number">4.6.</span> <span class="toc-text">6、启动 &amp; 请求</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#7%E3%80%81%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">4.7.</span> <span class="toc-text">7、目录结构</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%9B%9B%E3%80%81%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%A8%A1%E5%9D%97-server"><span class="toc-number">5.</span> <span class="toc-text">四、服务端模块 server</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%BC%96%E5%86%99-hello-proto"><span class="toc-number">5.1.</span> <span class="toc-text">1、编写 hello.proto</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E7%BC%96%E5%86%99-grpc-go"><span class="toc-number">5.2.</span> <span class="toc-text">2、编写 grpc.go</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81%E7%BC%96%E5%86%99-tls-go"><span class="toc-number">5.3.</span> <span class="toc-text">3、编写 tls.go</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81%E9%87%8D%E6%96%B0%E7%BC%96%E5%86%99%E6%A0%B8%E5%BF%83%E6%96%87%E4%BB%B6-server-x2F-server-go"><span class="toc-number">5.4.</span> <span class="toc-text">4、重新编写核心文件 server&#x2F;server.go</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#5%E3%80%81server%E6%B5%81%E7%A8%8B%E5%88%A8%E6%9E%90"><span class="toc-number">5.5.</span> <span class="toc-text">5、server流程刨析</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1%EF%BC%89%E5%90%AF%E5%8A%A8%E7%9B%91%E5%90%AC"><span class="toc-number">5.5.1.</span> <span class="toc-text">1）启动监听</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2%EF%BC%89%E8%8E%B7%E5%8F%96TLSConfig"><span class="toc-number">5.5.2.</span> <span class="toc-text">2）获取TLSConfig</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3%EF%BC%89%E5%88%9B%E5%BB%BA%E5%86%85%E9%83%A8%E6%9C%8D%E5%8A%A1"><span class="toc-number">5.5.3.</span> <span class="toc-text">3）创建内部服务</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#4%EF%BC%89%E5%88%9B%E5%BB%BAListener"><span class="toc-number">5.5.4.</span> <span class="toc-text">4）创建Listener</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#5%EF%BC%89%E6%9C%8D%E5%8A%A1%E6%8E%A5%E5%8F%97%E8%AF%B7%E6%B1%82"><span class="toc-number">5.5.5.</span> <span class="toc-text">5）服务接受请求</span></a></li></ol></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%94%E3%80%81%E9%AA%8C%E8%AF%81%E5%8A%9F%E8%83%BD"><span class="toc-number">6.</span> <span class="toc-text">五、验证功能</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81%E7%BC%96%E5%86%99-client"><span class="toc-number">6.1.</span> <span class="toc-text">1、编写 client</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81%E5%90%AF%E5%8A%A8-amp-%E8%AF%B7%E6%B1%82"><span class="toc-number">6.2.</span> <span class="toc-text">2、启动 &amp; 请求</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%85%AD%E3%80%81%E6%9C%80%E7%BB%88%E7%9B%AE%E5%BD%95%E7%BB%93%E6%9E%84"><span class="toc-number">7.</span> <span class="toc-text">六、最终目录结构</span></a></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"/></a><div class="content"><a class="title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"/></a><div class="content"><a class="title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"/></a><div class="content"><a class="title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"/></a><div class="content"><a class="title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"/></a><div class="content"><a class="title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Linzy</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.2.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
 
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/gRPC%E5%AD%A6%E4%B9%A0/" class="category-chain-item">gRPC学习</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/%E5%AD%A6%E4%B9%A0/">#学习</a>
-      
-        <a href="/tags/go/">#go</a>
-      
-        <a href="/tags/%E5%BE%AE%E6%9C%8D%E5%8A%A1/">#微服务</a>
-      
-        <a href="/tags/grpc/">#grpc</a>
-      
-        <a href="/tags/grpc-gateway/">#grpc-gateway</a>
-      
-    </div>
-  
-</div>
-
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</div>
-      <div>https://gopherlinzy.github.io/2022/11/10/grpc-gateway/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>孙禄毅</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2022年11月10日</div>
-        </div>
-      
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
-                  </span>
-                </a>
-              
-            
-          </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
-
-
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2023/04/24/go-sort/" title="Go基础入门：sort包">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Go基础入门：sort包</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2022/11/08/grpc-token/" title="gRPC（七）进阶：自定义身份验证">
-                        <span class="hidden-mobile">gRPC（七）进阶：自定义身份验证</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-  <article id="comments">
-    
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#comments', function() {
-      var light = 'github-light';
-      var dark = 'github-dark';
-      var schema = document.documentElement.getAttribute('data-user-color-scheme');
-      if (schema === 'dark') {
-        schema = dark;
-      } else {
-        schema = light;
-      }
-      window.UtterancesThemeLight = light;
-      window.UtterancesThemeDark = dark;
-      var s = document.createElement('script');
-      s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'Gopherlinzy/Gopherlinzy.github.io');
-      s.setAttribute('issue-term', 'pathname');
-      
-      s.setAttribute('label', 'utterances');
-      
-      s.setAttribute('theme', schema);
-      s.setAttribute('crossorigin', 'anonymous');
-      document.getElementById('comments').appendChild(s);
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
     })
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    return ele
+  }
 
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
 
-  </article>
-
-
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
-    </div>
-  
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Gopherlinzy/linzy-knowledge',
+      'data-repo-id': 'R_kgDORkWX8A',
+      'data-category-id': 'DIC_kwDORkWX8M4C4Koo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
     }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
         }
       }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
     }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
+  }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
         }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
       }
-    });
-  });
-</script>
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
 
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
 
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
 
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
-</body>
-</html>
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>

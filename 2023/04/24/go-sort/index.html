@@ -1,305 +1,171 @@
-
-
-<!DOCTYPE html>
-<html lang="zh-CN" data-default-color-scheme=auto>
-
-
-
-<head>
-  <meta charset="UTF-8">
-  <link rel="apple-touch-icon" sizes="76x76" href="/img/fluid.png">
-  <link rel="icon" href="/img/fluid.png">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, shrink-to-fit=no">
-  <meta http-equiv="x-ua-compatible" content="ie=edge">
-  
-  <meta name="theme-color" content="#2f4154">
-  <meta name="author" content="孙禄毅">
-  <meta name="keywords" content="">
-  
-    <meta name="description" content="前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介G">
+<!DOCTYPE html><html lang="zh-CN" data-theme="light"><head><meta charset="UTF-8"><meta http-equiv="X-UA-Compatible" content="IE=edge"><meta name="viewport" content="width=device-width, initial-scale=1.0,viewport-fit=cover"><title>Go基础入门：sort包 | Linzy 知识库</title><meta name="author" content="Linzy"><meta name="copyright" content="Linzy"><meta name="format-detection" content="telephone=no"><meta name="theme-color" content="#ffffff"><meta name="description" content="前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介G">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Go基础入门：sort包">
 <meta property="og:url" content="https://gopherlinzy.github.io/2023/04/24/go-sort/index.html">
-<meta property="og:site_name" content="linzy">
+<meta property="og:site_name" content="Linzy 知识库">
 <meta property="og:description" content="前言 切片是Go语言中引入的用于在大多数场合替代数组的语法元素。切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。有序列的地方就有排序的需求。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。  一、sort包简介G">
 <meta property="og:locale" content="zh_CN">
-<meta property="og:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
+<meta property="og:image" content="https://gopherlinzy.github.io/img/default.png">
 <meta property="article:published_time" content="2023-04-24T08:13:12.000Z">
-<meta property="article:modified_time" content="2023-04-24T08:16:12.798Z">
-<meta property="article:author" content="孙禄毅">
+<meta property="article:modified_time" content="2026-03-12T05:30:57.157Z">
+<meta property="article:author" content="Linzy">
 <meta property="article:tag" content="golang">
 <meta property="article:tag" content="后端">
 <meta property="article:tag" content="排序算法">
-<meta name="twitter:card" content="summary_large_image">
-<meta name="twitter:image" content="https://gopherlinzy.github.io/img/gin.jpeg">
-  
-  
-    <meta name="referrer" content="no-referrer-when-downgrade">
-  
-  
-  <title>Go基础入门：sort包 - linzy</title>
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/twitter-bootstrap/4.6.1/css/bootstrap.min.css" />
-
-
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/github-markdown-css/4.0.0/github-markdown.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/hint.css/2.7.0/hint.min.css" />
-
-  <link  rel="stylesheet" href="https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.css" />
-
-
-
-<!-- 主题依赖的图标库，不要自行修改 -->
-<!-- Do not modify the link that theme dependent icons -->
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1749284_hj8rtnfg7um.css">
-
-
-
-<link rel="stylesheet" href="//at.alicdn.com/t/font_1736178_lbnruvf0jn.css">
-
-
-<link  rel="stylesheet" href="/css/main.css" />
-
-
-  <link id="highlight-css" rel="stylesheet" href="/css/highlight.css" />
-  
-    <link id="highlight-css-dark" rel="stylesheet" href="/css/highlight-dark.css" />
-  
-
-
-
-
-  <script id="fluid-configs">
-    var Fluid = window.Fluid || {};
-    Fluid.ctx = Object.assign({}, Fluid.ctx)
-    var CONFIG = {"hostname":"gopherlinzy.github.io","root":"/","version":"1.9.3","typing":{"enable":true,"typeSpeed":70,"cursorChar":"_","loop":false,"scope":[]},"anchorjs":{"enable":true,"element":"h1,h2,h3,h4,h5,h6","placement":"left","visible":"hover","icon":""},"progressbar":{"enable":true,"height_px":3,"color":"#29d","options":{"showSpinner":false,"trickleSpeed":100}},"code_language":{"enable":true,"default":"TEXT"},"copy_btn":true,"image_caption":{"enable":true},"image_zoom":{"enable":true,"img_url_replace":["",""]},"toc":{"enable":true,"placement":"right","headingSelector":"h1,h2,h3,h4,h5,h6","collapseDepth":0},"lazyload":{"enable":false,"loading_img":"/img/loading.gif","onlypost":false,"offset_factor":2},"web_analytics":{"enable":false,"follow_dnt":true,"baidu":null,"google":null,"gtag":null,"tencent":{"sid":null,"cid":null},"woyaola":null,"cnzz":null,"leancloud":{"app_id":null,"app_key":null,"server_url":null,"path":"window.location.pathname","ignore_local":false}},"search_path":"/local-search.xml"};
-
-    if (CONFIG.web_analytics.follow_dnt) {
-      var dntVal = navigator.doNotTrack || window.doNotTrack || navigator.msDoNotTrack;
-      Fluid.ctx.dnt = dntVal && (dntVal.startsWith('1') || dntVal.startsWith('yes') || dntVal.startsWith('on'));
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://gopherlinzy.github.io/img/default.png"><script type="application/ld+json">{
+  "@context": "https://schema.org",
+  "@type": "BlogPosting",
+  "headline": "Go基础入门：sort包",
+  "url": "https://gopherlinzy.github.io/2023/04/24/go-sort/",
+  "image": "https://gopherlinzy.github.io/img/default.png",
+  "datePublished": "2023-04-24T08:13:12.000Z",
+  "dateModified": "2026-03-12T05:30:57.157Z",
+  "author": [
+    {
+      "@type": "Person",
+      "name": "Linzy",
+      "url": "https://gopherlinzy.github.io"
     }
-  </script>
-  <script  src="/js/utils.js" ></script>
-  <script  src="/js/color-schema.js" ></script>
+  ]
+}</script><link rel="shortcut icon" href="/img/favicon.png"><link rel="canonical" href="https://gopherlinzy.github.io/2023/04/24/go-sort/index.html"><link rel="preconnect" href="//cdn.jsdelivr.net"/><link rel="preconnect" href="//busuanzi.ibruce.info"/><link rel="stylesheet" href="/css/index.css?v=5.5.4"><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@fortawesome/fontawesome-free@7.1.0/css/all.min.css"><script>
+    (() => {
+      
+    const saveToLocal = {
+      set: (key, value, ttl) => {
+        if (!ttl) return
+        const expiry = Date.now() + ttl * 86400000
+        localStorage.setItem(key, JSON.stringify({ value, expiry }))
+      },
+      get: key => {
+        const itemStr = localStorage.getItem(key)
+        if (!itemStr) return undefined
+        const { value, expiry } = JSON.parse(itemStr)
+        if (Date.now() > expiry) {
+          localStorage.removeItem(key)
+          return undefined
+        }
+        return value
+      }
+    }
+
+    window.btf = {
+      saveToLocal,
+      getScript: (url, attr = {}) => new Promise((resolve, reject) => {
+        const script = document.createElement('script')
+        script.src = url
+        script.async = true
+        Object.entries(attr).forEach(([key, val]) => script.setAttribute(key, val))
+        script.onload = script.onreadystatechange = () => {
+          if (!script.readyState || /loaded|complete/.test(script.readyState)) resolve()
+        }
+        script.onerror = reject
+        document.head.appendChild(script)
+      }),
+      getCSS: (url, id) => new Promise((resolve, reject) => {
+        const link = document.createElement('link')
+        link.rel = 'stylesheet'
+        link.href = url
+        if (id) link.id = id
+        link.onload = link.onreadystatechange = () => {
+          if (!link.readyState || /loaded|complete/.test(link.readyState)) resolve()
+        }
+        link.onerror = reject
+        document.head.appendChild(link)
+      }),
+      addGlobalFn: (key, fn, name = false, parent = window) => {
+        if (!false && key.startsWith('pjax')) return
+        const globalFn = parent.globalFn || {}
+        globalFn[key] = globalFn[key] || {}
+        globalFn[key][name || Object.keys(globalFn[key]).length] = fn
+        parent.globalFn = globalFn
+      }
+    }
   
+      
+      const activateDarkMode = () => {
+        document.documentElement.setAttribute('data-theme', 'dark')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#0d0d0d')
+        }
+      }
+      const activateLightMode = () => {
+        document.documentElement.setAttribute('data-theme', 'light')
+        if (document.querySelector('meta[name="theme-color"]') !== null) {
+          document.querySelector('meta[name="theme-color"]').setAttribute('content', '#ffffff')
+        }
+      }
 
+      btf.activateDarkMode = activateDarkMode
+      btf.activateLightMode = activateLightMode
 
+      const theme = saveToLocal.get('theme')
+    
+          theme === 'dark' ? activateDarkMode() : theme === 'light' ? activateLightMode() : null
+        
+      
+      const asideStatus = saveToLocal.get('aside-status')
+      if (asideStatus !== undefined) {
+        document.documentElement.classList.toggle('hide-aside', asideStatus === 'hide')
+      }
+    
+      
+    const detectApple = () => {
+      if (/iPad|iPhone|iPod|Macintosh/.test(navigator.userAgent)) {
+        document.documentElement.classList.add('apple')
+      }
+    }
+    detectApple()
   
-<meta name="generator" content="Hexo 6.3.0"></head>
-
-
-<body>
-  
-
-  <header>
-    
-
-<div class="header-inner" style="height: 70vh;">
-  <nav id="navbar" class="navbar fixed-top  navbar-expand-lg navbar-dark scrolling-navbar">
-  <div class="container">
-    <a class="navbar-brand" href="/">
-      <strong>LinzyBlog</strong>
-    </a>
-
-    <button id="navbar-toggler-btn" class="navbar-toggler" type="button" data-toggle="collapse"
-            data-target="#navbarSupportedContent"
-            aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-      <div class="animated-icon"><span></span><span></span><span></span></div>
-    </button>
-
-    <!-- Collapsible content -->
-    <div class="collapse navbar-collapse" id="navbarSupportedContent">
-      <ul class="navbar-nav ml-auto text-center">
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/">
-                <i class="iconfont icon-home-fill"></i>
-                首页
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/archives/">
-                <i class="iconfont icon-archive-fill"></i>
-                归档
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/categories/">
-                <i class="iconfont icon-category-fill"></i>
-                分类
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/tags/">
-                <i class="iconfont icon-tags-fill"></i>
-                标签
-              </a>
-            </li>
-          
-        
-          
-          
-          
-          
-            <li class="nav-item">
-              <a class="nav-link" href="/about/">
-                <i class="iconfont icon-user-fill"></i>
-                关于
-              </a>
-            </li>
-          
-        
-        
-          <li class="nav-item" id="search-btn">
-            <a class="nav-link" target="_self" href="javascript:;" data-toggle="modal" data-target="#modalSearch" aria-label="Search">
-              &nbsp;<i class="iconfont icon-search"></i>&nbsp;
-            </a>
-          </li>
-          
-        
-        
-          <li class="nav-item" id="color-toggle-btn">
-            <a class="nav-link" target="_self" href="javascript:;" aria-label="Color Toggle">&nbsp;<i
-                class="iconfont icon-dark" id="color-toggle-icon"></i>&nbsp;</a>
-          </li>
-        
-      </ul>
-    </div>
-  </div>
-</nav>
-
-  
-
-<div id="banner" class="banner" parallax=true
-     style="background: url('/img/pkg7.jpg') no-repeat center center; background-size: cover;">
-  <div class="full-bg-img">
-    <div class="mask flex-center" style="background-color: rgba(0, 0, 0, 0.3)">
-      <div class="banner-text text-center fade-in-up">
-        <div class="h2">
-          
-            <span id="subtitle" data-typed-text="Go基础入门：sort包"></span>
-          
-        </div>
-
-        
-          
-  <div class="mt-3">
-    
-    
-      <span class="post-meta">
-        <i class="iconfont icon-date-fill" aria-hidden="true"></i>
-        <time datetime="2023-04-24 16:13" pubdate>
-          2023年4月24日 下午
-        </time>
-      </span>
-    
-  </div>
-
-  <div class="mt-1">
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-chart"></i>
-        
-          5.1k 字
-        
-      </span>
-    
-
-    
-      <span class="post-meta mr-2">
-        <i class="iconfont icon-clock-fill"></i>
-        
-        
-        
-          43 分钟
-        
-      </span>
-    
-
-    
-    
-      
-        <span id="busuanzi_container_page_pv" style="display: none">
-          <i class="iconfont icon-eye" aria-hidden="true"></i>
-          <span id="busuanzi_value_page_pv"></span> 次
-        </span>
-        
-      
-    
-  </div>
-
-
-        
-      </div>
-
-      
-    </div>
-  </div>
-</div>
-
-</div>
-
-  </header>
-
-  <main>
-    
-      
-
-<div class="container-fluid nopadding-x">
-  <div class="row nomargin-x">
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-
-    </div>
-
-    <div class="col-lg-8 nopadding-x-md">
-      <div class="container nopadding-x-md" id="board-ctn">
-        <div id="board">
-          <article class="post-content mx-auto">
-            <!-- SEO header -->
-            <h1 style="display: none">Go基础入门：sort包</h1>
-            
-              <p class="note note-info">
-                
-                  
-                    本文最后更新于：5 个月前
-                  
-                
-              </p>
-            
-            
-              <div class="markdown-body">
-                
-                <h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
+    })()
+  </script><script>const GLOBAL_CONFIG = {
+  root: '/',
+  algolia: undefined,
+  localSearch: {"path":"/search.xml","preload":false,"top_n_per_article":1,"unescape":false,"pagination":{"enable":false,"hitsPerPage":8},"languages":{"hits_empty":"未找到符合您查询的内容：${query}","hits_stats":"共找到 ${hits} 篇文章"}},
+  translate: undefined,
+  highlight: {"plugin":"highlight.js","highlightCopy":true,"highlightLang":true,"highlightHeightLimit":false,"highlightFullpage":false,"highlightMacStyle":false},
+  copy: {
+    success: '复制成功',
+    error: '复制失败',
+    noSupport: '浏览器不支持'
+  },
+  relativeDate: {
+    homepage: false,
+    post: false
+  },
+  runtime: '',
+  dateSuffix: {
+    just: '刚刚',
+    min: '分钟前',
+    hour: '小时前',
+    day: '天前',
+    month: '个月前'
+  },
+  copyright: undefined,
+  lightbox: 'null',
+  Snackbar: undefined,
+  infinitegrid: {
+    js: 'https://cdn.jsdelivr.net/npm/@egjs/infinitegrid@4.13.0/dist/infinitegrid.min.js',
+    buttonText: '加载更多'
+  },
+  isPhotoFigcaption: false,
+  islazyloadPlugin: false,
+  isAnchor: false,
+  percent: {
+    toc: true,
+    rightside: false,
+  },
+  autoDarkmode: false
+}</script><script id="config-diff">var GLOBAL_CONFIG_SITE = {
+  title: 'Go基础入门：sort包',
+  isHighlightShrink: false,
+  isToc: true,
+  pageType: 'post'
+}</script><meta name="generator" content="Hexo 6.2.0"></head><body><div id="sidebar"><div id="menu-mask"></div><div id="sidebar-menus"><div class="avatar-img text-center"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="site-data text-center"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div></div></div><div class="post" id="body-wrap"><header class="post-bg" id="page-header" style="background-image: url(/img/default.png);"><nav id="nav"><span id="blog-info"><a class="nav-site-title" href="/"><span class="site-name">Linzy 知识库</span></a><a class="nav-page-title" href="/"><span class="site-name">Go基础入门：sort包</span><span class="site-name"><i class="fa-solid fa-circle-arrow-left"></i><span>  返回首页</span></span></a></span><div id="menus"><div id="search-button"><span class="site-page social-icon search"><i class="fas fa-search fa-fw"></i><span> 搜索</span></span></div><div class="menus_items"><div class="menus_item"><a class="site-page" href="/"><i class="fa-fw fas fa-home"></i><span> 首页</span></a></div><div class="menus_item"><a class="site-page" href="/archives/"><i class="fa-fw fas fa-archive"></i><span> 归档</span></a></div><div class="menus_item"><a class="site-page" href="/categories/"><i class="fa-fw fas fa-folder-open"></i><span> 分类</span></a></div><div class="menus_item"><a class="site-page" href="/tags/"><i class="fa-fw fas fa-tags"></i><span> 标签</span></a></div><div class="menus_item"><a class="site-page" href="/about/"><i class="fa-fw fas fa-heart"></i><span> 关于</span></a></div></div><div id="toggle-menu"><span class="site-page"><i class="fas fa-bars fa-fw"></i></span></div></div></nav><div id="post-info"><h1 class="post-title">Go基础入门：sort包</h1><div id="post-meta"><div class="meta-firstline"><span class="post-meta-date"><i class="far fa-calendar-alt fa-fw post-meta-icon"></i><span class="post-meta-label">发表于</span><time class="post-meta-date-created" datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time><span class="post-meta-separator">|</span><i class="fas fa-history fa-fw post-meta-icon"></i><span class="post-meta-label">更新于</span><time class="post-meta-date-updated" datetime="2026-03-12T05:30:57.157Z" title="更新于 2026-03-12 13:30:57">2026-03-12</time></span><span class="post-meta-categories"><span class="post-meta-separator">|</span><i class="fas fa-inbox fa-fw post-meta-icon"></i><a class="post-meta-categories" href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/">Go基础入门</a></span></div><div class="meta-secondline"><span class="post-meta-separator">|</span><span class="post-meta-pv-cv" id="" data-flag-title=""><i class="far fa-eye fa-fw post-meta-icon"></i><span class="post-meta-label">浏览量:</span><span id="busuanzi_value_page_pv"><i class="fa-solid fa-spinner fa-spin"></i></span></span></div></div></div></header><main class="layout" id="content-inner"><div id="post"><article class="container post-content" id="article-container"><h1 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h1><blockquote>
 <p><code>切片是Go语言中引入的用于在大多数场合替代数组的语法元素。</code>切片是长度可变的同类型元素序列，它不支持存储不同类型的元素。<br><strong>有序列的地方就有排序的需求</strong>。在各种排序算法都已经成熟的今天，我们完全可以针对特定元素类型的切片手写排序函数&#x2F;方法，但多数情况下不推荐这么做，因为Go标准库内置了sort包可以很好地帮助我们实现原生类型元素切片以及自定义类型元素切片的排序任务。</p>
 </blockquote>
 <h1 id="一、sort包简介"><a href="#一、sort包简介" class="headerlink" title="一、sort包简介"></a>一、sort包简介</h1><p>Go的sort包用来排序，二分查找等操作。</p>
-<h1 id="二、sort包内排序原理实现"><a href="#二、sort包内排序原理实现" class="headerlink" title="二、sort包内排序原理实现"></a>二、sort包内排序原理实现</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> Interface <span class="hljs-keyword">interface</span> &#123;<br>	<span class="hljs-comment">// Len是集合中元素的个数。</span><br>	Len() <span class="hljs-type">int</span><br>	<span class="hljs-comment">// Less是排序条件（索引i与j的元素对比排序）</span><br>	Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span><br>	<span class="hljs-comment">// Swap交换索引i和j的元素。</span><br>	Swap(i, j <span class="hljs-type">int</span>)<br>&#125;<br><br><span class="hljs-comment">// Sort按Less方法确定的升序对数据进行排序。</span><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">Sort</span><span class="hljs-params">(data Interface)</span></span> &#123;<br>	n := data.Len()<br>	<span class="hljs-keyword">if</span> n &lt;= <span class="hljs-number">1</span> &#123;<br>		<span class="hljs-keyword">return</span><br>	&#125;<br>	limit := bits.Len(<span class="hljs-type">uint</span>(n))<br>	pdqsort(data, <span class="hljs-number">0</span>, n, limit)<br>&#125;<br></code></pre></td></tr></table></figure>
+<h1 id="二、sort包内排序原理实现"><a href="#二、sort包内排序原理实现" class="headerlink" title="二、sort包内排序原理实现"></a>二、sort包内排序原理实现</h1><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> Interface <span class="keyword">interface</span> &#123;</span><br><span class="line">	<span class="comment">// Len是集合中元素的个数。</span></span><br><span class="line">	Len() <span class="type">int</span></span><br><span class="line">	<span class="comment">// Less是排序条件（索引i与j的元素对比排序）</span></span><br><span class="line">	Less(i, j <span class="type">int</span>) <span class="type">bool</span></span><br><span class="line">	<span class="comment">// Swap交换索引i和j的元素。</span></span><br><span class="line">	Swap(i, j <span class="type">int</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="comment">// Sort按Less方法确定的升序对数据进行排序。</span></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">Sort</span><span class="params">(data Interface)</span></span> &#123;</span><br><span class="line">	n := data.Len()</span><br><span class="line">	<span class="keyword">if</span> n &lt;= <span class="number">1</span> &#123;</span><br><span class="line">		<span class="keyword">return</span></span><br><span class="line">	&#125;</span><br><span class="line">	limit := bits.Len(<span class="type">uint</span>(n))</span><br><span class="line">	pdqsort(data, <span class="number">0</span>, n, limit)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <p>入口的 Sort 函数调用的 pdqsort 并不完全是快排。</p>
 <blockquote>
 <p><code>pdqsort实质为一种混合排序算法，在不同情况下切换到不同的排序机制</code>，该实现灵感来自C++和RUST的实现，是对C++标准库算法introsort的一种改进，其理想情况下的时间复杂度为 O(n)，最坏情况下的时间复杂度为 O(n* logn)，不需要额外的空间。</p>
@@ -310,10 +176,10 @@
 <li>最坏情况，如果发现改进的 quicksort 效果不佳(limit &#x3D;&#x3D; 0)，则后续排序都使用 heap sort 来保证最坏情况时间复杂度为 O(n*logn)。</li>
 <li>正常情况，对于其他输入，使用改进的 quicksort 来排序</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">pdqsort</span><span class="hljs-params">(data Interface, a, b, limit <span class="hljs-type">int</span>)</span></span> &#123;<br>	<span class="hljs-keyword">const</span> maxInsertion = <span class="hljs-number">12</span><br><br>	<span class="hljs-keyword">var</span> (<br>		wasBalanced    = <span class="hljs-literal">true</span> <span class="hljs-comment">// whether the last partitioning was reasonably balanced</span><br>		wasPartitioned = <span class="hljs-literal">true</span> <span class="hljs-comment">// whether the slice was already partitioned</span><br>	)<br><br>	<span class="hljs-keyword">for</span> &#123;<br>		length := b - a<br><br>		<span class="hljs-keyword">if</span> length &lt;= maxInsertion &#123;<br>			insertionSort(data, a, b)<br>			<span class="hljs-keyword">return</span><br>		&#125;<br><br>		<span class="hljs-comment">// Fall back to heapsort if too many bad choices were made.</span><br>		<span class="hljs-keyword">if</span> limit == <span class="hljs-number">0</span> &#123;<br>			heapSort(data, a, b)<br>			<span class="hljs-keyword">return</span><br>		&#125;<br><br>		<span class="hljs-comment">// If the last partitioning was imbalanced, we need to breaking patterns.</span><br>		<span class="hljs-keyword">if</span> !wasBalanced &#123;<br>			breakPatterns(data, a, b)<br>			limit--<br>		&#125;<br><br>		pivot, hint := choosePivot(data, a, b)<br>		<span class="hljs-keyword">if</span> hint == decreasingHint &#123;<br>			reverseRange(data, a, b)<br>			<span class="hljs-comment">// The chosen pivot was pivot-a elements after the start of the array.</span><br>			<span class="hljs-comment">// After reversing it is pivot-a elements before the end of the array.</span><br>			<span class="hljs-comment">// The idea came from Rust&#x27;s implementation.</span><br>			pivot = (b - <span class="hljs-number">1</span>) - (pivot - a)<br>			hint = increasingHint<br>		&#125;<br><br>		<span class="hljs-comment">// The slice is likely already sorted.</span><br>		<span class="hljs-keyword">if</span> wasBalanced &amp;&amp; wasPartitioned &amp;&amp; hint == increasingHint &#123;<br>			<span class="hljs-keyword">if</span> partialInsertionSort(data, a, b) &#123;<br>				<span class="hljs-keyword">return</span><br>			&#125;<br>		&#125;<br><br>		<span class="hljs-comment">// Probably the slice contains many duplicate elements, partition the slice into</span><br>		<span class="hljs-comment">// elements equal to and elements greater than the pivot.</span><br>		<span class="hljs-keyword">if</span> a &gt; <span class="hljs-number">0</span> &amp;&amp; !data.Less(a<span class="hljs-number">-1</span>, pivot) &#123;<br>			mid := partitionEqual(data, a, b, pivot)<br>			a = mid<br>			<span class="hljs-keyword">continue</span><br>		&#125;<br><br>		mid, alreadyPartitioned := partition(data, a, b, pivot)<br>		wasPartitioned = alreadyPartitioned<br><br>		leftLen, rightLen := mid-a, b-mid<br>		balanceThreshold := length / <span class="hljs-number">8</span><br>		<span class="hljs-keyword">if</span> leftLen &lt; rightLen &#123;<br>			wasBalanced = leftLen &gt;= balanceThreshold<br>			pdqsort(data, a, mid, limit)<br>			a = mid + <span class="hljs-number">1</span><br>		&#125; <span class="hljs-keyword">else</span> &#123;<br>			wasBalanced = rightLen &gt;= balanceThreshold<br>			pdqsort(data, mid+<span class="hljs-number">1</span>, b, limit)<br>			b = mid<br>		&#125;<br>	&#125;<br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">pdqsort</span><span class="params">(data Interface, a, b, limit <span class="type">int</span>)</span></span> &#123;</span><br><span class="line">	<span class="keyword">const</span> maxInsertion = <span class="number">12</span></span><br><span class="line"></span><br><span class="line">	<span class="keyword">var</span> (</span><br><span class="line">		wasBalanced    = <span class="literal">true</span> <span class="comment">// whether the last partitioning was reasonably balanced</span></span><br><span class="line">		wasPartitioned = <span class="literal">true</span> <span class="comment">// whether the slice was already partitioned</span></span><br><span class="line">	)</span><br><span class="line"></span><br><span class="line">	<span class="keyword">for</span> &#123;</span><br><span class="line">		length := b - a</span><br><span class="line"></span><br><span class="line">		<span class="keyword">if</span> length &lt;= maxInsertion &#123;</span><br><span class="line">			insertionSort(data, a, b)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Fall back to heapsort if too many bad choices were made.</span></span><br><span class="line">		<span class="keyword">if</span> limit == <span class="number">0</span> &#123;</span><br><span class="line">			heapSort(data, a, b)</span><br><span class="line">			<span class="keyword">return</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// If the last partitioning was imbalanced, we need to breaking patterns.</span></span><br><span class="line">		<span class="keyword">if</span> !wasBalanced &#123;</span><br><span class="line">			breakPatterns(data, a, b)</span><br><span class="line">			limit--</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		pivot, hint := choosePivot(data, a, b)</span><br><span class="line">		<span class="keyword">if</span> hint == decreasingHint &#123;</span><br><span class="line">			reverseRange(data, a, b)</span><br><span class="line">			<span class="comment">// The chosen pivot was pivot-a elements after the start of the array.</span></span><br><span class="line">			<span class="comment">// After reversing it is pivot-a elements before the end of the array.</span></span><br><span class="line">			<span class="comment">// The idea came from Rust&#x27;s implementation.</span></span><br><span class="line">			pivot = (b - <span class="number">1</span>) - (pivot - a)</span><br><span class="line">			hint = increasingHint</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// The slice is likely already sorted.</span></span><br><span class="line">		<span class="keyword">if</span> wasBalanced &amp;&amp; wasPartitioned &amp;&amp; hint == increasingHint &#123;</span><br><span class="line">			<span class="keyword">if</span> partialInsertionSort(data, a, b) &#123;</span><br><span class="line">				<span class="keyword">return</span></span><br><span class="line">			&#125;</span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		<span class="comment">// Probably the slice contains many duplicate elements, partition the slice into</span></span><br><span class="line">		<span class="comment">// elements equal to and elements greater than the pivot.</span></span><br><span class="line">		<span class="keyword">if</span> a &gt; <span class="number">0</span> &amp;&amp; !data.Less(a<span class="number">-1</span>, pivot) &#123;</span><br><span class="line">			mid := partitionEqual(data, a, b, pivot)</span><br><span class="line">			a = mid</span><br><span class="line">			<span class="keyword">continue</span></span><br><span class="line">		&#125;</span><br><span class="line"></span><br><span class="line">		mid, alreadyPartitioned := partition(data, a, b, pivot)</span><br><span class="line">		wasPartitioned = alreadyPartitioned</span><br><span class="line"></span><br><span class="line">		leftLen, rightLen := mid-a, b-mid</span><br><span class="line">		balanceThreshold := length / <span class="number">8</span></span><br><span class="line">		<span class="keyword">if</span> leftLen &lt; rightLen &#123;</span><br><span class="line">			wasBalanced = leftLen &gt;= balanceThreshold</span><br><span class="line">			pdqsort(data, a, mid, limit)</span><br><span class="line">			a = mid + <span class="number">1</span></span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			wasBalanced = rightLen &gt;= balanceThreshold</span><br><span class="line">			pdqsort(data, mid+<span class="number">1</span>, b, limit)</span><br><span class="line">			b = mid</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 <p>为了更方便理解应用排序函数Sort，我们需要让被排序的切片类型实现 sort.Interface接口，以整型切片排序为例：</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-comment">// IntSlice将Interface的方法附加到[]int，按递减顺序排序。</span><br><span class="hljs-keyword">type</span> IntSlice []<span class="hljs-type">int</span><br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(x IntSlice)</span></span> Len() <span class="hljs-type">int</span>           &#123; <span class="hljs-keyword">return</span> <span class="hljs-built_in">len</span>(x) &#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(x IntSlice)</span></span> Less(i, j <span class="hljs-type">int</span>) <span class="hljs-type">bool</span> &#123; <span class="hljs-keyword">return</span> x[i] &gt; x[j] &#125;<br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-params">(x IntSlice)</span></span> Swap(i, j <span class="hljs-type">int</span>)      &#123; x[i], x[j] = x[j], x[i] &#125;<br><br><span class="hljs-function"><span class="hljs-keyword">func</span> <span class="hljs-title">main</span><span class="hljs-params">()</span></span> &#123;<br>	sl := IntSlice([]<span class="hljs-type">int</span>&#123;<span class="hljs-number">24</span>, <span class="hljs-number">46</span>, <span class="hljs-number">81</span>, <span class="hljs-number">9</span>, <span class="hljs-number">67</span>, <span class="hljs-number">6</span>, <span class="hljs-number">5</span>, <span class="hljs-number">13</span>&#125;)<br>	fmt.Println(sl) <span class="hljs-comment">// [24, 46, 81, 9, 67, 6, 5, 13]</span><br>	<br>	<span class="hljs-comment">// Sort按照less条件排序</span><br>	sort.Sort(sl)<br>	fmt.Println(sl) <span class="hljs-comment">// [81 67 46 24 13 9 6 5]</span><br>&#125;<br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// IntSlice将Interface的方法附加到[]int，按递减顺序排序。</span></span><br><span class="line"><span class="keyword">type</span> IntSlice []<span class="type">int</span></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(x IntSlice)</span></span> Len() <span class="type">int</span>           &#123; <span class="keyword">return</span> <span class="built_in">len</span>(x) &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(x IntSlice)</span></span> Less(i, j <span class="type">int</span>) <span class="type">bool</span> &#123; <span class="keyword">return</span> x[i] &gt; x[j] &#125;</span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="params">(x IntSlice)</span></span> Swap(i, j <span class="type">int</span>)      &#123; x[i], x[j] = x[j], x[i] &#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">func</span> <span class="title">main</span><span class="params">()</span></span> &#123;</span><br><span class="line">	sl := IntSlice([]<span class="type">int</span>&#123;<span class="number">24</span>, <span class="number">46</span>, <span class="number">81</span>, <span class="number">9</span>, <span class="number">67</span>, <span class="number">6</span>, <span class="number">5</span>, <span class="number">13</span>&#125;)</span><br><span class="line">	fmt.Println(sl) <span class="comment">// [24, 46, 81, 9, 67, 6, 5, 13]</span></span><br><span class="line">	</span><br><span class="line">	<span class="comment">// Sort按照less条件排序</span></span><br><span class="line">	sort.Sort(sl)</span><br><span class="line">	fmt.Println(sl) <span class="comment">// [81 67 46 24 13 9 6 5]</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 <blockquote>
 <p>使用 sort.Sort 函数的实现排序后，因为我们并没有重写接口的Sort方法，所以默认使用sort包里Sort函数，它使用的是<code>快速排序(quickSort)</code>。<br>我们知道快速排序是在所有数量级为(O(nlogn))的排序算法中其平均性能最好的算法，但在某些情况下其性能却并非最佳。<br>Go sort包中的quickSort函数也没有严格拘泥于仅使用快排算法，而是<code>以快速排序为主</code>，并根据目标状况在特殊条件下选择了其他不同的排序算法，包括<code>堆排序(heapSort)、插入排序(insertionSort)</code>等。</p>
 </blockquote>
@@ -322,7 +188,7 @@
 <p>注：稳定排序：假定在待排序的序列中存在多个具有相同值的元素，若经过排序，这些元素的相对次序保持不变，即在原序列中，若r[i]&#x3D;r[j]且r[i]在r[j]之前，在排序后的序列中，若r[i]仍在r[j]之前，则称这种排序算法是稳定的(stable)；否则称为不稳定的。</p>
 </blockquote>
 <h1 id="三、sort包内置函数"><a href="#三、sort包内置函数" class="headerlink" title="三、sort包内置函数"></a>三、sort包内置函数</h1><p>如果我们直接使用sort.Sort函数对切片进行排序还是比较繁琐的，所以sort包提供了许多<code>内置函数</code>，比如：Ints、Float64s、Strings、Slice,、Sort、 SearchInts、SearchFloat64s、SearchStrings和Search等。</p>
-<h2 id="1、sort-Ints-x-int"><a href="#1、sort-Ints-x-int" class="headerlink" title="1、sort.Ints(x []int)"></a>1、sort.Ints(x []int)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><code class="hljs go">ints := []<span class="hljs-type">int</span>&#123;<span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">3</span>, <span class="hljs-number">2</span>&#125;<br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, ints) <br>sort.Ints(ints) <span class="hljs-comment">//默认升序</span><br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, ints) <span class="hljs-comment">//[1 2 3 4] </span><br>sort.Sort(sort.Reverse(sort.IntSlice(ints))) <span class="hljs-comment">//降序排序 </span><br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, ints) <span class="hljs-comment">//[4 3 2 1]</span><br></code></pre></td></tr></table></figure>
+<h2 id="1、sort-Ints-x-int"><a href="#1、sort-Ints-x-int" class="headerlink" title="1、sort.Ints(x []int)"></a>1、sort.Ints(x []int)</h2><figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">ints := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">4</span>, <span class="number">3</span>, <span class="number">2</span>&#125;</span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, ints) </span><br><span class="line">sort.Ints(ints) <span class="comment">//默认升序</span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, ints) <span class="comment">//[1 2 3 4] </span></span><br><span class="line">sort.Sort(sort.Reverse(sort.IntSlice(ints))) <span class="comment">//降序排序 </span></span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, ints) <span class="comment">//[4 3 2 1]</span></span><br></pre></td></tr></table></figure>
 <blockquote>
 <p><code>sort.Strings(x []string) sort.Float64s(x []float64)</code>使用方法相同。</p>
 </blockquote>
@@ -330,418 +196,93 @@
 <ul>
 <li>传入对象是切片，实现回调函数</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">slices := []<span class="hljs-type">int</span>&#123;<span class="hljs-number">1</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">1</span>, <span class="hljs-number">4</span>&#125;<br>sort.Slice(slices, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i, j <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">return</span> slices[i] &lt; slices[j]<br>&#125;)<br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, slices)<span class="hljs-comment">//[1 1 1 4 4 5]</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">slices := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">1</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">1</span>, <span class="number">4</span>&#125;</span><br><span class="line">sort.Slice(slices, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	<span class="keyword">return</span> slices[i] &lt; slices[j]</span><br><span class="line">&#125;)</span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, slices)<span class="comment">//[1 1 1 4 4 5]</span></span><br></pre></td></tr></table></figure>
 
 <ul>
 <li>传入对象是结构体，可以自定义排序规则</li>
 </ul>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><code class="hljs go"><span class="hljs-keyword">type</span> stu <span class="hljs-keyword">struct</span> &#123;<br>	name <span class="hljs-type">string</span><br>	age  <span class="hljs-type">int</span><br>&#125;<br><br>stus := []stu&#123;&#123;<span class="hljs-string">&quot;h&quot;</span>, <span class="hljs-number">20</span>&#125;, &#123;<span class="hljs-string">&quot;a&quot;</span>, <span class="hljs-number">23</span>&#125;, &#123;<span class="hljs-string">&quot;h&quot;</span>, <span class="hljs-number">21</span>&#125;&#125;<br>sort.Slice(stus, <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i, j <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>	<span class="hljs-keyword">if</span> stus[i].name == stus[j].name &#123;<br>		<span class="hljs-keyword">return</span> stus[i].age &gt; stus[j].age <span class="hljs-comment">// 年龄逆序</span><br>	&#125;<br>	<span class="hljs-keyword">return</span> stus[i].name &lt; stus[j].name <span class="hljs-comment">// 名字正序</span><br>&#125;)<br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, stus) <span class="hljs-comment">//[&#123;a 23&#125; &#123;h 21&#125; &#123;h 20&#125;]</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">type</span> stu <span class="keyword">struct</span> &#123;</span><br><span class="line">	name <span class="type">string</span></span><br><span class="line">	age  <span class="type">int</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">stus := []stu&#123;&#123;<span class="string">&quot;h&quot;</span>, <span class="number">20</span>&#125;, &#123;<span class="string">&quot;a&quot;</span>, <span class="number">23</span>&#125;, &#123;<span class="string">&quot;h&quot;</span>, <span class="number">21</span>&#125;&#125;</span><br><span class="line">sort.Slice(stus, <span class="function"><span class="keyword">func</span><span class="params">(i, j <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">	<span class="keyword">if</span> stus[i].name == stus[j].name &#123;</span><br><span class="line">		<span class="keyword">return</span> stus[i].age &gt; stus[j].age <span class="comment">// 年龄逆序</span></span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> stus[i].name &lt; stus[j].name <span class="comment">// 名字正序</span></span><br><span class="line">&#125;)</span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, stus) <span class="comment">//[&#123;a 23&#125; &#123;h 21&#125; &#123;h 20&#125;]</span></span><br></pre></td></tr></table></figure>
 <h2 id="3、sort-SearchInts-a-int-x-int-int"><a href="#3、sort-SearchInts-a-int-x-int-int" class="headerlink" title="3、sort.SearchInts(a []int, x int) int"></a>3、sort.SearchInts(a []int, x int) int</h2><p>作用：用来二分查找对应值的索引值，索引值从0开始。</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><code class="hljs go">arr := []<span class="hljs-type">int</span>&#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>&#125;<br>idx := sort.SearchInts(arr, <span class="hljs-number">4</span>)<br>fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, idx) <span class="hljs-comment">// 3</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">arr := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>&#125;</span><br><span class="line">idx := sort.SearchInts(arr, <span class="number">4</span>)</span><br><span class="line">fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, idx) <span class="comment">// 3</span></span><br></pre></td></tr></table></figure>
 
 <blockquote>
 <p><code>sort.SearchFloat64s(a []float64, x float64) int sort.SearchStrings(a []string, x string) int</code> 功能同上。</p>
 </blockquote>
 <h2 id="4、sort-Search-n-int-f-func-int-bool-int"><a href="#4、sort-Search-n-int-f-func-int-bool-int" class="headerlink" title="4、sort.Search(n int, f func(int) bool) int"></a>4、sort.Search(n int, f func(int) bool) int</h2><p>作用：自定义的二分查找，需要自己实现查找条件</p>
-<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><code class="hljs go">arr := []<span class="hljs-type">int</span>&#123;<span class="hljs-number">1</span>, <span class="hljs-number">2</span>, <span class="hljs-number">3</span>, <span class="hljs-number">4</span>, <span class="hljs-number">5</span>, <span class="hljs-number">6</span>, <span class="hljs-number">7</span>&#125;<br>	idx := sort.Search(<span class="hljs-built_in">len</span>(arr), <span class="hljs-function"><span class="hljs-keyword">func</span><span class="hljs-params">(i <span class="hljs-type">int</span>)</span></span> <span class="hljs-type">bool</span> &#123;<br>		<span class="hljs-keyword">return</span> arr[i] &gt; <span class="hljs-number">4</span><br>	&#125;)<br>	fmt.Printf(<span class="hljs-string">&quot;%v\n&quot;</span>, idx) <span class="hljs-comment">//4</span><br></code></pre></td></tr></table></figure>
+<figure class="highlight go"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">arr := []<span class="type">int</span>&#123;<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>, <span class="number">4</span>, <span class="number">5</span>, <span class="number">6</span>, <span class="number">7</span>&#125;</span><br><span class="line">	idx := sort.Search(<span class="built_in">len</span>(arr), <span class="function"><span class="keyword">func</span><span class="params">(i <span class="type">int</span>)</span></span> <span class="type">bool</span> &#123;</span><br><span class="line">		<span class="keyword">return</span> arr[i] &gt; <span class="number">4</span></span><br><span class="line">	&#125;)</span><br><span class="line">	fmt.Printf(<span class="string">&quot;%v\n&quot;</span>, idx) <span class="comment">//4</span></span><br></pre></td></tr></table></figure>
+</article><div class="post-copyright"><div class="post-copyright__author"><span class="post-copyright-meta"><i class="fas fa-circle-user fa-fw"></i>文章作者: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io">Linzy</a></span></div><div class="post-copyright__type"><span class="post-copyright-meta"><i class="fas fa-square-arrow-up-right fa-fw"></i>文章链接: </span><span class="post-copyright-info"><a href="https://gopherlinzy.github.io/2023/04/24/go-sort/">https://gopherlinzy.github.io/2023/04/24/go-sort/</a></span></div><div class="post-copyright__notice"><span class="post-copyright-meta"><i class="fas fa-circle-exclamation fa-fw"></i>版权声明: </span><span class="post-copyright-info">本博客所有文章除特别声明外，均采用 <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" target="_blank">CC BY-NC-SA 4.0</a> 许可协议。转载请注明来源 <a href="https://gopherlinzy.github.io" target="_blank">Linzy 知识库</a>！</span></div></div><div class="tag_share"><div class="post-meta__tag-list"><a class="post-meta__tags" href="/tags/golang/">golang</a><a class="post-meta__tags" href="/tags/%E5%90%8E%E7%AB%AF/">后端</a><a class="post-meta__tags" href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">排序算法</a></div><div class="post-share"><div class="social-share" data-image="/img/default.png" data-sites="facebook,x,wechat,weibo,qq"></div><link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/css/share.min.css" media="print" onload="this.media='all'"><script src="https://cdn.jsdelivr.net/npm/butterfly-extsrc@1.1.6/sharejs/dist/js/social-share.min.js" defer></script></div></div><nav class="pagination-post" id="pagination"><a class="pagination-related" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img class="cover" src="/img/default.png" onerror="onerror=null;src='/img/404.jpg'" alt="cover of previous post"><div class="info"><div class="info-1"><div class="info-item-1">上一篇</div><div class="info-item-2">Go底层原理：一起来唠唠GMP调度（一）</div></div><div class="info-2"><div class="info-item-1">前言 春招开始了，作为23届的科班咸鱼学习记录一下八股文和go底层原理（GC、GMP调度、goroutine等）本文介绍 Go 语言运行时调度器的实现原理，其中包含调度器的设计与实现原理、演变过程以及与运行时调度相关的数据结构。参考几篇不错的文章：mingguangtu《深入分析Go1.18 GMP调度器底层原理》刘丹冰Aceld《Golang 调度器 GMP 原理与调度全分析》  一、进程、线程、Goroutine1、进程与线程在了解Go的调度器的时候，都离不开操作系统、进程与线程这些概念。    进程 线程    操作系统资源调度和分配的基本单位 CPU调度和分派的基本单位   一个进程可以有多个线程 一个线程只能属于一个进程   有独立的地址空间 同一类线程共享代码和数据空间，每个线程有独立的运行栈和程序计数器   创建销毁开销大，进程切换时，耗费资源较大 创建销毁开销小，线程切换时，耗费资源小   实现操作系统的并发 实现进程内部的并发   进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存。资源分配给进程，同一进程的所有线程共享该进程的所有资源。同一进程中的多...</div></div></div></a><a class="pagination-related" href="/2023/04/24/hello-world/" title="Hello World"><img class="cover" src="/img/background.jpeg" onerror="onerror=null;src='/img/404.jpg'" alt="cover of next post"><div class="info text-right"><div class="info-1"><div class="info-item-1">下一篇</div><div class="info-item-2">Hello World</div></div><div class="info-2"><div class="info-item-1">Welcome to Hexo! This is your very first post. Check documentation for more info. If you get any problems when using Hexo, you can find the answer in troubleshooting or you can ask me on GitHub. Quick StartCreate a new post1$ hexo new &quot;My New Post&quot;  More info: Writing Run server1$ hexo server  More info: Server Generate static files1$ hexo generate  More info: Generating Deploy to remote sites1$ hexo deploy  More info: Deployment </div></div></div></a></nav><div class="relatedPosts"><div class="headline"><i class="fas fa-thumbs-up fa-fw"></i><span>相关推荐</span></div><div class="relatedPosts-list"><a class="pagination-related" href="/2022/10/25/go-memory-layout/" title="Go高性能编程-Go中的类型对齐保证"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2022-10-25</div><div class="info-item-2">Go高性能编程-Go中的类型对齐保证</div></div><div class="info-2"><div class="info-item-1">前言 本文将介绍Go中的各种字段类型的字节数和对齐保证。  一、内存对齐1、什么是内存对齐？元素是按照定义顺序一个一个放到内存中去的，但并不是紧密排列的。从结构体存储的首地址开始，每个元素放置到内存中时，它都会认为内存是按照自己的大小（通常它为4字节(32位)或8字节(64位)）来划分的，因此元素放置的位置一定会在自己宽度的整数倍上开始，这就是所谓的内存对齐。 2、为什么需要内存对齐？CPU 访问内存时，并不是逐个字节访问，而是以字长（word size）为单位访问。比如 32 位的 CPU ，字长为 4 字节，那么 CPU 访问内存的单位也是 4 字节。64位 CPU 访问内存的单位是8个字节。 这么设计的目的，是减少 CPU 访问内存的次数，加大 CPU 访问内存的吞吐量。比如同样读取 8 个字节的数据，一次读取 4 个字节那么只需要读取 2 次。CPU 始终以字长访问内存。 提出设想如果我们不进行内存对齐，而是按照类型字节长度紧密对齐呢？ 变量 a、b 各占据 3 字节的空间，我们使用32位 CPU 访问内存读取变量，例如：   内存对齐后，a、b 占据 4 字节空间，CP...</div></div></div></a><a class="pagination-related" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-28</div><div class="info-item-2">Go基础篇：类型系统</div></div><div class="info-2"><div class="info-item-1">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是类型？类型的概念在不同的编程语言之间是不同的，可以用许多不同的方式来表达，但都有一些相同点。  类型是用来定义变量、常量、函数参数、函数返回值等值的属性； 在定义的变量上可以执行一组操作，例如：int 类型可以执行 + 和 - 等运算，而对于 string 类型，可以执行连接、空检查等操作；  在Go语言中，类型是用来描述变量、常量、函数参数、函数返回值等值的属性。它定义了变量或表达式可以存储的数据类型，以及可以对其执行的操作。 Go语言中的类型可以分为基本数据类型和引用类型两种。基本数据类型包括整型、浮点型、布尔型、字符串型等，而引用类型包括数组、切片、结构体、接口、channel等。    类型 说明 例子    布尔型 表示真或假的值 true, false   整型 表示整数的值，有不同的位数和符号 int, int8, int16, int3...</div></div></div></a><a class="pagination-related" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-24</div><div class="info-item-2">Go底层原理：一起来唠唠GMP调度（一）</div></div><div class="info-2"><div class="info-item-1">前言 春招开始了，作为23届的科班咸鱼学习记录一下八股文和go底层原理（GC、GMP调度、goroutine等）本文介绍 Go 语言运行时调度器的实现原理，其中包含调度器的设计与实现原理、演变过程以及与运行时调度相关的数据结构。参考几篇不错的文章：mingguangtu《深入分析Go1.18 GMP调度器底层原理》刘丹冰Aceld《Golang 调度器 GMP 原理与调度全分析》  一、进程、线程、Goroutine1、进程与线程在了解Go的调度器的时候，都离不开操作系统、进程与线程这些概念。    进程 线程    操作系统资源调度和分配的基本单位 CPU调度和分派的基本单位   一个进程可以有多个线程 一个线程只能属于一个进程   有独立的地址空间 同一类线程共享代码和数据空间，每个线程有独立的运行栈和程序计数器   创建销毁开销大，进程切换时，耗费资源较大 创建销毁开销小，线程切换时，耗费资源小   实现操作系统的并发 实现进程内部的并发   进程在执行过程中拥有独立的内存单元，而多个线程共享进程的内存。资源分配给进程，同一进程的所有线程共享该进程的所有资源。同一进程中的多...</div></div></div></a><a class="pagination-related" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-05-17</div><div class="info-item-2">Go基础篇：接口</div></div><div class="info-2"><div class="info-item-1">前言✨ 前段时间忙着春招面试，现在也算告一段落，找到一家比较心仪的公司实习，开始慢慢回归状态，这后面几章我会学习go1.19版本的语言特性或者机制：类型系统、接口、断言以及反射的内容，也算是补上之前没有深入底层的内容。  一、什么是接口？Go语言中的接口（interface）是一种类型，它定义了一组方法的集合，但没有具体的实现。接口可以被任何类型实现，只要该类型实现了接口中定义的所有方法。这种设计方式使得Go语言具有很高的灵活性和可扩展性。 1234567891011121314151617181920212223// 定义一个接口，包含一个String方法type Stringer interface &#123;	String() string&#125;// 定义一个结构体，实现Stringer接口type Person struct &#123;	Name string	Age  int&#125;func (p Person) String() string &#123;	return fmt.Sprintf(&quot;%s (%d)&quot;, p.Name, p...</div></div></div></a><a class="pagination-related" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img class="cover" src="/img/default.png" alt="cover"><div class="info text-center"><div class="info-1"><div class="info-item-1"><i class="far fa-calendar-alt fa-fw"></i> 2023-04-24</div><div class="info-item-2">Go基础：数据结构（定义和go语言实现）</div></div><div class="info-2"><div class="info-item-1">前言 最近在刷leetcode的每日一题的，总会碰到一些问题，因为竞赛时用惯了c++的STL库，有数据结构的实现，可以直接使用，到现在用go总会遇到头疼的事情就是用到数据结构的时候需要自己定义结构并且实现方法，刚好这几天笔试里面也有关于数据结构的题目，所以这一篇主要来讲一下数据结构  一、数组 (Array)数组是一种线性数据结构，它由相同类型的元素组成，每个元素可以通过下标访问。在Go语言中，数组是一种值类型，声明数组时必须指定长度，长度不能被修改。 12345// 定义一个长度为5的整型数组var a [5]int// 访问数组元素，下标从0开始a[0] = 1 1、优缺点 优点： 数组的访问速度很快，因为它们是在内存中连续存储的 数组是一种简单、清晰的数据结构，易于理解和实现   缺点： 数组的长度是固定的，无法动态增加或缩小 插入或删除元素时需要移动数组中的其他元素，效率较低    2、适用场景和不适用场景 适用场景： 当需要在一个集合中存储相同类型的元素时，可以使用数组，例如存储身份证号、学号等 当需要快速访问数组中的元素时，可以使用数组   不适用场景： 当需要动态地...</div></div></div></a></div></div><hr class="custom-hr"/><div id="post-comment"><div class="comment-head"><div class="comment-headline"><i class="fas fa-comments fa-fw"></i><span> 评论</span></div></div><div class="comment-wrap"><div><div id="giscus-wrap"></div></div></div></div></div><div class="aside-content" id="aside-content"><div class="card-widget card-info text-center"><div class="avatar-img"><img src="/img/avatar.jpg" onerror="this.onerror=null;this.src='/img/friend_404.gif'" alt="avatar"/></div><div class="author-info-name">Linzy</div><div class="author-info-description">Backend Developer · Go Enthusiast · Gamer 🎮</div><div class="site-data"><a href="/archives/"><div class="headline">文章</div><div class="length-num">42</div></a><a href="/tags/"><div class="headline">标签</div><div class="length-num">39</div></a><a href="/categories/"><div class="headline">分类</div><div class="length-num">8</div></a></div><a id="card-info-btn" target="_blank" rel="noopener" href="https://github.com/Gopherlinzy"><i class="fab fa-github"></i><span>Follow Me</span></a><div class="card-info-social-icons"><a class="social-icon" href="https://github.com/Gopherlinzy" target="_blank" title="Github"><i class="fab fa-github" style="color: #24292e;"></i></a></div></div><div class="card-widget card-announcement"><div class="item-headline"><i class="fas fa-bullhorn fa-shake"></i><span>公告</span></div><div class="announcement_content">即使再小的帆也能远航 ⛵</div></div><div class="sticky_layout"><div class="card-widget" id="card-toc"><div class="item-headline"><i class="fas fa-stream"></i><span>目录</span><span class="toc-percentage"></span></div><div class="toc-content"><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E5%89%8D%E8%A8%80"><span class="toc-number">1.</span> <span class="toc-text">前言</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%80%E3%80%81sort%E5%8C%85%E7%AE%80%E4%BB%8B"><span class="toc-number">2.</span> <span class="toc-text">一、sort包简介</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%BA%8C%E3%80%81sort%E5%8C%85%E5%86%85%E6%8E%92%E5%BA%8F%E5%8E%9F%E7%90%86%E5%AE%9E%E7%8E%B0"><span class="toc-number">3.</span> <span class="toc-text">二、sort包内排序原理实现</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#%E4%B8%89%E3%80%81sort%E5%8C%85%E5%86%85%E7%BD%AE%E5%87%BD%E6%95%B0"><span class="toc-number">4.</span> <span class="toc-text">三、sort包内置函数</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81sort-Ints-x-int"><span class="toc-number">4.1.</span> <span class="toc-text">1、sort.Ints(x []int)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81sort-Slice-x-any-less-func-i-j-int-bool"><span class="toc-number">4.2.</span> <span class="toc-text">2、sort.Slice(x any, less func(i, j int) bool)</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81sort-SearchInts-a-int-x-int-int"><span class="toc-number">4.3.</span> <span class="toc-text">3、sort.SearchInts(a []int, x int) int</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#4%E3%80%81sort-Search-n-int-f-func-int-bool-int"><span class="toc-number">4.4.</span> <span class="toc-text">4、sort.Search(n int, f func(int) bool) int</span></a></li></ol></li></ol></div></div><div class="card-widget card-recent-post"><div class="item-headline"><i class="fas fa-history"></i><span>最新文章</span></div><div class="aside-list"><div class="aside-list-item"><a class="thumbnail" href="/2023/05/17/go-interface/" title="Go基础篇：接口"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：接口"/></a><div class="content"><a class="title" href="/2023/05/17/go-interface/" title="Go基础篇：接口">Go基础篇：接口</a><time datetime="2023-05-17T08:53:34.000Z" title="发表于 2023-05-17 16:53:34">2023-05-17</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础篇：类型系统"/></a><div class="content"><a class="title" href="/2023/04/28/go-type-system/" title="Go基础篇：类型系统">Go基础篇：类型系统</a><time datetime="2023-04-28T15:25:54.000Z" title="发表于 2023-04-28 23:25:54">2023-04-28</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础：数据结构（定义和go语言实现）"/></a><div class="content"><a class="title" href="/2023/04/24/go-dataStructure/" title="Go基础：数据结构（定义和go语言实现）">Go基础：数据结构（定义和go语言实现）</a><time datetime="2023-04-24T08:32:57.000Z" title="发表于 2023-04-24 16:32:57">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go底层原理：一起来唠唠GMP调度（一）"/></a><div class="content"><a class="title" href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">Go底层原理：一起来唠唠GMP调度（一）</a><time datetime="2023-04-24T08:16:43.000Z" title="发表于 2023-04-24 16:16:43">2023-04-24</time></div></div><div class="aside-list-item"><a class="thumbnail" href="/2023/04/24/go-sort/" title="Go基础入门：sort包"><img src="/img/default.png" onerror="this.onerror=null;this.src='/img/404.jpg'" alt="Go基础入门：sort包"/></a><div class="content"><a class="title" href="/2023/04/24/go-sort/" title="Go基础入门：sort包">Go基础入门：sort包</a><time datetime="2023-04-24T08:13:12.000Z" title="发表于 2023-04-24 16:13:12">2023-04-24</time></div></div></div></div></div></div></main><footer id="footer"><div class="footer-other"><div class="footer-copyright"><span class="copyright">&copy;&nbsp;2025 - 2026 By Linzy</span><span class="framework-info"><span>框架 </span><a target="_blank" rel="noopener" href="https://hexo.io">Hexo 6.2.0</a><span class="footer-separator">|</span><span>主题 </span><a target="_blank" rel="noopener" href="https://github.com/jerryc127/hexo-theme-butterfly">Butterfly 5.5.4</a></span></div></div></footer></div><div id="rightside"><div id="rightside-config-hide"><button id="readmode" type="button" title="阅读模式"><i class="fas fa-book-open"></i></button><button id="darkmode" type="button" title="日间和夜间模式切换"><i class="fas fa-adjust"></i></button><button id="hide-aside-btn" type="button" title="单栏和双栏切换"><i class="fas fa-arrows-alt-h"></i></button></div><div id="rightside-config-show"><button id="rightside-config" type="button" title="设置"><i class="fas fa-cog fa-spin"></i></button><button class="close" id="mobile-toc-button" type="button" title="目录"><i class="fas fa-list-ul"></i></button><a id="to_comment" href="#post-comment" title="前往评论"><i class="fas fa-comments"></i></a><button id="go-up" type="button" title="回到顶部"><span class="scroll-percent"></span><i class="fas fa-arrow-up"></i></button></div></div><div><script src="/js/utils.js?v=5.5.4"></script><script src="/js/main.js?v=5.5.4"></script><div class="js-pjax"><script>(() => {
+  const isShuoshuo = GLOBAL_CONFIG_SITE.pageType === 'shuoshuo'
+  const option = null
 
-                
-              </div>
-            
-            <hr/>
-            <div>
-              <div class="post-metas my-3">
-  
-    <div class="post-meta mr-3 d-flex align-items-center">
-      <i class="iconfont icon-category"></i>
-      
+  const getGiscusTheme = theme => theme === 'dark' ? 'dark' : 'light'
 
-<span class="category-chains">
-  
-  
-    
-      <span class="category-chain">
-        
-  <a href="/categories/Go%E5%9F%BA%E7%A1%80%E5%85%A5%E9%97%A8/" class="category-chain-item">Go基础入门</a>
-  
-  
-
-      </span>
-    
-  
-</span>
-
-    </div>
-  
-  
-    <div class="post-meta">
-      <i class="iconfont icon-tags"></i>
-      
-        <a href="/tags/golang/">#golang</a>
-      
-        <a href="/tags/%E5%90%8E%E7%AB%AF/">#后端</a>
-      
-        <a href="/tags/%E6%8E%92%E5%BA%8F%E7%AE%97%E6%B3%95/">#排序算法</a>
-      
-    </div>
-  
-</div>
-
-
-              
-  
-
-  <div class="license-box my-3">
-    <div class="license-title">
-      <div>Go基础入门：sort包</div>
-      <div>https://gopherlinzy.github.io/2023/04/24/go-sort/</div>
-    </div>
-    <div class="license-meta">
-      
-        <div class="license-meta-item">
-          <div>作者</div>
-          <div>孙禄毅</div>
-        </div>
-      
-      
-        <div class="license-meta-item license-meta-date">
-          <div>发布于</div>
-          <div>2023年4月24日</div>
-        </div>
-      
-      
-      
-        <div class="license-meta-item">
-          <div>许可协议</div>
-          <div>
-            
-              
-              
-                <a target="_blank" href="https://creativecommons.org/licenses/by/4.0/">
-                  <span class="hint--top hint--rounded" aria-label="BY - 署名">
-                    <i class="iconfont icon-by"></i>
-                  </span>
-                </a>
-              
-            
-          </div>
-        </div>
-      
-    </div>
-    <div class="license-icon iconfont"></div>
-  </div>
-
-
-
-              
-                <div class="post-prevnext my-3">
-                  <article class="post-prev col-6">
-                    
-                    
-                      <a href="/2023/04/24/go-GMP-1/" title="Go底层原理：一起来唠唠GMP调度（一）">
-                        <i class="iconfont icon-arrowleft"></i>
-                        <span class="hidden-mobile">Go底层原理：一起来唠唠GMP调度（一）</span>
-                        <span class="visible-mobile">上一篇</span>
-                      </a>
-                    
-                  </article>
-                  <article class="post-next col-6">
-                    
-                    
-                      <a href="/2022/11/10/grpc-gateway/" title="gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api">
-                        <span class="hidden-mobile">gRPC（八）生态 grpc-gateway 应用：同一个服务端支持Rpc和Restful Api</span>
-                        <span class="visible-mobile">下一篇</span>
-                        <i class="iconfont icon-arrowright"></i>
-                      </a>
-                    
-                  </article>
-                </div>
-              
-            </div>
-
-            
-  <article id="comments">
-    
-  <script type="text/javascript">
-    Fluid.utils.loadComments('#comments', function() {
-      var light = 'github-light';
-      var dark = 'github-dark';
-      var schema = document.documentElement.getAttribute('data-user-color-scheme');
-      if (schema === 'dark') {
-        schema = dark;
-      } else {
-        schema = light;
-      }
-      window.UtterancesThemeLight = light;
-      window.UtterancesThemeDark = dark;
-      var s = document.createElement('script');
-      s.setAttribute('src', 'https://utteranc.es/client.js');
-      s.setAttribute('repo', 'Gopherlinzy/Gopherlinzy.github.io');
-      s.setAttribute('issue-term', 'pathname');
-      
-      s.setAttribute('label', 'utterances');
-      
-      s.setAttribute('theme', schema);
-      s.setAttribute('crossorigin', 'anonymous');
-      document.getElementById('comments').appendChild(s);
+  const createScriptElement = config => {
+    const ele = document.createElement('script')
+    Object.entries(config).forEach(([key, value]) => {
+      ele.setAttribute(key, value)
     })
-  </script>
-  <noscript>Please enable JavaScript to view the comments</noscript>
+    return ele
+  }
 
+  const loadGiscus = (el = document, key) => {
+    const mappingConfig = isShuoshuo
+      ? { 'data-mapping': 'specific', 'data-term': key }
+      : { 'data-mapping': (option && option['data-mapping']) || 'pathname' }
 
-  </article>
-
-
-          </article>
-        </div>
-      </div>
-    </div>
-
-    <div class="side-col d-none d-lg-block col-lg-2">
-      
-  <aside class="sidebar" style="margin-left: -1rem">
-    <div id="toc">
-  <p class="toc-header"><i class="iconfont icon-list"></i>&nbsp;目录</p>
-  <div class="toc-body" id="toc-body"></div>
-</div>
-
-
-
-  </aside>
-
-
-    </div>
-  </div>
-</div>
-
-
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-  
-
-
-
-
-
-
-
-    
-
-    
-      <a id="scroll-top-button" aria-label="TOP" href="#" role="button">
-        <i class="iconfont icon-arrowup" aria-hidden="true"></i>
-      </a>
-    
-
-    
-      <div class="modal fade" id="modalSearch" tabindex="-1" role="dialog" aria-labelledby="ModalLabel"
-     aria-hidden="true">
-  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
-    <div class="modal-content">
-      <div class="modal-header text-center">
-        <h4 class="modal-title w-100 font-weight-bold">搜索</h4>
-        <button type="button" id="local-search-close" class="close" data-dismiss="modal" aria-label="Close">
-          <span aria-hidden="true">&times;</span>
-        </button>
-      </div>
-      <div class="modal-body mx-3">
-        <div class="md-form mb-5">
-          <input type="text" id="local-search-input" class="form-control validate">
-          <label data-error="x" data-success="v" for="local-search-input">关键词</label>
-        </div>
-        <div class="list-group" id="local-search-result"></div>
-      </div>
-    </div>
-  </div>
-</div>
-
-    
-
-    
-  </main>
-
-  <footer>
-    <div class="footer-inner">
-  
-    <div class="footer-content">
-       <a href="https://hexo.io" target="_blank" rel="nofollow noopener"><span>Hexo</span></a> <i class="iconfont icon-love"></i> <a href="https://github.com/Gopherlinzy/Gopherlinzy.github.io" target="_blank" rel="nofollow noopener"><span>Github</span></a> 
-    </div>
-  
-  
-  
-  
-</div>
-
-  </footer>
-
-  <!-- Scripts -->
-  
-  <script  src="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.js" ></script>
-  <link  rel="stylesheet" href="https://lib.baomitu.com/nprogress/0.2.0/nprogress.min.css" />
-
-  <script>
-    NProgress.configure({"showSpinner":false,"trickleSpeed":100})
-    NProgress.start()
-    window.addEventListener('load', function() {
-      NProgress.done();
-    })
-  </script>
-
-
-<script  src="https://lib.baomitu.com/jquery/3.6.0/jquery.min.js" ></script>
-<script  src="https://lib.baomitu.com/twitter-bootstrap/4.6.1/js/bootstrap.min.js" ></script>
-<script  src="/js/events.js" ></script>
-<script  src="/js/plugins.js" ></script>
-
-
-  <script  src="https://lib.baomitu.com/typed.js/2.0.12/typed.min.js" ></script>
-  <script>
-    (function (window, document) {
-      var typing = Fluid.plugins.typing;
-      var subtitle = document.getElementById('subtitle');
-      if (!subtitle || !typing) {
-        return;
-      }
-      var text = subtitle.getAttribute('data-typed-text');
-      
-        typing(text);
-      
-    })(window, document);
-  </script>
-
-
-
-
-
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/tocbot/4.18.2/tocbot.min.js', function() {
-    var toc = jQuery('#toc');
-    if (toc.length === 0 || !window.tocbot) { return; }
-    var boardCtn = jQuery('#board-ctn');
-    var boardTop = boardCtn.offset().top;
-
-    window.tocbot.init(Object.assign({
-      tocSelector     : '#toc-body',
-      contentSelector : '.markdown-body',
-      linkClass       : 'tocbot-link',
-      activeLinkClass : 'tocbot-active-link',
-      listClass       : 'tocbot-list',
-      isCollapsedClass: 'tocbot-is-collapsed',
-      collapsibleClass: 'tocbot-is-collapsible',
-      scrollSmooth    : true,
-      includeTitleTags: true,
-      headingsOffset  : -boardTop,
-    }, CONFIG.toc));
-    if (toc.find('.toc-list-item').length > 0) {
-      toc.css('visibility', 'visible');
+    const giscusConfig = {
+      src: 'https://giscus.app/client.js',
+      'data-repo': 'Gopherlinzy/linzy-knowledge',
+      'data-repo-id': 'R_kgDORkWX8A',
+      'data-category-id': 'DIC_kwDORkWX8M4C4Koo',
+      'data-theme': getGiscusTheme(document.documentElement.getAttribute('data-theme')),
+      'data-reactions-enabled': '1',
+      crossorigin: 'anonymous',
+      async: true,
+      ...option,
+      ...mappingConfig
     }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('tocbot' in window) {
-        tocbot.refresh();
-        var toc = jQuery('#toc');
-        if (toc.length === 0 || !tocbot) {
-          return;
-        }
-        if (toc.find('.toc-list-item').length > 0) {
-          toc.css('visibility', 'visible');
+    const scriptElement = createScriptElement(giscusConfig)
+
+    el.querySelector('#giscus-wrap').appendChild(scriptElement)
+
+    if (isShuoshuo) {
+      window.shuoshuoComment.destroyGiscus = () => {
+        if (el.children.length) {
+          el.innerHTML = ''
+          el.classList.add('no-comment')
         }
       }
-    });
-  });
-</script>
-
-
-  <script src=https://lib.baomitu.com/clipboard.js/2.0.10/clipboard.min.js></script>
-
-  <script>Fluid.plugins.codeWidget();</script>
-
-
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/anchor-js/4.3.1/anchor.min.js', function() {
-    window.anchors.options = {
-      placement: CONFIG.anchorjs.placement,
-      visible  : CONFIG.anchorjs.visible
-    };
-    if (CONFIG.anchorjs.icon) {
-      window.anchors.options.icon = CONFIG.anchorjs.icon;
     }
-    var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-    var res = [];
-    for (var item of el) {
-      res.push('.markdown-body > ' + item.trim());
-    }
-    if (CONFIG.anchorjs.placement === 'left') {
-      window.anchors.options.class = 'anchorjs-link-left';
-    }
-    window.anchors.add(res.join(', '));
+  }
 
-    Fluid.events.registerRefreshCallback(function() {
-      if ('anchors' in window) {
-        anchors.removeAll();
-        var el = (CONFIG.anchorjs.element || 'h1,h2,h3,h4,h5,h6').split(',');
-        var res = [];
-        for (var item of el) {
-          res.push('.markdown-body > ' + item.trim());
+  const changeGiscusTheme = theme => {
+    const iframe = document.querySelector('#giscus-wrap iframe')
+    if (iframe) {
+      const message = {
+        giscus: {
+          setConfig: {
+            theme: getGiscusTheme(theme)
+          }
         }
-        if (CONFIG.anchorjs.placement === 'left') {
-          anchors.options.class = 'anchorjs-link-left';
-        }
-        anchors.add(res.join(', '));
       }
-    });
-  });
-</script>
+      iframe.contentWindow.postMessage(message, 'https://giscus.app')
+    }
+  }
 
+  btf.addGlobalFn('themeChange', changeGiscusTheme, 'giscus')
 
-  
-<script>
-  Fluid.utils.createScript('https://lib.baomitu.com/fancybox/3.5.7/jquery.fancybox.min.js', function() {
-    Fluid.plugins.fancyBox();
-  });
-</script>
+  if (isShuoshuo) {
+    'Giscus' === 'Giscus'
+      ? window.shuoshuoComment = { loadComment: loadGiscus }
+      : window.loadOtherComment = loadGiscus
+    return
+  }
 
-
-  <script>Fluid.plugins.imageCaption();</script>
-
-  <script  src="/js/local-search.js" ></script>
-
-  <script defer src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js" ></script>
-
-
-
-
-
-<!-- 主题的启动项，将它保持在最底部 -->
-<!-- the boot of the theme, keep it at the bottom -->
-<script  src="/js/boot.js" ></script>
-
-
-  
-
-  <noscript>
-    <div class="noscript-warning">博客在允许 JavaScript 运行的环境下浏览效果更佳</div>
-  </noscript>
-</body>
-</html>
+  if ('Giscus' === 'Giscus' || !false) {
+    if (false) btf.loadComment(document.getElementById('giscus-wrap'), loadGiscus)
+    else loadGiscus()
+  } else {
+    window.loadOtherComment = loadGiscus
+  }
+})()</script></div><script async data-pjax src="//busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script><div id="local-search"><div class="search-dialog"><nav class="search-nav"><span class="search-dialog-title">搜索</span><i class="fas fa-spinner fa-pulse" id="loading-status" hidden="hidden"></i><button class="search-close-button"><i class="fas fa-times"></i></button></nav><div class="text-center" id="loading-database"><i class="fas fa-spinner fa-pulse"></i><span>  数据加载中</span></div><div class="local-search-input"><input placeholder="搜索文章..." type="text"/></div><hr/><div id="local-search-results"></div><div class="ais-Pagination" id="local-search-pagination" style="display:none;"><ul class="ais-Pagination-list"></ul></div><div id="local-search-stats"></div></div><div id="search-mask"></div><script src="/js/search/local-search.js?v=5.5.4"></script></div></div></body></html>
