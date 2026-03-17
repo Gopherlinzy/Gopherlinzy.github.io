@@ -7681,4 +7681,231 @@
         <tag>npm</tag>
       </tags>
   </entry>
+  <entry>
+    <title>AI Agent 范式全景：从 ReAct 到多智能体编排（2022-2026）</title>
+    <url>/2026/03/17/ai-agent-paradigm-2026/</url>
+    <content><![CDATA[<h1 id="AI-Agent-范式全景：从-ReAct-到多智能体编排（2022-2026）"><a href="#AI-Agent-范式全景：从-ReAct-到多智能体编排（2022-2026）" class="headerlink" title="AI Agent 范式全景：从 ReAct 到多智能体编排（2022-2026）"></a>AI Agent 范式全景：从 ReAct 到多智能体编排（2022-2026）</h1><blockquote>
+<p>本文梳理了 AI Agent 从 2022 年至今的范式演进脉络，横向对比主流架构的优劣，并结合实际多智能体系统的落地经验，给出选型建议。如果你正在构建或评估 Agent 系统，这篇文章应该能帮你少走弯路。</p>
+</blockquote>
+<h2 id="一、什么是-AI-Agent？"><a href="#一、什么是-AI-Agent？" class="headerlink" title="一、什么是 AI Agent？"></a>一、什么是 AI Agent？</h2><p>AI Agent 是能够<strong>感知环境、进行推理并采取行动</strong>以实现特定目标的智能实体。其核心循环为：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Perceive (感知) → Reason (推理) → Act (行动) → 观察结果 → 循环</span><br></pre></td></tr></table></figure>
+
+<p>听起来很简单，但这个循环的不同实现方式，催生了过去四年间一系列截然不同的架构范式。</p>
+<h2 id="二、演进路线（2022-2026）"><a href="#二、演进路线（2022-2026）" class="headerlink" title="二、演进路线（2022-2026）"></a>二、演进路线（2022-2026）</h2><table>
+<thead>
+<tr>
+<th>阶段</th>
+<th>时间</th>
+<th>代表</th>
+<th>核心突破</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>ReAct</strong></td>
+<td>2022.10</td>
+<td>ReAct 论文</td>
+<td>将思维链（CoT）与工具调用结合，确立 Agent 基本交互模式</td>
+</tr>
+<tr>
+<td><strong>自主循环</strong></td>
+<td>2023.03</td>
+<td>AutoGPT &#x2F; BabyAGI</td>
+<td>展示了 Agent 自主循环的可能性（也暴露了不可靠性）</td>
+</tr>
+<tr>
+<td><strong>Tool-Use</strong></td>
+<td>2023</td>
+<td>Function Calling</td>
+<td>模型原生支持函数调用，Agent 从”文字游戏”转向”物理干预”</td>
+</tr>
+<tr>
+<td><strong>多智能体</strong></td>
+<td>2023-2024</td>
+<td>MetaGPT &#x2F; AutoGen &#x2F; CrewAI</td>
+<td>从单体 Agent 演进到群体协作，角色分工提升可靠性</td>
+</tr>
+<tr>
+<td><strong>状态图编排</strong></td>
+<td>2024</td>
+<td>LangGraph</td>
+<td>基于状态图的流程控制，解决了生产环境可控性问题</td>
+</tr>
+<tr>
+<td><strong>GUI 操控</strong></td>
+<td>2024.10</td>
+<td>Anthropic Computer Use</td>
+<td>Agent 直接操控键盘鼠标，不再依赖 API</td>
+</tr>
+<tr>
+<td><strong>开发者级 Agent</strong></td>
+<td>2025-2026</td>
+<td>Claude Code &#x2F; OpenAI Agents SDK &#x2F; Operator</td>
+<td>Agent 进入大规模商用，确立开发者级交互标准</td>
+</tr>
+</tbody></table>
+<p>一条清晰的脉络浮现：**从”能不能做”到”能不能控”**。早期追求能力上限，现在追求可靠下限。</p>
+<h2 id="三、主流范式横向对比"><a href="#三、主流范式横向对比" class="headerlink" title="三、主流范式横向对比"></a>三、主流范式横向对比</h2><h3 id="3-1-单体-Agent-范式"><a href="#3-1-单体-Agent-范式" class="headerlink" title="3.1 单体 Agent 范式"></a>3.1 单体 Agent 范式</h3><h4 id="ReAct（推理-行动交替）"><a href="#ReAct（推理-行动交替）" class="headerlink" title="ReAct（推理 + 行动交替）"></a>ReAct（推理 + 行动交替）</h4><p>ReAct 是 Agent 范式的基石。模型交替生成推理过程（Thought）和行动指令（Action），观察结果后继续推理。</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Thought: 用户想知道今天的天气，我应该调用天气 API</span><br><span class="line">Action: call_weather_api(&quot;Shanghai&quot;)</span><br><span class="line">Observation: 25°C, 晴</span><br><span class="line">Thought: 我已经得到了结果，可以回答了</span><br><span class="line">Answer: 上海今天 25°C，晴天。</span><br></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>：实时调整，低延迟，实现简单<br><strong>致命缺陷</strong>：在复杂多步任务中容易”丢失目标”。模型会在错误路径上越走越远，因为它没有全局规划视角。</p>
+<p><strong>适用场景</strong>：简单搜索、单步 API 调用、FAQ 问答</p>
+<h4 id="Plan-and-Execute（先规划，再执行）"><a href="#Plan-and-Execute（先规划，再执行）" class="headerlink" title="Plan-and-Execute（先规划，再执行）"></a>Plan-and-Execute（先规划，再执行）</h4><p>针对 ReAct 的缺陷，Plan-and-Execute 引入了显式的规划层：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Phase 1 - Plan:</span><br><span class="line">  Step 1: 查询数据库获取用户信息</span><br><span class="line">  Step 2: 调用风控 API 评估信用</span><br><span class="line">  Step 3: 根据评分生成审批结果</span><br><span class="line">  Step 4: 发送通知邮件</span><br><span class="line"></span><br><span class="line">Phase 2 - Execute:</span><br><span class="line">  执行 Step 1... ✅</span><br><span class="line">  执行 Step 2... ✅ (发现信用分异常，修正计划)</span><br><span class="line">  执行 Step 3... ✅</span><br><span class="line">  执行 Step 4... ✅</span><br></pre></td></tr></table></figure>
+
+<p><strong>优势</strong>：逻辑严密，减少漂移，支持中途纠偏<br><strong>代价</strong>：延迟更高，Token 消耗更大<br><strong>适用场景</strong>：复杂软件工程任务、多步骤自动化流程</p>
+<h4 id="Reflexion（自我反思）"><a href="#Reflexion（自我反思）" class="headerlink" title="Reflexion（自我反思）"></a>Reflexion（自我反思）</h4><p>Agent 执行完毕后，对自己的输出进行批判性审查，发现问题则修正后重新执行。</p>
+<p><strong>核心价值</strong>：闭环自优化，减少外部干预<br><strong>适用场景</strong>：代码生成（跑测试→发现 bug→自动修复）、文本迭代润色</p>
+<h4 id="Tree-of-Thoughts（思维树）"><a href="#Tree-of-Thoughts（思维树）" class="headerlink" title="Tree of Thoughts（思维树）"></a>Tree of Thoughts（思维树）</h4><p>维护多条推理路径并行探索，遇到死胡同可以回溯到分叉点换路。</p>
+<p><strong>适用场景</strong>：数学证明、复杂调试等需要搜索最优解的场景</p>
+<h3 id="3-2-多智能体范式"><a href="#3-2-多智能体范式" class="headerlink" title="3.2 多智能体范式"></a>3.2 多智能体范式</h3><p>当单体 Agent 的能力到达天花板，<strong>让多个 Agent 协作</strong>成了自然的演进方向。但不同框架的协作方式差异很大：</p>
+<table>
+<thead>
+<tr>
+<th>框架</th>
+<th>协作方式</th>
+<th>优势</th>
+<th>生产稳定性</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AutoGen</strong></td>
+<td>对话驱动，Agent 之间”聊天”完成任务</td>
+<td>模块化强，支持人类介入</td>
+<td>⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>CrewAI</strong></td>
+<td>角色驱动，定义角色和 SOP 流程</td>
+<td>结构清晰，上手快</td>
+<td>⭐⭐ （黑盒较多）</td>
+</tr>
+<tr>
+<td><strong>MetaGPT</strong></td>
+<td>SOP 驱动，模拟软件公司流程</td>
+<td>从 PRD 到代码全自动</td>
+<td>⭐⭐</td>
+</tr>
+<tr>
+<td><strong>LangGraph</strong></td>
+<td>状态图驱动，Agent 是图中的节点</td>
+<td>状态持久化、Human-in-the-loop 最好</td>
+<td>⭐⭐⭐⭐</td>
+</tr>
+<tr>
+<td><strong>OpenAI Swarm&#x2F;Agents SDK</strong></td>
+<td>Handoff 驱动，Agent 之间轻量移交</td>
+<td>极简编排，无状态负担</td>
+<td>⭐⭐⭐</td>
+</tr>
+</tbody></table>
+<p><strong>一个重要的反直觉结论</strong>：Multi-Agent 不一定比 Single-Agent 好。</p>
+<p>对于线性、确定性的任务，复杂的 Agent 路由和推理往往不如硬编码的 Prompt Chain 可靠且便宜。多智能体系统的通信开销、上下文管理复杂度和调试难度不可忽视。</p>
+<p><strong>判断标准</strong>：任务是否有不确定性分支、是否需要对抗性审查、是否需要多专业领域知识。如果三个都不是——用 Prompt Chain。</p>
+<h3 id="3-3-新兴范式"><a href="#3-3-新兴范式" class="headerlink" title="3.3 新兴范式"></a>3.3 新兴范式</h3><table>
+<thead>
+<tr>
+<th>范式</th>
+<th>一句话描述</th>
+<th>为什么重要</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>MCP（Model Context Protocol）</strong></td>
+<td>Anthropic 推出的统一 AI-数据上下文协议</td>
+<td>打通本地文件&#x2F;数据库&#x2F;API 与 AI 的标准化连接</td>
+</tr>
+<tr>
+<td><strong>Computer Use</strong></td>
+<td>模拟人类操作键盘鼠标</td>
+<td>无需 API 即可操控所有软件，覆盖遗留系统</td>
+</tr>
+<tr>
+<td><strong>Operator &#x2F; Manus</strong></td>
+<td>通用型全自主 Agent</td>
+<td>跨应用协作，一键完成复杂办公流程</td>
+</tr>
+</tbody></table>
+<h2 id="四、范式选型决策树"><a href="#四、范式选型决策树" class="headerlink" title="四、范式选型决策树"></a>四、范式选型决策树</h2><p>面对这么多选择，如何决策？我总结了一个简单的决策路径：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">你的任务是什么？</span><br><span class="line">│</span><br><span class="line">├── 单步工具调用（查天气、查数据库）</span><br><span class="line">│   └── → ReAct 足矣</span><br><span class="line">│</span><br><span class="line">├── 多步但路径确定（ETL、固定流程）</span><br><span class="line">│   └── → Prompt Chain / 硬编码工作流</span><br><span class="line">│</span><br><span class="line">├── 多步且路径不确定（需要中途决策）</span><br><span class="line">│   ├── 不需要多角色 → Plan-and-Execute</span><br><span class="line">│   └── 需要多角色协作</span><br><span class="line">│       ├── 需要高可靠 + 状态管理 → LangGraph</span><br><span class="line">│       ├── 需要快速原型 → CrewAI</span><br><span class="line">│       └── 需要对抗性审查 → Multi-Agent Debate</span><br><span class="line">│</span><br><span class="line">└── 需要操控 GUI / 无 API</span><br><span class="line">    └── → Computer Use</span><br></pre></td></tr></table></figure>
+
+<h2 id="五、实战案例：多智能体编排系统的经验教训"><a href="#五、实战案例：多智能体编排系统的经验教训" class="headerlink" title="五、实战案例：多智能体编排系统的经验教训"></a>五、实战案例：多智能体编排系统的经验教训</h2><p>我在实际项目中落地了一套多智能体编排系统，采用了 <strong>Plan-and-Execute 骨架 + Multi-Agent Debate 变体 + Human-in-the-loop 门禁</strong>的混合架构。踩过的坑比选对的路多，以下是最有价值的几条经验。</p>
+<h3 id="架构概览"><a href="#架构概览" class="headerlink" title="架构概览"></a>架构概览</h3><figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">Commander (人类)</span><br><span class="line">    │</span><br><span class="line">    ▼</span><br><span class="line">Orchestrator (中央编排)</span><br><span class="line">    │</span><br><span class="line">    ├── Wave 1: 情报收集 ∥ 红队批判  (并行)</span><br><span class="line">    │       │              │</span><br><span class="line">    │       ▼              ▼</span><br><span class="line">    │   正面调研员     反面批判员</span><br><span class="line">    │</span><br><span class="line">    ├── Wave 2: 综合裁决 (串行)</span><br><span class="line">    │       │</span><br><span class="line">    │       ▼</span><br><span class="line">    │    裁决节点（交叉验证两方结论）</span><br><span class="line">    │</span><br><span class="line">    ├── Human Gate: 人类授权（阻塞）</span><br><span class="line">    │</span><br><span class="line">    ├── Wave 3: 物理执行 (串行)</span><br><span class="line">    │       │</span><br><span class="line">    │       ▼</span><br><span class="line">    │    代码执行节点</span><br><span class="line">    │</span><br><span class="line">    └── Wave 4: 验收 (串行)</span><br><span class="line">            │</span><br><span class="line">            ▼</span><br><span class="line">         验收节点</span><br></pre></td></tr></table></figure>
+
+<p>核心设计决策：</p>
+<ul>
+<li><strong>非对称对抗</strong>：不是同质 Agent 辩论，而是”正面调研 vs 红队攻击”。这比两个相同角色辩论效果好得多，因为视角是真正互补的。</li>
+<li><strong>物理黑板（Blackboard）</strong>：节点之间通过文件系统传递上下文，而非内存。牺牲了一部分自动化效率，但换来了<strong>人类完全可审计性</strong>——你可以随时 <code>cat</code> 任何中间产物。</li>
+<li><strong>Plan-Before-Act 门禁</strong>：任何破坏性操作前必须生成计划并等待人类授权。听起来效率低？对。但在生产环境中，这是<strong>唯一让你睡得着觉</strong>的设计。</li>
+</ul>
+<h3 id="踩坑记录"><a href="#踩坑记录" class="headerlink" title="踩坑记录"></a>踩坑记录</h3><p><strong>坑 1：过度工程化</strong></p>
+<p>一开始所有任务都走完整编队流程（情报→批判→裁决→授权→执行→验收），改一个配置文件也要六个节点转一圈。后来加入了”闪击模式”——对于简单任务自动降级为 Orchestrator 直接编排执行，跳过推演阶段。</p>
+<p><strong>教训</strong>：Multi-Agent 不是越多越好，要根据任务复杂度动态调整编队规模。</p>
+<p><strong>坑 2：执行节点缺乏自纠错</strong></p>
+<p>早期设计中，代码执行节点遇到编译错误会直接上报，走完”验收→编排→重新派发”的完整回路才能重试。一个 typo 要花 5 分钟来修。</p>
+<p>后来在执行节点内建了局部 Reflexion——允许自动重试最多 2 次，超限才上报。**简单错误的修复耗时直接减少 50%+**。</p>
+<p><strong>教训</strong>：全局 Reflexion（外部审查节点）和局部 Reflexion（节点内自纠错）要并存，不是二选一。</p>
+<p><strong>坑 3：黑板竞态</strong></p>
+<p>并行 Wave 中两个节点同时写入同一个黑板文件，偶尔出现内容覆盖。解决方案：每个节点写独立文件，由编排器合并。</p>
+<p><strong>教训</strong>：如果你用文件做状态管理，要像对待数据库一样认真对待并发控制。</p>
+<p><strong>坑 4：上下文窗口衰减</strong></p>
+<p>长链路任务执行到后期，早期的推演结论已经被挤出上下文窗口。节点开始”遗忘”之前的决策，做出矛盾的操作。</p>
+<p>物理黑板在这里发挥了意外的优势——即使上下文窗口丢失了早期信息，节点可以随时重新读取黑板文件来恢复记忆。</p>
+<h2 id="六、2025-2026-趋势判断"><a href="#六、2025-2026-趋势判断" class="headerlink" title="六、2025-2026 趋势判断"></a>六、2025-2026 趋势判断</h2><p>基于对行业的持续跟踪，我认为以下趋势是确定性最高的：</p>
+<h3 id="确定性趋势（Tier-1-2）"><a href="#确定性趋势（Tier-1-2）" class="headerlink" title="确定性趋势（Tier 1-2）"></a>确定性趋势（Tier 1-2）</h3><table>
+<thead>
+<tr>
+<th>趋势</th>
+<th>证据</th>
+<th>意味着什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>从全自治回归可控</strong></td>
+<td>AutoGPT 类项目活跃度骤降；LangGraph、Human-in-the-loop 成为标配</td>
+<td>不要再追求”完全不用管”的 Agent，投资可控性</td>
+</tr>
+<tr>
+<td><strong>状态图成为主流编排模型</strong></td>
+<td>LangGraph 生态爆发；OpenAI Agents SDK 也引入了类似概念</td>
+<td>学 LangGraph 或类似的状态图框架</td>
+</tr>
+<tr>
+<td><strong>MCP 生态快速扩张</strong></td>
+<td>Anthropic 主推，飞书&#x2F;GitHub&#x2F;各大 SaaS 已接入</td>
+<td>你的 Agent 应该支持 MCP，这是未来的”USB 接口”</td>
+</tr>
+<tr>
+<td><strong>工作流驱动 &gt; Agent 驱动</strong></td>
+<td>Agent 被视为工作流中的节点，而非工作流的掌控者</td>
+<td>先设计工作流，再决定哪些节点需要 Agent 智能</td>
+</tr>
+</tbody></table>
+<h3 id="有趣但尚未验证的方向（Tier-X）"><a href="#有趣但尚未验证的方向（Tier-X）" class="headerlink" title="有趣但尚未验证的方向（Tier X）"></a>有趣但尚未验证的方向（Tier X）</h3><ul>
+<li><strong>Small-Agent 编队</strong>：用大量精调 7B-14B 小模型替代单个大模型。理论上性价比极高，但目前小模型的推理能力不足以胜任复杂审查任务。</li>
+<li><strong>Agentic Mesh</strong>：跨公司、跨设备的 Agent 通过标准协议互相协作。”我的 Agent 和你的 Agent 开会”——听起来科幻，但 MCP 2.0 正在朝这个方向走。</li>
+<li><strong>硬件级 Agent</strong>：OS 原生集成 Agent，拥有内核级权限。macOS 和 Windows 都在做，但不可控变量太多，短期内难以依赖。</li>
+</ul>
+<h2 id="七、总结"><a href="#七、总结" class="headerlink" title="七、总结"></a>七、总结</h2><p>如果你只记住三句话：</p>
+<ol>
+<li><strong>ReAct 是基础，Plan-and-Execute 是进阶，LangGraph 是生产级</strong>——根据任务复杂度逐级升级，不要跳级。</li>
+<li><strong>Multi-Agent 不是银弹</strong>——简单任务用 Prompt Chain，复杂任务才上多智能体。判断标准是任务是否有不确定性分支。</li>
+<li><strong>可控性 &gt; 自治性</strong>——2026 年的正确方向是 Human-in-the-loop，不是 Full Autopilot。投资可审计性、投资回滚能力、投资人类门禁。</li>
+</ol>
+<p>Agent 范式还在快速演进中，但底层逻辑已经清晰：<strong>不是让 AI 替代人类决策，而是让 AI 在人类监督下高效执行</strong>。这个认知转变，比任何具体框架的选择都重要。</p>
+<hr>
+<p><em>本文基于对 ReAct、Plan-and-Execute、LangGraph、AutoGen、CrewAI、MetaGPT、OpenAI Swarm、MCP、Computer Use 等范式的系统性调研与实战验证。部分趋势判断为作者推演，已标注可信度等级。</em></p>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>Agent</tag>
+        <tag>LLM</tag>
+        <tag>多智能体</tag>
+        <tag>LangGraph</tag>
+        <tag>ReAct</tag>
+        <tag>MCP</tag>
+      </tags>
+  </entry>
 </search>
