@@ -7908,4 +7908,213 @@
         <tag>MCP</tag>
       </tags>
   </entry>
+  <entry>
+    <title>AI 写代码之前，先让它读懂 PRD——PRD Pilot 的设计与思考</title>
+    <url>/2026/03/28/prd-pilot-design-and-thoughts/</url>
+    <content><![CDATA[<blockquote>
+<p>“AI 可以在 10 分钟内写完一个功能，但没有人告诉它这个功能和三个月前的需求文档冲突了。”</p>
+</blockquote>
+<p>这是我在用 Claude Code 做项目开发时反复遇到的场景。AI Coding 工具解决了「写代码」的效率问题，但没有解决「写对代码」的准确性问题。于是我做了 PRD Pilot——一个在 AI 动手之前，先帮它「读懂」需求文档的工具。</p>
+<p>这篇文章不只是介绍工具，更想聊聊我在 AI Coding 时代对需求管理的思考。</p>
+<span id="more"></span>
+
+<h1 id="一、背景：AI-Coding-时代的新痛点"><a href="#一、背景：AI-Coding-时代的新痛点" class="headerlink" title="一、背景：AI Coding 时代的新痛点"></a>一、背景：AI Coding 时代的新痛点</h1><p>2025 年到 2026 年，AI Coding 工具经历了爆发式增长。Claude Code、Cursor、GitHub Copilot 让开发者的编码速度提升了数倍。一个典型的新工作流是：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">需求文档 → Prompt 描述 → AI 生成代码 → Code Review → 合并 PR</span><br></pre></td></tr></table></figure>
+
+<p>速度确实快了。但我在实际项目中发现了三个被忽视的痛点：</p>
+<p><strong>痛点一：新功能与旧约束冲突</strong></p>
+<p>产品经理写了新 PRD，要求接口增加一个 <code>phone</code> 字段支持双因子登录。AI Agent 很快写完了代码——但它不知道 6 个月前的 API 版本约定明确规定了 v2 接口不允许新增字段。上线后客户端崩溃了。</p>
+<p><strong>痛点二：需求被无声遗漏</strong></p>
+<p>PRD 里写了 8 个需求，AI 实现了 6 个，跑通了所有写到的测试。但剩下 2 个需求压根没被翻译成代码，也没有任何工具告诉你「这两个需求漏了」。直到上线后用户投诉。</p>
+<p><strong>痛点三：Code Review 失焦</strong></p>
+<p>AI 除了实现计划内的功能，还「顺手」重构了两个不相关的模块。Reviewer 不知道哪些改动是计划内的，哪些是 AI 的即兴创作。结果 Review 变成了大海捞针。</p>
+<p>这三个问题的本质是同一件事：<strong>在 AI 生成代码的链路里，缺少一个需求验证的节点。</strong></p>
+<p>传统开发中，程序员脑子里装着 PRD——他们写代码时会本能地想到需求约束。但 AI Agent 每次对话都是无状态的，它不会「记得」上周的需求文档。</p>
+<h1 id="二、PRD-Pilot-是什么"><a href="#二、PRD-Pilot-是什么" class="headerlink" title="二、PRD Pilot 是什么"></a>二、PRD Pilot 是什么</h1><p>PRD Pilot 是一个<strong>需求-代码交叉分析工具</strong>。</p>
+<p>它不写代码，不写 PRD，也不做代码格式化。它的定位是一个<strong>守门员</strong>——在 AI 开始编码之前，检查需求文档和现有代码之间是否有冲突、遗漏和风险。</p>
+<p>核心工作流如下：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">PRD 文档 → [prd:audit] → 冲突报告 → [prd:plan] → 编码计划 → AI 编码 → [prd:review] → 覆盖率报告</span><br></pre></td></tr></table></figure>
+
+<p>它支持多种 PRD 输入方式：</p>
+<table>
+<thead>
+<tr>
+<th>输入方式</th>
+<th>状态</th>
+<th>说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>本地 Markdown 文件</strong></td>
+<td>✅ 已实现</td>
+<td>直接传入文件路径</td>
+</tr>
+<tr>
+<td><strong>飞书文档 URL</strong></td>
+<td>✅ 已跑通</td>
+<td>粘贴飞书链接，通过飞书 MCP 服务自动提取</td>
+</tr>
+<tr>
+<td><strong>飞书知识库 URL</strong></td>
+<td>✅ 已跑通</td>
+<td>支持 wiki 链接，自动识别并读取</td>
+</tr>
+</tbody></table>
+<p>飞书集成是一个我比较骄傲的特性。我们已经成功引入了飞书 MCP 服务，并且<strong>完整跑通了 PRD 文档识别流程</strong>。国内团队的需求文档大多写在飞书里，能直接通过 MCP API 读取飞书文档内容，意味着不需要任何手动导出——粘贴 URL，工具直接分析。这大幅降低了使用门槛，让 PRD Pilot 可以无缝嵌入团队的现有工作流。</p>
+<h1 id="三、三阶段工作流详解"><a href="#三、三阶段工作流详解" class="headerlink" title="三、三阶段工作流详解"></a>三、三阶段工作流详解</h1><h2 id="3-1-Phase-1：冲突检测（prd-audit）"><a href="#3-1-Phase-1：冲突检测（prd-audit）" class="headerlink" title="3.1 Phase 1：冲突检测（prd:audit）"></a>3.1 Phase 1：冲突检测（prd:audit）</h2><p>这是最核心的阶段，分为 5 个步骤：</p>
+<p><strong>Step 1 — 需求提取</strong></p>
+<p>从 PRD 中提取结构化需求列表。每个需求包含：编号、一句话描述、搜索关键词（3-8 个，用于定位相关代码）、类型（新增&#x2F;修改&#x2F;删除&#x2F;约束&#x2F;非功能性）。</p>
+<p><strong>Step 2 — 项目侦察</strong></p>
+<p>扫描项目结构，生成一个 300 字以内的项目概要：语言&#x2F;框架、主要模块、数据库、API 层。</p>
+<p><strong>Step 3 — 文档健康检查（Trust But Verify）</strong></p>
+<p>这是一个我觉得有意思的设计。工具不会盲目信任项目的 README——它会先验证文档的准确性：</p>
+<ul>
+<li>文档说”模块 X 在 path&#x2F;to&#x2F;X”→ 检查目录是否存在</li>
+<li>文档说”使用 Redis 做缓存”→ 搜索代码中是否真的引入了 Redis</li>
+<li>记录每个声明：✅ 已验证 &#x2F; ❌ 矛盾 &#x2F; ⚠️ 无法验证</li>
+</ul>
+<p>根据验证结果给出信任评分：HIGH &#x2F; MEDIUM &#x2F; LOW &#x2F; NONE。评分低的话，后续步骤会跳过文档，完全依赖代码搜索。</p>
+<p><strong>Step 4 — 代码搜索</strong></p>
+<p>这里有一个关键设计决策：<strong>所有代码搜索用 <code>rg/grep/find</code>，不依赖 LLM 的记忆。</strong></p>
+<p>原因很简单：AI 的记忆不可信。它可能「记得」一个不存在的文件路径，导致整个分析建立在幻觉之上。工具调用才是可靠的。</p>
+<p><strong>Step 5 — 交叉分析</strong></p>
+<p>将每个需求与其关联的代码进行交叉分析，给出判定：</p>
+<table>
+<thead>
+<tr>
+<th>判定</th>
+<th>含义</th>
+<th>需要的行动</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>CONFLICT</strong></td>
+<td>PRD 要求 X，代码做了 Y（矛盾）</td>
+<td>编码前必须解决</td>
+</tr>
+<tr>
+<td><strong>WARNING</strong></td>
+<td>可能不匹配，但也可能是间接实现</td>
+<td>需人工审查</td>
+</tr>
+<tr>
+<td><strong>PASS</strong></td>
+<td>需求已满足或兼容</td>
+<td>无需行动</td>
+</tr>
+<tr>
+<td><strong>GAP</strong></td>
+<td>没有找到相关代码（新功能）</td>
+<td>预期中的新增实现</td>
+</tr>
+<tr>
+<td><strong>UNKNOWN</strong></td>
+<td>无法判断（元编程、动态分发等）</td>
+<td>需人工审查</td>
+</tr>
+</tbody></table>
+<p>每个 CONFLICT 和 WARNING 都必须附带<strong>代码证据</strong>——文件路径、行号、代码片段。不允许无凭据的断言。</p>
+<p>下面是一个 audit 输出的示例（已脱敏）：</p>
+<figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">📋 PRD Audit Report</span><br><span class="line">Generated: 2026-03-28 | Base commit: a1b2c3d</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">[R1] 支持邮箱+手机双因子登录</span><br><span class="line">   Type: FEATURE_MODIFY | Verdict: 🔴 CONFLICT</span><br><span class="line"></span><br><span class="line">   PRD excerpt: &quot;用户登录时，系统应支持邮箱验证码和手机短信双因子认证&quot;</span><br><span class="line">   </span><br><span class="line">   Evidence:</span><br><span class="line">     File: src/auth/login-handler.ts:45-62</span><br><span class="line">     Code: export async function handleLogin(email: string, password: string)</span><br><span class="line">     </span><br><span class="line">   Analysis: 当前登录函数只接受 email + password 两个参数，</span><br><span class="line">   没有 phone/sms 相关字段。grep &quot;phone|sms&quot; 在整个 src/auth/ </span><br><span class="line">   目录返回 0 结果。需要新增手机验证逻辑。</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">[R2] 登录失败 3 次后锁定账户 15 分钟</span><br><span class="line">   Type: FEATURE_NEW | Verdict: 🟡 WARNING</span><br><span class="line"></span><br><span class="line">   PRD excerpt: &quot;连续登录失败 3 次后，账户锁定 15 分钟&quot;</span><br><span class="line">   </span><br><span class="line">   Evidence:</span><br><span class="line">     File: src/auth/rate-limiter.ts:12-18</span><br><span class="line">     Code: const MAX_ATTEMPTS = 5; const LOCKOUT_MINUTES = 30;</span><br><span class="line">     </span><br><span class="line">   Analysis: 已有速率限制机制，但阈值不匹配</span><br><span class="line">   （代码: 5次/30分钟 vs PRD: 3次/15分钟）。</span><br><span class="line">   可能是有意的宽松配置，需人工确认。</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">Summary: 8 requirements analyzed</span><br><span class="line">  🔴 CONFLICT: 1 | 🟡 WARNING: 2 | 🟢 PASS: 3 | ⬜ GAP: 2</span><br></pre></td></tr></table></figure>
+
+<h2 id="3-2-Phase-2：编码计划（prd-plan）"><a href="#3-2-Phase-2：编码计划（prd-plan）" class="headerlink" title="3.2 Phase 2：编码计划（prd:plan）"></a>3.2 Phase 2：编码计划（prd:plan）</h2><p>Audit 完成后，下一步是生成编码计划。这里有一个重要的设计选择：<strong>计划只到文件级别，不到函数级别。</strong></p>
+<p>为什么？因为 AI Agent 在小范围内的实现决策应该被尊重。人的价值在于架构和方向——告诉 AI「改哪几个文件、按什么顺序」就够了，具体怎么改它自己会决定。</p>
+<p>计划的关键特性：</p>
+<ul>
+<li><strong>依赖排序</strong>：先改数据模型，再改服务层，最后改 API 层</li>
+<li><strong>Commit-hash 绑定</strong>：计划和代码版本锚定，代码变了计划自动失效</li>
+<li><strong>两个人工检查点</strong>：WARNING 项由人决定是否处理 + 计划整体由人授权</li>
+</ul>
+<h2 id="3-3-Phase-3：代码审查（prd-review）"><a href="#3-3-Phase-3：代码审查（prd-review）" class="headerlink" title="3.3 Phase 3：代码审查（prd:review）"></a>3.3 Phase 3：代码审查（prd:review）</h2><p>代码写完后，prd:review 做最后的闭环验证，用三向交叉检查：</p>
+<ul>
+<li>🔴 <strong>越界检测</strong>：哪些文件被改了但不在计划里？（AI 的「即兴创作」）</li>
+<li>🟡 <strong>遗漏检测</strong>：哪些计划中的文件没有被修改？（漏掉的需求）</li>
+<li>🟢 <strong>覆盖率映射</strong>：每个需求 → 对应的任务 → 对应的文件变更，全链路可追溯</li>
+</ul>
+<p>它和功能测试是互补的关系：prd:review 检查「改了对的文件吗」，测试检查「代码能跑通吗」。两道门各司其职。</p>
+<h1 id="四、设计哲学：几个关键取舍"><a href="#四、设计哲学：几个关键取舍" class="headerlink" title="四、设计哲学：几个关键取舍"></a>四、设计哲学：几个关键取舍</h1><p>做工具最难的不是写代码，而是做取舍。PRD Pilot 背后有几个我反复思考的设计决策：</p>
+<p><strong>决策一：不信任 LLM 记忆</strong></p>
+<p>所有代码搜索用 <code>rg/grep/find</code>，不让 AI 凭印象说「这个函数在那里」。</p>
+<p>背景：AI 幻觉在代码定位上是高风险的。一个不存在的文件路径会导致整个分析链条建立在虚假基础上，后续所有判定都不可信。宁可慢一点用工具搜索，也不冒这个风险。</p>
+<p><strong>决策二：文件级粒度而非函数级</strong></p>
+<p>Coding Plan 只到文件粒度。</p>
+<p>背景：函数级计划看似精确，实际上过度约束了 AI Agent 的实现自由度。AI 可能找到比你预想更好的实现方式。控制粒度在文件级——既有方向感，又留有空间。</p>
+<p><strong>决策三：误报防控优先于漏报防控</strong></p>
+<p>宁可把冲突降级为 WARNING，也不轻易标记 CONFLICT。</p>
+<p>背景：虚假告警会让开发者产生「狼来了」效应。工具的信任度一旦崩塌就难以恢复。所以 PRD Pilot 对 CONFLICT 的标准很严——必须有确凿的代码证据，不能「我觉得可能有冲突」。</p>
+<p><strong>决策四：保留人工检查点</strong></p>
+<p>WARNING 决策 + 计划授权，确保工具不会绕过人类判断自动执行。</p>
+<p>背景：AI 工具的最大风险不是「做不到」，而是「做了不该做的事」。两个人工检查点是刻意的减速带——让人在关键节点做判断，而不是全程自动化。</p>
+<h1 id="五、为什么做这个工具——从团队痛点说起"><a href="#五、为什么做这个工具——从团队痛点说起" class="headerlink" title="五、为什么做这个工具——从团队痛点说起"></a>五、为什么做这个工具——从团队痛点说起</h1><p>PRD Pilot 的起点不是灵感，而是真实的工程困境。</p>
+<p>我们团队已经在 CI&#x2F;CD 流水线中接入了 AI Code Review。每次 PR 提交后，AI 会自动对这次 git diff 进行代码规范和逻辑审查，输出一个评分。这套系统在发现低级错误方面确实有效——命名不规范、未处理的异常、潜在的空指针，AI 抓得又快又准。</p>
+<p><strong>但它有一个致命盲区：它不知道这次提交对应的需求是什么。</strong></p>
+<p>AI CR 只看代码本身——“这段逻辑写得对不对”，不会去想”这段逻辑是不是需求要求的”。一个功能写得技术上完美，但如果它和 PRD 要求的方向背道而驰，AI CR 给满分也没用。本质上，它缺少一个 RAG 检索层，去关联这次 git commit 对应的需求上下文。</p>
+<p>后来我们又引入了 SonarQube，想从静态分析角度补上代码质量的缺口。但实际用下来发现，SonarQube 的问题更让人头疼——它做的是<strong>纯语法层面的静态扫描</strong>，根本不理解代码的业务逻辑。结果就是大量误判提示：一个有意为之的设计模式被标记为 “code smell”，一个业务上合理的空值处理被报成 “potential bug”。团队花了不少时间去甄别哪些告警是真的、哪些是噪音。</p>
+<p>这两个工具代表了目前 AI Code Review 的两个典型困境：</p>
+<table>
+<thead>
+<tr>
+<th>工具</th>
+<th>能做什么</th>
+<th>做不了什么</th>
+</tr>
+</thead>
+<tbody><tr>
+<td><strong>AI CR（评分制）</strong></td>
+<td>审查代码规范和逻辑质量</td>
+<td>不知道这次提交对应哪个需求</td>
+</tr>
+<tr>
+<td><strong>SonarQube</strong></td>
+<td>静态语法扫描</td>
+<td>不理解业务逻辑，大量误判</td>
+</tr>
+</tbody></table>
+<p>两个工具都缺了同一块拼图：<strong>需求上下文。</strong></p>
+<p>这让我产生了一个想法：如果能做一个 PRD 和 Project 的关联 RAG Skill，把需求文档检索注入到 AI CR 的上下文里，是不是就能让代码审查从「看语法」升级到「看业务」？</p>
+<p>AI CR 在判断代码质量时，不只是看”这个函数写得对不对”，而是同时看到”这个函数应该实现 PRD 里的哪条需求”、”这条需求的验收标准是什么”、”这次 commit 改动的范围是否在需求定义之内”。</p>
+<p>PRD Pilot 就是从这个想法演化出来的。它不是要替代 AI CR 或 SonarQube——它是为它们补上<strong>需求上下文</strong>这块缺失的拼图。当 PRD Pilot 的 audit 报告和 coding plan 作为上下文注入到 AI CR 中，Code Review 就有了业务锚点，不再是纯粹的语法审查。</p>
+<p>从更大的维度看，这也是我对 AI 工具链的判断：<strong>单点工具各有局限，真正的价值在于把它们串起来。</strong> SonarQube 看语法，AI CR 看逻辑，PRD Pilot 看需求——三层验证各司其职，才能构成一个可信的质量门禁。</p>
+<h1 id="六、范式转移的信号"><a href="#六、范式转移的信号" class="headerlink" title="六、范式转移的信号"></a>六、范式转移的信号</h1><p>把 PRD Pilot 放在更大的图景里，我看到的是一个正在发生的范式转移：</p>
+<p><strong>旧范式</strong>：人写需求 → 人写代码</p>
+<p>PRD 是给程序员看的沟通工具。写完就放在那儿，偶尔有人翻出来看一眼。</p>
+<p><strong>过渡期</strong>：人写需求 → AI 写代码</p>
+<p>PRD 同时要给 AI 看，但没有工具帮 AI 理解和验证它。AI 可能理解了 80%，剩下 20% 靠运气。</p>
+<p><strong>新范式</strong>：人写需求 → AI 写代码 → 工具验证 → 闭环</p>
+<p>PRD 从「沟通工具」升级为「验证基准」。它不再是写完就束之高阁的文档，而是持续有效的约束集，每次编码都要对照它做检查。</p>
+<p>这个转变类似于单元测试的演进——测试让代码「可验证」，PRD Pilot 让需求「可验证」。我相信这是软件工程演进的一个必然方向。</p>
+<h1 id="七、未来方向"><a href="#七、未来方向" class="headerlink" title="七、未来方向"></a>七、未来方向</h1><p>PRD Pilot 目前还有明确的局限：</p>
+<ul>
+<li>只能分析本地代码，需要先 clone 到本地</li>
+<li>无法追踪高度动态的分发（eval、反射、复杂 DI 容器）</li>
+<li>非功能性需求（性能、可扩展性）无法通过静态分析验证</li>
+</ul>
+<p>飞书 MCP 服务已经跑通了 PRD 文档识别，这给了我们很大的信心。接下来的方向：</p>
+<p><strong>已完成 — 飞书 MCP 集成</strong>：飞书文档和知识库的 MCP 服务已成功接入，PRD 识别流程已跑通。这意味着团队写在飞书里的需求文档可以直接被 PRD Pilot 消费，无需任何格式转换。</p>
+<p><strong>Phase 4 — 深度 RAG 集成</strong>：将 PRD Pilot 的 audit 结果和 coding plan 作为 RAG 知识库，注入到团队现有的 AI Code Review 流程中。让 AI CR 在审查代码时不只看语法和逻辑，还能看到这次 commit 对应的需求上下文。这是我目前最想推进的方向——把 PRD 和 Project 真正关联起来。</p>
+<p><strong>Phase 5 — 飞书文档变更订阅</strong>：基于已跑通的飞书 MCP 能力，进一步实现文档变更的自动监听。PRD 一更新就自动触发增量审计，实现需求管理和代码验证的实时联动。</p>
+<p><strong>Phase 6 — CI&#x2F;CD 原生集成</strong>：直接传入 GitHub&#x2F;GitLab URL，工具自动 clone 并分析。让需求验证可以进入每个 PR 的自动化流程，而不只是本地手动触发。</p>
+<p><strong>更远的设想</strong>：多 PRD 版本对比（追踪需求演变）、跨服务的需求映射（微服务架构下跨 repo 分析）、需求覆盖率可视化（作为团队质量 KPI）。</p>
+<h1 id="八、写在最后"><a href="#八、写在最后" class="headerlink" title="八、写在最后"></a>八、写在最后</h1><p>PRD Pilot 不只是一个工具，它体现了我对 AI Coding 工作流的一个判断：<strong>在当前阶段，验证节点比生成节点更稀缺。</strong></p>
+<p>AI 让「写代码」变得容易了。但「写对代码」——确保代码符合需求、不与历史约束冲突、覆盖了所有需求点——这件事依然需要人类设计的验证机制。</p>
+<p>如果你在团队里用 AI Coding 工具遇到过类似问题——需求被遗漏、代码与 PRD 冲突、Code Review 不知道从何下手——欢迎试用 PRD Pilot，也欢迎交流你的想法。</p>
+<p>📦 <strong>GitHub</strong>: <a href="https://github.com/Gopherlinzy/prd-pilot">github.com&#x2F;Gopherlinzy&#x2F;prd-pilot</a></p>
+<p>安装很简单：</p>
+<figure class="highlight bash"><table><tr><td class="code"><pre><span class="line">git <span class="built_in">clone</span> https://github.com/Gopherlinzy/prd-pilot.git ~/.claude/skills/prd-pilot</span><br></pre></td></tr></table></figure>
+
+<p>然后在 Claude Code 或 OpenClaw 中使用 <code>prd:audit</code> 即可开始。</p>
+]]></content>
+      <categories>
+        <category>AI</category>
+      </categories>
+      <tags>
+        <tag>AI</tag>
+        <tag>Agent</tag>
+        <tag>PRD</tag>
+        <tag>AI-Coding</tag>
+        <tag>需求管理</tag>
+        <tag>Developer-Tools</tag>
+        <tag>OpenClaw</tag>
+      </tags>
+  </entry>
 </search>
