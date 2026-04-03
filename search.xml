@@ -8017,6 +8017,40 @@
 <p>下面是一个 audit 输出的示例（已脱敏）：</p>
 <figure class="highlight plaintext"><table><tr><td class="code"><pre><span class="line">📋 PRD Audit Report</span><br><span class="line">Generated: 2026-03-28 | Base commit: a1b2c3d</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">[R1] 支持邮箱+手机双因子登录</span><br><span class="line">   Type: FEATURE_MODIFY | Verdict: 🔴 CONFLICT</span><br><span class="line"></span><br><span class="line">   PRD excerpt: &quot;用户登录时，系统应支持邮箱验证码和手机短信双因子认证&quot;</span><br><span class="line">   </span><br><span class="line">   Evidence:</span><br><span class="line">     File: src/auth/login-handler.ts:45-62</span><br><span class="line">     Code: export async function handleLogin(email: string, password: string)</span><br><span class="line">     </span><br><span class="line">   Analysis: 当前登录函数只接受 email + password 两个参数，</span><br><span class="line">   没有 phone/sms 相关字段。grep &quot;phone|sms&quot; 在整个 src/auth/ </span><br><span class="line">   目录返回 0 结果。需要新增手机验证逻辑。</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">[R2] 登录失败 3 次后锁定账户 15 分钟</span><br><span class="line">   Type: FEATURE_NEW | Verdict: 🟡 WARNING</span><br><span class="line"></span><br><span class="line">   PRD excerpt: &quot;连续登录失败 3 次后，账户锁定 15 分钟&quot;</span><br><span class="line">   </span><br><span class="line">   Evidence:</span><br><span class="line">     File: src/auth/rate-limiter.ts:12-18</span><br><span class="line">     Code: const MAX_ATTEMPTS = 5; const LOCKOUT_MINUTES = 30;</span><br><span class="line">     </span><br><span class="line">   Analysis: 已有速率限制机制，但阈值不匹配</span><br><span class="line">   （代码: 5次/30分钟 vs PRD: 3次/15分钟）。</span><br><span class="line">   可能是有意的宽松配置，需人工确认。</span><br><span class="line"></span><br><span class="line">==================================================</span><br><span class="line">Summary: 8 requirements analyzed</span><br><span class="line">  🔴 CONFLICT: 1 | 🟡 WARNING: 2 | 🟢 PASS: 3 | ⬜ GAP: 2</span><br></pre></td></tr></table></figure>
 
+<h2 id="3-1-5-工程化增强（3-x2F-28-之后持续迭代）"><a href="#3-1-5-工程化增强（3-x2F-28-之后持续迭代）" class="headerlink" title="3.1.5 工程化增强（3&#x2F;28 之后持续迭代）"></a>3.1.5 工程化增强（3&#x2F;28 之后持续迭代）</h2><p>在核心流程跑通之后，我们又做了一轮工程化加固，解决了实际使用中暴露的几个问题：</p>
+<p><strong>自适应超时控制</strong></p>
+<p>所有外部命令（<code>rg</code>、<code>find</code>、<code>grep</code>）都加了 <code>timeout &#123;T&#125;</code> 包裹，而且 T 值会根据项目规模自动调整：</p>
+<table>
+<thead>
+<tr>
+<th>项目规模</th>
+<th>文件数</th>
+<th>超时时间</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>小型项目</td>
+<td>&lt;30</td>
+<td>30s</td>
+</tr>
+<tr>
+<td>中型项目</td>
+<td>30-200</td>
+<td>60s</td>
+</tr>
+<tr>
+<td>大型项目</td>
+<td>200+</td>
+<td>120s</td>
+</tr>
+</tbody></table>
+<p>工具启动时先跑 <code>find &lt;dir&gt; -maxdepth 2 -type f | wc -l</code> 估算文件数，然后设定全局 T 值。这比写死一个数字靠谱得多——30 个文件的小项目不需要等 2 分钟超时，而 500 个文件的大项目 30 秒可能搜不完。</p>
+<p><strong>小型项目智能跳过</strong></p>
+<p>实际用下来发现，对于 30 个文件以下的小项目，文档健康检查（Stage 2.5）和自动代码地图（Stage 2.8）基本是浪费时间——项目结构一目了然，跑这两步纯属多余。所以我们加了规模检测，小项目直接跳到 Stage 2.9，输出一行 “📦 小型项目（&lt;30 文件），跳过文档健康检查和代码地图生成。” 就完事了。</p>
+<p><strong>扫描预算预览（Stage 2.9）</strong></p>
+<p>在正式开始代码搜索之前，先估算一下工作量：”预计扫描 142 个文件、85k 行，共 8 条需求，继续执行？”。用户可以确认或调整上限。这个设计来自实际踩坑——有一次对着一个 monorepo 跑 audit，搜了 20 分钟才意识到范围太大了。提前预告比事后超时好得多。</p>
+<p><strong>路径安全检查</strong></p>
+<p>简单但必要：在解析项目目录时先验证它不是系统根目录（<code>/</code>、<code>/etc</code>、<code>/usr</code>、<code>C:\Windows</code> 之类）。防止手误把整个系统扫一遍。</p>
 <h2 id="3-2-Phase-2：编码计划（prd-plan）"><a href="#3-2-Phase-2：编码计划（prd-plan）" class="headerlink" title="3.2 Phase 2：编码计划（prd:plan）"></a>3.2 Phase 2：编码计划（prd:plan）</h2><p>Audit 完成后，下一步是生成编码计划。这里有一个重要的设计选择：<strong>计划只到文件级别，不到函数级别。</strong></p>
 <p>为什么？因为 AI Agent 在小范围内的实现决策应该被尊重。人的价值在于架构和方向——告诉 AI「改哪几个文件、按什么顺序」就够了，具体怎么改它自己会决定。</p>
 <p>计划的关键特性：</p>
@@ -8091,9 +8125,21 @@
 </ul>
 <p>飞书 MCP 服务已经跑通了 PRD 文档识别，这给了我们很大的信心。接下来的方向：</p>
 <p><strong>已完成 — 飞书 MCP 集成</strong>：飞书文档和知识库的 MCP 服务已成功接入，PRD 识别流程已跑通。这意味着团队写在飞书里的需求文档可以直接被 PRD Pilot 消费，无需任何格式转换。</p>
+<p><strong>已完成 — 工程化加固（3&#x2F;28 后迭代）</strong>：</p>
+<ul>
+<li><strong>自适应超时</strong>：所有 shell 命令按项目规模动态调整超时（30s&#x2F;60s&#x2F;120s），告别一刀切。</li>
+<li><strong>断点续审（Checkpoint &amp; Resume）</strong>：长审计（10+ 需求、大代码库）支持中间断点保存和恢复。用 <code>--checkpoint</code> 开启，中途超时或断连后可以从上次完成的需求继续，不用从头再跑。中间结果存在 <code>.prd-pilot/checkpoint-&#123;date&#125;.json</code>，报告生成后自动清理。</li>
+<li><strong>优雅降级</strong>：核心工具链做了 fallback——<code>rg</code> 不可用时自动降级到 <code>grep</code>，<code>grep</code> 也没有就用 <code>find + cat</code>。飞书 API 失败会回退到提示用户手动粘贴。降级时在报告里标注 <code>⚠️ DEGRADED</code>，不会静默忽略。</li>
+<li><strong>Code Map 持久化与复用</strong>：自动生成的代码地图缓存 7 天可复用。如果代码库变更超过 20%（通过 <code>git diff --stat</code> 检测）会自动重建。支持 <code>--refresh-map</code> 强制刷新。</li>
+<li><strong>上下文窗口管理</strong>：对大型项目（50k+ LOC）自动压缩每个需求的代码上下文预算，从默认 2000 行按比例缩减到 800-1500 行，优先保留关键词命中密度高的代码段。审计报告末尾会展示上下文消耗统计。</li>
+<li><strong>小型项目快速通道</strong>：&lt;30 文件的项目自动跳过文档健康检查和代码地图生成，直奔核心搜索。</li>
+<li><strong>扫描预算预览</strong>：正式搜索前预估文件数和代码行数，让用户确认或调整上限。</li>
+<li><strong>路径安全检查</strong>：拒绝对系统根目录执行扫描，防止误操作。</li>
+</ul>
 <p><strong>Phase 4 — 深度 RAG 集成</strong>：将 PRD Pilot 的 audit 结果和 coding plan 作为 RAG 知识库，注入到团队现有的 AI Code Review 流程中。让 AI CR 在审查代码时不只看语法和逻辑，还能看到这次 commit 对应的需求上下文。这是我目前最想推进的方向——把 PRD 和 Project 真正关联起来。</p>
 <p><strong>Phase 5 — 飞书文档变更订阅</strong>：基于已跑通的飞书 MCP 能力，进一步实现文档变更的自动监听。PRD 一更新就自动触发增量审计，实现需求管理和代码验证的实时联动。</p>
 <p><strong>Phase 6 — CI&#x2F;CD 原生集成</strong>：直接传入 GitHub&#x2F;GitLab URL，工具自动 clone 并分析。让需求验证可以进入每个 PR 的自动化流程，而不只是本地手动触发。</p>
+<p><strong>并行代码搜索（架构已就绪）</strong>：Stage 3 的需求搜索天然可并行——各需求之间互相独立。在 OpenClaw 编队模式下，可以让多个子 Agent 同时搜索不同需求，预计 8+ 需求时有 3-5 倍加速。单 Agent 模式下保持串行 + 进度条。架构已设计完成，待后续接入。</p>
 <p><strong>更远的设想</strong>：多 PRD 版本对比（追踪需求演变）、跨服务的需求映射（微服务架构下跨 repo 分析）、需求覆盖率可视化（作为团队质量 KPI）。</p>
 <h1 id="八、写在最后"><a href="#八、写在最后" class="headerlink" title="八、写在最后"></a>八、写在最后</h1><p>PRD Pilot 不只是一个工具，它体现了我对 AI Coding 工作流的一个判断：<strong>在当前阶段，验证节点比生成节点更稀缺。</strong></p>
 <p>AI 让「写代码」变得容易了。但「写对代码」——确保代码符合需求、不与历史约束冲突、覆盖了所有需求点——这件事依然需要人类设计的验证机制。</p>
